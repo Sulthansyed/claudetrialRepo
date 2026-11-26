@@ -1,0 +1,26 @@
+Misty Ridge — third-party material in this film
+
+PICTURE
+- Everything on screen is painted in code (film.js); no images, footage or generated pictures.
+- engine.js (brush-stroke engine) and paper.py (paper texture) are copied from the Lemo-Opuscar
+  library's Watercolor Brush demo, https://github.com/lemomo-ai/lemo-opuscar
+  Copyright (c) 2026 Lemomo (LemoLab) · MIT licence.
+
+FONTS (self-hosted in fonts/, downloaded from Google Fonts)
+- Cormorant Garamond — Christian Thalmann · SIL Open Font License 1.1
+- Caveat — Impallari Type · SIL Open Font License 1.1
+- IBM Plex Mono — IBM Corp. · SIL Open Font License 1.1
+
+VOICE
+- Narration: Kokoro-82M text-to-speech, voice "bf_emma" (hexgrad, https://huggingface.co/hexgrad/Kokoro-82M)
+  Apache License 2.0; ONNX export by thewh1teagle/kokoro-onnx (runtime MIT).
+- Speech check: faster-whisper "base.en" (Systran) · MIT.
+
+MUSIC AND SOUND
+- Original score written for this film, synthesised in code: kalimba and nylon guitar by physical modelling
+  (Lemo-Opuscar core/audio/pluck.py, MIT), pad and glockenspiel synthesised in mix.py. No samples.
+- All foley and ambience (paper brush, pencil, drop, basket, cherries, birds, wind, insects, pour) synthesised
+  in mix.py with Lemo-Opuscar core/audio/sfx.py (MIT). No recordings.
+
+CONTENT
+- Misty Ridge Farm, its history and its people are invented for this film (the brief's defaults).

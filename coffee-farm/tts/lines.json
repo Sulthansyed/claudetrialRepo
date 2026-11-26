@@ -1,0 +1,44 @@
+[
+ {
+  "id": "v01",
+  "text": "Every cup begins on one misty hill.",
+  "voice": "bf_emma",
+  "speed": 0.92,
+  "lang": "en-gb"
+ },
+ {
+  "id": "v02",
+  "text": "My grandfather planted these trees.",
+  "voice": "bf_emma",
+  "speed": 0.92,
+  "lang": "en-gb"
+ },
+ {
+  "id": "v03",
+  "text": "Each spring, the slope turns white.",
+  "voice": "bf_emma",
+  "speed": 0.92,
+  "lang": "en-gb"
+ },
+ {
+  "id": "v04",
+  "text": "Then the cherries blush red.",
+  "voice": "bf_emma",
+  "speed": 0.92,
+  "lang": "en-gb"
+ },
+ {
+  "id": "v05",
+  "text": "Picked by hand. Dried in the sun.",
+  "voice": "bf_emma",
+  "speed": 0.92,
+  "lang": "en-gb"
+ },
+ {
+  "id": "v06",
+  "text": "So every cup tastes of our hill.",
+  "voice": "bf_emma",
+  "speed": 0.92,
+  "lang": "en-gb"
+ }
+]
