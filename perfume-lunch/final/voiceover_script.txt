@@ -1,0 +1,9 @@
+1. "RM300 perfume… gone by lunch?"
+2. "Every perfume has three layers: top, heart and base."
+3. "In Malaysian heat, the top notes burn off fast. And dry skin? Nothing to hold on to."
+4. "Fix it: moisturise first. Spray pulse points and your clothes. And never rub your wrists."
+5. "Now it lasts till evening. Comment your perfume, I'll tell you if it lasts."
+
+Placeholder voice is in the film. To use your VoiceStudio clone: save the 5 lines as l1.wav..l5.wav
+(or one WAV), drop into perfume-lunch/film/voice/, then re-run the mix.
+Line start times (s): 0.15, 3.3, 8.2, 14.3, 20.6. Max lengths: 3.0, 4.8, 6.0, 6.0, 4.4.

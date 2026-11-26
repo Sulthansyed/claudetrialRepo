@@ -3,7 +3,7 @@ const CV = document.getElementById('c'), X = CV.getContext('2d');
 const VW = 1080, VH = 1920, DUR = 25;
 const Q = new URLSearchParams(location.search), STYLE = Q.get('style') || 'ff', THUMB = Q.get('thumb') === '1';
 const OV = THUMB ? { split: 0, pct: [1, 1, 1], clock: 8, clockBig: 1, clockBigEnd: 0, hookText: 0, labels: 0, scale: .86, cy: 730, bottle: 1, sun: 0, skin: 0, fix: [0, 0, 0], endCard: 0, slide: 0 } : {};
-const SERIF = '"Liberation Serif","DejaVu Serif",serif', SANS = 'Inter,sans-serif';
+const SERIF = '"CG","Liberation Serif",serif', SANS = 'Inter,sans-serif';
 
 // ---------- story timeline (shared) ----------
 function story(t) {
@@ -26,7 +26,7 @@ function story(t) {
   s.scale = 1 - .52 * ss(seg(t, 14, 14.7)) + .52 * ss(seg(t, 21, 21.8));
   s.cy = lerp(780, 470, ss(seg(t, 14, 14.7)) - ss(seg(t, 21, 21.8)));
   s.bottle = 1 - ss(seg(t, 14, 14.6)) + ss(seg(t, 21, 21.8));  // hidden during fixes
-  s.bottle = clamp(s.bottle) * (1 - ss(seg(t, 23.4, 24)));
+  s.bottle = clamp(s.bottle) * (1 - ss(seg(t, 22.6, 23.2)));
   s.sun = ss(seg(t, 8.2, 9)) * (1 - ss(seg(t, 14, 14.6)));
   s.skin = ss(seg(t, 9.5, 10.5)) * (1 - ss(seg(t, 14, 14.6)));
   s.fix = [0, 1, 2].map(i => ss(seg(t, 14.5 + i * 2.3, 15.2 + i * 2.3)) * (1 - ss(seg(t, 21, 21.5))));
@@ -47,7 +47,7 @@ function bottlePolys(cx, cy, k) { // [ [x,y]… ] closed polylines: body, neck, 
   const r = (x0, y0, x1, y1, c) => { const o = []; const q = (a, b, s, e) => { for (let i = 0; i <= 6; i++) { const t = s + (e - s) * i / 6; o.push([a + c * Math.cos(t), b + c * Math.sin(t)]); } };
     q(x1 - c, y0 + c, -Math.PI / 2, 0); q(x1 - c, y1 - c, 0, Math.PI / 2); q(x0 + c, y1 - c, Math.PI / 2, Math.PI); q(x0 + c, y0 + c, Math.PI, Math.PI * 1.5); o.push(o[0]); return o; };
   const S = p => p.map(([x, y]) => [cx + x * k, cy + y * k]);
-  return { body: S(r(-100, -40, 100, 150, 30)), neck: S(r(-28, -78, 28, -38, 6)), cap: S(r(-44, -150, 44, -82, 14)), label: S(r(-62, 20, 62, 100, 8)) };
+  return { body: S(r(-100, -40, 100, 150, 46)), inner: S(r(-84, -24, 84, 134, 34)), neck: S(r(-22, -80, 22, -38, 6)), cap: S(r(-36, -150, 36, -84, 32)), label: S(r(-56, 36, 56, 96, 6)) };
 }
 function ptsOnPath(pl, step) { const o = []; let carry = 0; for (let i = 0; i < pl.length - 1; i++) { const [a, b] = pl[i], [c, d] = pl[i + 1], L = Math.hypot(c - a, d - b); let s = carry; while (s < L) { o.push([a + (c - a) * s / L, b + (d - b) * s / L]); s += step; } carry = s - L; } return o; }
 function wrapText(c, text, maxW) { const w = text.split(' '), lines = []; let cur = ''; for (const x of w) { const n = cur ? cur + ' ' + x : x; if (c.measureText(n).width > maxW && cur) { lines.push(cur); cur = x; } else cur = n; } lines.push(cur); return lines; }
@@ -71,15 +71,16 @@ const hourLabel = h => { const hh = Math.floor(h), m = hh % 12 || 12; return m +
 // cloud particles: layer index by v, blob→band blend. Shared model, per-style draw.
 const NP = 1800, PT = []; withSeed(7, () => { for (let i = 0; i < NP; i++) PT.push({ u: rnd(), v: rnd(), h: rnd(), r: rnd(), ph: rnd(0, 6.28), z: rnd() }); });
 function cloudPos(p, st, t) {
-  const L = Math.min(2, Math.floor(p.v * 3)), vv = p.v * 3 - L; // vv in layer
-  // blob: elliptical, v maps down the ellipse
-  const ang = p.u * 6.283 * 3.1 + p.v * 9, rad = Math.sqrt(p.z) * .5, bx = Math.cos(ang) * rad * 700, by = (p.v - .5) * 520 + Math.sin(ang) * rad * 90;
-  // bands: three stacked wide bars
-  const gap = 70 * st.split, bY = (L - 1) * (150 + gap) + (vv - .5) * 130, bX = (p.u - .5) * 640 * (1 - .1 * L);
-  const k = st.split;
-  let x = lerp(bx, bX, k), y = lerp(by, bY, k);
+  const L = Math.min(2, Math.floor(p.v * 3)), vv = p.v * 3 - L;
+  // blob: a plume rising from the bottle (narrow low, wide high) with slow curls
+  const ang = p.u * 6.283 * 3.1 + p.v * 9, rad = Math.sqrt(p.z) * .5, wide = .28 + .72 * Math.pow(1 - p.v, .8);
+  const by = (p.v - .5) * 540 + Math.sin(ang) * rad * 80, bx = Math.cos(ang) * rad * 720 * wide + Math.sin(by * .014 + t * .7) * 55 * (1 - p.v);
+  // bands: tapered ribbons with a gentle wave
+  const gap = 70 * st.split, ux = (p.u - .5) * 2, taper = 1 - .75 * Math.pow(Math.abs(ux), 2.2);
+  const bX = ux * 330 * (1 - .08 * L), bY = (L - 1) * (150 + gap) + (vv - .5) * 130 * taper + Math.sin(ux * 3.2 + t * .8 + L * 1.7) * 22;
+  const k = st.split; let x = lerp(bx, bX, k), y = lerp(by, bY, k);
   const slide = L > 0 ? st.slide * (240 + 220 * p.h) * (L === 2 ? 1.25 : .8) : 0;
-  x += slide + Math.sin(t * .9 + p.ph) * 14; y += Math.cos(t * 1.1 + p.ph) * 10 + (L === 0 ? -st.slide * 0 : 0) + (L > 0 ? st.slide * 70 * p.h : 0);
+  x += slide + Math.sin(t * .9 + p.ph) * 14; y += Math.cos(t * 1.1 + p.ph) * 10 + (L > 0 ? st.slide * 70 * p.h : 0);
   return [CX + x * st.scale, st.cy + y * st.scale, L];
 }
 
@@ -146,15 +147,16 @@ function renderA(t) {
 const GLOW = {}; function glowSprite(col, r) { const k = col + r; if (GLOW[k]) return GLOW[k]; const c = document.createElement('canvas'); c.width = c.height = r * 2; const g = c.getContext('2d'), gr = g.createRadialGradient(r, r, 0, r, r, r); const [R, G, B] = hex2rgb(col); gr.addColorStop(0, `rgba(255,255,255,1)`); gr.addColorStop(.18, `rgba(${R},${G},${B},.95)`); gr.addColorStop(1, `rgba(${R},${G},${B},0)`); g.fillStyle = gr; g.fillRect(0, 0, r * 2, r * 2); return GLOW[k] = c; }
 function dot(c, x, y, r, col, a) { if (a <= 0) return; c.globalAlpha = a; c.drawImage(glowSprite(col, 32), x - r, y - r, r * 2, r * 2); }
 function neonB(c, text, x, y, size, col, a) { c.save(); c.globalAlpha = a; c.font = `700 ${size}px ${SANS}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.shadowColor = col; c.shadowBlur = size * .9; c.fillStyle = col; c.fillText(text, x, y); c.shadowBlur = size * .35; c.fillText(text, x, y); c.shadowBlur = 0; c.fillStyle = '#fff'; c.globalAlpha = a * .8; c.fillText(text, x, y); c.restore(); }
-function noteB(c, text, x, y, size, a, align = 'center', col = '#f0e2b8') { c.save(); c.globalAlpha = a; c.font = `italic ${size}px ${SERIF}`; c.textAlign = align; c.textBaseline = 'middle'; c.fillStyle = col; c.fillText(text, x, y); c.restore(); }
+function noteB(c, text, x, y, size, a, align = 'center', col = '#fff1cf') { c.save(); c.globalAlpha = a; c.font = `italic 600 ${Math.round(size * 1.15)}px ${SERIF}`; c.textAlign = align; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = size * .35; c.strokeStyle = 'rgba(0,0,0,.88)'; c.strokeText(text, x, y); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 10; c.fillStyle = col; c.fillText(text, x, y); c.restore(); }
 function renderB(t) {
   const s = Object.assign(story(t), OV), c = X; const bg = c.createLinearGradient(0, 0, 0, VH); bg.addColorStop(0, '#050708'); bg.addColorStop(1, '#0a0709'); c.fillStyle = bg; c.fillRect(0, 0, VW, VH);
-  c.globalCompositeOperation = 'lighter';
   const cols = ['#f5e0a0', '#f0a35e', '#c27ab8'];
+  c.globalCompositeOperation = 'lighter';
   withSeed(55, () => { for (let i = 0; i < 70; i++) dot(c, rnd(0, VW), rnd(0, VH), rnd(4, 14), '#8a9a80', .15 + .1 * Math.sin(t * 1.5 + i)); }); // ambient fireflies
-  for (const p of PT) { const [x, y, L] = cloudPos(p, s, t); const al = clamp((s.pct[L] - p.h) * 6); if (al > 0) dot(c, x, y, (8 + 20 * p.r * p.r) * s.scale, cols[L], al * (.45 + .4 * p.z)); }
+  for (const p of PT) { const [x, y, L] = cloudPos(p, s, t); const al = clamp((s.pct[L] - p.h) * 6); if (al > 0) dot(c, x, y, (5 + 17 * p.r * p.r * p.r) * s.scale, cols[L], al * (.35 + .4 * p.z)); }
+  { const bg2 = Math.max(s.clockBig, s.clockBigEnd); if (!THUMB && bg2 > .05) { c.globalCompositeOperation = 'source-over'; const x = CX, y = 640, g = c.createRadialGradient(x, y + 40, 60, x, y + 40, 260); g.addColorStop(0, `rgba(5,7,8,${.85 * bg2})`); g.addColorStop(1, 'rgba(5,7,8,0)'); c.fillStyle = g; c.fillRect(x - 280, y - 200, 560, 520); c.globalCompositeOperation = 'lighter'; } }
   // bottle: dotted outline
-  if (s.bottle > 0) { const by = s.skin > 0 ? 1010 : 1195, B = bottlePolys(CX, by, .95); let n = 0; for (const k of ['body', 'neck', 'cap', 'label']) for (const [x, y] of ptsOnPath(B[k], 9)) { n++; dot(c, x, y, k === 'label' ? 7 : 11, k === 'cap' ? '#f5e0a0' : '#ffd9c0', s.bottle * (.65 + .3 * Math.sin(t * 2 + n))); }
+  if (s.bottle > 0) { const by = s.skin > 0 ? 1010 : 1195, B = bottlePolys(CX, by, .95); let n = 0; for (const k of ['body', 'inner', 'neck', 'cap', 'label']) for (const [x, y] of ptsOnPath(B[k], k === 'inner' ? 12 : 9)) { n++; dot(c, x, y, k === 'label' ? 7 : k === 'inner' ? 6 : 11, k === 'cap' ? '#f5e0a0' : '#ffd9c0', s.bottle * (k === 'inner' ? .45 : .65 + .3 * Math.sin(t * 2 + n))); }
     for (let i = 0; i < 160; i++) { const p = PT[i], x = CX + (p.u - .5) * 170, y = by + (p.v - .1) * 170; dot(c, x, y, 6, '#ffb89a', s.bottle * .22); } }
   // sun
   if (s.sun > 0) { const sx = 830, sy = 330 - (1 - s.sun) * 80; for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283, rr = 70 + (i % 3) * 8; dot(c, sx + Math.cos(a) * rr, sy + Math.sin(a) * rr, 10, '#ffb347', s.sun * .9); } for (let i = 0; i < 34; i++) { const a = i / 34 * 6.283 + t * .2, rr = 105 + 30 * Math.abs(Math.sin(t * 2 + i)); dot(c, sx + Math.cos(a) * rr, sy + Math.sin(a) * rr, 9, '#ff8a3a', s.sun * .8); } dot(c, sx, sy, 190, '#ff9a3a', s.sun * .35); }
@@ -171,16 +173,16 @@ function renderB(t) {
   for (let i = 0; i < 3; i++) { const f = s.fix[i]; if (f <= 0) continue; const y = 760 + i * 250, sc = .85 + .15 * back(f, 2); c.save(); c.translate(CX, y); c.scale(sc, sc); c.globalAlpha = clamp(f * 1.6);
     c.shadowColor = fc[i]; c.shadowBlur = 24; c.strokeStyle = fc[i]; c.lineWidth = 3; c.beginPath(); c.roundRect(-440, -95, 880, 190, 40); c.stroke(); c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,.04)'; c.fill();
     c.shadowColor = fc[i]; c.shadowBlur = 16; iconStroke(c, i, -330, 0, 1.55, fc[i], 4.5); c.shadowBlur = 0;
-    c.font = `italic 600 46px ${SERIF}`; c.fillStyle = '#fbf3da'; c.textBaseline = 'middle'; c.fillText(fx[i][0], -230, -22); c.font = `italic 28px ${SERIF}`; c.fillStyle = '#d6c79e'; c.fillText(fx[i][1], -228, 34); c.restore(); }
-  if (s.endCard > 0) { neonB(c, 'Comment your', CX, 1235, 62, '#ff4fa3', s.endCard); neonB(c, 'perfume 👇', CX, 1325, 82, '#3be8e0', s.endCard); }
+    c.font = `italic 600 54px ${SERIF}`; c.fillStyle = '#fff6e0'; c.textBaseline = 'middle'; c.fillText(fx[i][0], -230, -22); c.font = `italic 500 32px ${SERIF}`; c.fillStyle = '#eadcb4'; c.fillText(fx[i][1], -228, 34); c.restore(); }
+  if (s.endCard > 0) { neonB(c, 'Comment your', CX, 1150, 62, '#ff4fa3', s.endCard); neonB(c, 'perfume 👇', CX, 1240, 82, '#3be8e0', s.endCard); }
   if (THUMB) { neonB(c, 'GONE BY', CX, 250, 120, '#ff4fa3', 1); neonB(c, 'LUNCH?', CX, 385, 150, '#3be8e0', 1); 
     c.globalCompositeOperation = 'lighter';
     for (const [x, h, lab] of [[190, 8, '8 AM'], [890, 12, '12 PM']]) { const y = 1240, r = 105; for (let i = 0; i < 48; i++) { const a = i / 48 * 6.283; dot(c, x + Math.sin(a) * r, y - Math.cos(a) * r, i % 4 === 0 ? 12 : 7, '#f5e0a0', .95); } const ha = (h % 12) / 12 * 6.283, ma = 0; for (let k = 1; k <= 6; k++) { dot(c, x + Math.sin(ha) * r * .55 * k / 6, y - Math.cos(ha) * r * .55 * k / 6, 12, '#fff2c8', 1); dot(c, x + Math.sin(ma) * r * .8 * k / 6, y - Math.cos(ma) * r * .8 * k / 6, 9, '#ffc9a0', .95); } }
-    c.globalCompositeOperation = 'source-over'; neonB(c, '8AM', 190, 1400, 56, '#ffd36a', 1); neonB(c, '12PM', 890, 1400, 56, '#ffd36a', 1); neonB(c, '→', 540, 1480, 70, '#ffd36a', .9); }
-  const cap = THUMB ? null : captionAt(t); if (cap) { c.save(); c.globalAlpha = cap[1]; c.font = `italic 36px ${SERIF}`; c.textAlign = 'center'; c.textBaseline = 'middle'; const L = wrapText(c, cap[0], 820); L.forEach((l, i) => { const y = 1440 + (i - (L.length - 1) / 2) * 46; c.fillStyle = 'rgba(0,0,0,.55)'; c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 14; c.fillStyle = 'rgba(250,240,215,.95)'; c.fillText(l, CX, y); }); c.restore(); }
+    c.globalCompositeOperation = 'source-over'; neonB(c, '8AM', 190, 1400, 56, '#ffd36a', 1); neonB(c, '12PM', 890, 1400, 56, '#ffd36a', 1); }
+  const cap = THUMB ? null : captionAt(t); if (cap) { c.save(); c.globalAlpha = cap[1]; c.font = `italic 500 42px ${SERIF}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; const L = wrapText(c, cap[0], 860); L.forEach((l, i) => { const y = 1440 + (i - (L.length - 1) / 2) * 52; c.lineWidth = 9; c.strokeStyle = 'rgba(0,0,0,.85)'; c.strokeText(l, CX, y); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 12; c.fillStyle = '#fff6e0'; c.fillText(l, CX, y); }); c.restore(); }
 }
 const back = (t, s = 1.7) => { t = clamp(t); const u = t - 1; return u * u * ((s + 1) * u + s) + 1; };
 window.DUR = DUR;
 window.EV = [{t:.4,type:'tick'},{t:3,type:'whoosh'},{t:5,type:'split'},{t:8.3,type:'sun'},{t:14.5,type:'pop'},{t:16.8,type:'pop'},{t:19.1,type:'pop'},{t:21,type:'rise'},{t:23.4,type:'ding'}];
 window.render = t => { X.setTransform(1, 0, 0, 1, 0, 0); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over'; withSeed(1, () => STYLE === 'ff' ? renderB(t) : renderA(t)); };
-document.fonts.ready.then(() => { window.READY = true; });
+Promise.all([document.fonts.load('italic 500 36px CG'), document.fonts.load('italic 600 36px CG')]).then(() => document.fonts.ready).then(() => { window.READY = true; });
