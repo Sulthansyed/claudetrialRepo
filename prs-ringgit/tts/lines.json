@@ -1,0 +1,34 @@
+[
+ {
+  "id": "v01",
+  "text": "Same salary. One gets RM seven-fifty back. One gets RM zero.",
+  "asr": "Same salary. One gets RM750 back. One gets RM0.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v02",
+  "text": "The difference? One account most people never open.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v03",
+  "text": "Ali pays full tax. Back: RM zero.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v04",
+  "text": "Aisyah puts RM three thousand into P R S. Tax relief kicks in. Up to RM seven-fifty saved.",
+  "voice": "am_onyx",
+  "speed": 0.92,
+  "asr": "Aisyah puts RM3,000 into PRS. Tax relief kicks in. Up to RM750 saved."
+ },
+ {
+  "id": "v05",
+  "text": "Deadline: thirty-first December. Want the full B M version? Comment below.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ }
+]
