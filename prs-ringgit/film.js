@@ -7,8 +7,8 @@ export const TL = {
   SAME: .25, POP_A: 1.55, POP_B: 3.35,                   // hook
   REW: 5.0, CAM_V: 5.0, LOCK: 6.05, PRS: 6.2,             // curiosity
   CAM_ALI: 7.9, ALI0: 8.6, SHAKE: 10.55,                  // conflict
-  CAM_AIS: 11.15, BRICK: [12.05, 12.675, 13.3], CUT: 13.75, STAMP: 14.3, RET0: 15.0, RET1: 17.2, NOTE: 15.4,   // climax
-  OUT: 18.0, CAL: 18.7, TITLE: 19.15, END: 20.55,         // payoff
+  CAM_AIS: 11.15, BRICK: [12.05, 12.675, 13.3], CUT: 13.75, STAMP: 14.3, RET0: 15.0, RET1: 17.2, NOTE: 12.4,   // climax
+  OUT: 18.0, CAL: 18.7, TITLE: 19.1, END: 19.65,         // payoff
 };
 export const DUR = 22.8;
 const BEAT = .625;
@@ -18,7 +18,7 @@ export const VO = [
   ['v01', .1, 4.76, 'Gaji sama. Seorang dapat balik RM750. Seorang lagi RM0.', 'Same salary. One gets RM750 back. One gets RM0.'],
   ['v02', 4.95, 2.946, 'Bezanya? Satu akaun yang ramai tak pernah buka.', 'The difference? One account most people never open.'],
   ['v03', 8.0, 2.962, 'Ali bayar cukai penuh. Dapat balik: RM0.', 'Ali pays full tax. Back: RM0.'],
-  ['v04', 11.3, 6.634, 'Aisyah masukkan RM3,000 ke dalam PRS. Jimat sehingga RM750.', 'Aisyah puts RM3,000 into PRS. Tax relief kicks in. Up to RM750 saved.'],
+  ['v04', 11.3, 6.713, 'Aisyah masukkan RM3,000 ke dalam PRS. Jimat sehingga RM750.', 'Aisyah puts RM3,000 into PRS. Tax relief kicks in. Up to RM750 saved.'],
   ['v05', 18.05, 4.505, 'Tarikh akhir: 31 Disember. Nak versi BM penuh? Komen di bawah.', 'Deadline: 31 December. Want the full BM version? Comment below.'],
 ];
 const subWin = i => { const [, s, d] = VO[i], nx = VO[i + 1] ? VO[i + 1][1] - .2 : DUR; return [s - .1, Math.min(nx, Math.max(s + d + .5, s + 1.8))]; };
@@ -301,4 +301,44 @@ export function events() {
   for (let i = 0; i < 15; i++) e(TL.RET0 + (i + 1) * (TL.RET1 - TL.RET0) / 15, 'coinBack', { i });
   e(TL.OUT, 'whoosh'); e(TL.OUT + .55, 'thud'); e(TL.CAL, 'flip'); e(TL.TITLE, 'title'); e(TL.END, 'bubble');
   return E;
+}
+
+// ---------- thumbnail: two piggy banks, RM750 vs a cracked RM0 ----------
+function piggy(I, x, y, col, cracked) {
+  const T = tri(col);
+  for (const [dx, dy] of [[-.9, -.6], [.9, -.6], [-.9, .6], [.9, .6]]) I.cyl(x + dx, y + dy, 0, .32, .7, T, { n: 14 });
+  I.sphere(x, y, 1.9, 1.75, T, { bias: 1 });
+  I.cyl(x + 1.55, y, 1.75, .55, .45, T, { axis: 'x', n: 18, bias: 2 });
+  I.cone(x - .3, y - .95, 3.1, .38, .6, T, { n: 3, bias: 2 }); I.cone(x - .9, y - .3, 3.1, .38, .6, T, { n: 3, bias: 2 });
+  I.bill(x - .2, y, 3.55, g => { g.fillStyle = '#3A2A35'; g.beginPath(); g.roundRect(-.55, -.08, 1.1, .16, .08); g.fill(); }, { bias: 3 });
+  I.bill(x + 1.0, y + .7, 2.35, g => { g.fillStyle = '#2B1F28'; g.beginPath(); g.arc(0, 0, .09, 0, TAU); g.fill(); }, { bias: 3 });
+  if (cracked) I.bill(x, y, 1.9, g => {
+    g.strokeStyle = '#2B1F28'; g.lineWidth = .09; g.lineJoin = 'round'; g.beginPath();
+    g.moveTo(-.3, -1.6); g.lineTo(.15, -1.0); g.lineTo(-.25, -.5); g.lineTo(.3, .1); g.lineTo(-.1, .6); g.lineTo(.35, 1.2); g.stroke();
+    g.beginPath(); g.moveTo(.3, .1); g.lineTo(.85, -.15); g.moveTo(-.25, -.5); g.lineTo(-.8, -.35); g.lineWidth = .06; g.stroke();
+  }, { bias: 4 });
+}
+export function thumb(g) {
+  const I2 = new Iso(g, W, H), A = [-2.3, 2.3], B = [2.3, -2.3];
+  g.fillStyle = GROUND; g.fillRect(0, 0, W, H); dots(g);
+  I2.cam = { x: 0, y: 0, z: -.6, k: 74 };
+  I2.keep = true;
+  I2.box(A[0] - 2, A[1] - 2, -.6, 4, 4, .6, tri('#F7F2E8'), { bias: -40 });
+  piggy(I2, A[0], A[1], '#E9919F', false);
+  for (let i = 0; i < 6; i++) I2.cyl(A[0] + .2 + (i % 3) * .55, A[1] + 1.4 + (i > 2 ? .55 : 0), 0, .36, .11, tri(GOLD), { n: 16, bias: 3 });
+  I2.cyl(A[0] - .2, A[1], 4.4, .42, .12, tri(GOLD), { n: 16, bias: 5 });
+  I2.keep = false;
+  I2.box(B[0] - 2, B[1] - 2, -.6, 4, 4, .6, tri('#F7F2E8'), { bias: -40 });
+  piggy(I2, B[0], B[1], '#E9919F', true);
+  I2.desat = .8; I2.flush(); I2.desat = 0;
+  const [cx, cy] = I2.P(B[0] + 1.2, B[1] + 1.8, 0); g.fillStyle = '#CFC6C2'; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + 30, cy - 12); g.lineTo(cx + 20, cy + 15); g.closePath(); g.fill();
+  const [ax, ay] = I2.P(A[0], A[1], 5.4), [bx, by] = I2.P(B[0], B[1], 5.4);
+  haloText(g, 'AISYAH', ax, ay - 150, { font: '600 34px Jost', align: 'center', track: 6, haloColor: GROUND });
+  haloText(g, 'RM750', ax, ay - 30, { font: '700 118px Jost', align: 'center', color: SAVE, haloColor: GROUND, hw: 12 });
+  haloText(g, 'ALI', bx, by - 150, { font: '600 34px Jost', align: 'center', track: 6, haloColor: GROUND });
+  haloText(g, 'RM0', bx, by - 30, { font: '700 118px Jost', align: 'center', color: '#8E8796', haloColor: GROUND, hw: 12 });
+  haloText(g, 'vs', 540, ay - 50, { font: '500 48px Jost', align: 'center', color: '#8E8796', haloColor: GROUND });
+  haloText(g, 'SAME GAJI.', 540, 1290, { font: '700 100px Jost', align: 'center', haloColor: GROUND });
+  haloText(g, 'DIFFERENT MOVE.', 540, 1400, { font: '700 100px Jost', align: 'center', color: PRSC, haloColor: GROUND });
+  cubeChip(g, 380, 1490, 14, GOLD); haloText(g, 'RINGGIT, EXPLAINED', 410, 1502, { font: '600 28px Jost', track: 5, haloColor: GROUND });
 }

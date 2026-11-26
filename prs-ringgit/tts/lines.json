@@ -16,19 +16,21 @@
   "id": "v03",
   "text": "Ali pays full tax. Back: RM zero.",
   "voice": "am_onyx",
-  "speed": 0.92
+  "speed": 0.92,
+  "asr": "Ollie pays full tax. Back: RM 0."
  },
  {
   "id": "v04",
-  "text": "Aisyah puts RM three thousand into P R S. Tax relief kicks in. Up to RM seven-fifty saved.",
+  "text": "Eye-shah puts RM three thousand into P R S. Tax relief kicks in. Up to RM seven-fifty saved.",
   "voice": "am_onyx",
   "speed": 0.92,
-  "asr": "Aisyah puts RM3,000 into PRS. Tax relief kicks in. Up to RM750 saved."
+  "asr": "Ayesha puts RM 3000 into PRS. Tax relief kicks in. Up to RM 750 saved."
  },
  {
   "id": "v05",
   "text": "Deadline: thirty-first December. Want the full B M version? Comment below.",
   "voice": "am_onyx",
-  "speed": 0.92
+  "speed": 0.92,
+  "asr": "Deadline: 31st December. Want the full BM version? Comment below."
  }
 ]

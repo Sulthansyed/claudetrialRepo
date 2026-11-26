@@ -1,0 +1,22 @@
+RM750 or RM0? — third-party material in this film
+
+PICTURE
+- Everything on screen is drawn in code (film.js); no images, footage or generated pictures.
+- engine.js (isometric engine) is copied from the Lemo-Opuscar library's Isometric Infographic demo,
+  https://github.com/lemomo-ai/lemo-opuscar · Copyright (c) 2026 Lemomo (LemoLab) · MIT licence.
+
+FONT
+- Jost — Owen Earl (indestructible type*) · SIL Open Font License 1.1 (fonts/Jost-OFL.txt), from Google Fonts.
+
+VOICE
+- Narration: Kokoro-82M text-to-speech, voice "am_onyx", speed 0.92 (hexgrad, https://huggingface.co/hexgrad/Kokoro-82M)
+  Apache License 2.0; ONNX export by thewh1teagle/kokoro-onnx (runtime MIT).
+- Speech check: faster-whisper "base.en" (Systran) · MIT.
+
+MUSIC AND SOUND
+- Original score synthesised in mix.py (marimba, woodblock, shaker) and with Lemo-Opuscar core/audio/pluck.py
+  (pizzicato bass, physical modelling, MIT). All foley synthesised with core/audio/sfx.py (MIT). No samples, no recordings.
+
+CONTENT
+- Ali and Aisyah are fictional. No bank, fund provider or LHDN logo appears; the tax office is a generic block.
+- Tax figures: see FACTS.md. This film is general information, not financial or tax advice.

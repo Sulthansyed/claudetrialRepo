@@ -1,6 +1,6 @@
 # RM750 or RM0? — treatment
 
-**Style:** Isometric Infographic · **Channel:** Ringgit, Explained (TikTok) · **Format:** 1080×1920 (9:16), 30 fps · **Length:** 22 s (see timing note)
+**Style:** Isometric Infographic · **Channel:** Ringgit, Explained (TikTok) · **Format:** 1080×1920 (9:16), 30 fps · **Length:** 22.8 s (voice-led timing, approved by the client)
 **Voice:** Kokoro `am_onyx`, speed 0.92, English · **Subtitles:** BM line large on top, English line small under it · **Mix:** for phone speakers
 
 ## 1. Three candidate structures
@@ -39,6 +39,8 @@ Why 3: 9:16 is made for two stacked dioramas; "same salary" is shown by two iden
 Camera moves: locked, slide + push, pan with focus, pan up, log pull-out (5). Signature shot: #4, bricks into the vault and the counter climbing.
 
 ## 5. Beat sheet (96 bpm, beat 0.625 s, bar 2.5 s)
+
+Final timing follows the voice at speed 0.92: hook 0–5, curiosity 5–8, conflict 8–11.3, climax 11.3–18, payoff 18–22.8 (the exact cue times live in `TL` in film.js; the table below is the first plan).
 
 | t | Event |
 |---|---|
