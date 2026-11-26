@@ -34,11 +34,11 @@ const taxBlock = b => ({ x: b.x + 1.3, y: b.y - 3.2, w: 1.8, h: 2.0 });
 
 // ---------- camera: world centre + log zoom, eased between keyframes ----------
 const CAM = {
-  wide: { x: 5, y: 5, z: -2.2, k: 58 },
+  wide: { x: 5, y: 5, z: -3.4, k: 51 },
   vault: { x: 8.7, y: 1.3, z: -.2, k: 98 },
-  ali: { x: 10.3, y: 9.8, z: -1.6, k: 76 },
-  ais: { x: 4.4, y: -.2, z: -1.6, k: 68 },
-  out: { x: 5.2, y: 5.2, z: -2.5, k: 42 },
+  ali: { x: 10.3, y: 9.8, z: -2.6, k: 72 },
+  ais: { x: 4.4, y: -.2, z: -.4, k: 64 },
+  out: { x: 5.2, y: 5.2, z: -5.1, k: 32 },
 };
 const KEYS = [[0, 'wide'], [TL.CAM_V, 'wide'], [TL.CAM_V + .8, 'vault'], [TL.CAM_ALI, 'vault'], [TL.CAM_ALI + .65, 'ali'], [TL.CAM_AIS, 'ali'], [TL.CAM_AIS + .65, 'ais'], [TL.OUT, 'ais'], [TL.OUT + 1.0, 'out']];
 function cam(t) {
@@ -50,13 +50,12 @@ function cam(t) {
 // ---------- story state ----------
 const fmt = n => 'RM' + Math.round(n).toLocaleString('en-US');
 function counterA(t) {
-  if (t < TL.POP_A) return null;
   if (t < TL.REW) return 750;
   if (t < TL.RET0) return 750 * (1 - eio(seg(t, TL.REW, TL.REW + .45)));
   return Math.floor(nCoinsBack(t) + 1e-6) * 50;
 }
 const nCoinsBack = t => clamp((t - TL.RET0) / (TL.RET1 - TL.RET0)) * 15;
-const counterB = t => t < TL.POP_B ? null : 0;
+const counterB = t => 0;
 const focusAli = t => ss(seg(t, TL.CAM_ALI, TL.CAM_ALI + .5)) * (1 - ss(seg(t, TL.CAM_AIS, TL.CAM_AIS + .5)));
 const focusAis = t => ss(seg(t, TL.CAM_AIS, TL.CAM_AIS + .5)) * (1 - ss(seg(t, TL.OUT, TL.OUT + .6)));
 const lidOff = t => ss(seg(t, TL.CUT + .3, TL.CUT + .65));
@@ -157,8 +156,7 @@ function calendar(I, t) {
 // ---------- screen-space furniture ----------
 function counter(g, x, y, name, val, col, s, t, popT) {
   haloText(g, name, x + 4, y - 88 * s, { font: `600 ${Math.round(26 * s)}px Jost`, track: 5, haloColor: GROUND });
-  if (val === null) { haloText(g, 'RM ?', x, y, { font: `600 ${Math.round(96 * s)}px Jost`, color: '#B9B0A3', haloColor: GROUND }); return; }
-  const pop = back(seg(t, popT, popT + .35), 2.6);
+  const pop = 1 + .14 * Math.sin(Math.PI * seg(t, popT, popT + .3));   // a pulse, never smaller than full size
   g.save(); g.translate(x, y); g.scale(pop, pop); haloText(g, fmt(val), 0, 0, { font: `700 ${Math.round(96 * s)}px Jost`, color: col, haloColor: GROUND, hw: 10 }); g.restore();
 }
 function coinIcon(g, x, y, s, lit = 1) {
@@ -184,7 +182,7 @@ function wrap(g, txt, maxW) {
   if (cur) lines.push(cur); return lines;
 }
 function cubeChip(g, x, y, s, col) { const T = tri(col); const P = (a, b, c) => [x + (a - b) * C30 * s, y + ((a + b) * .5 - c) * s]; const f = (pts, c) => { g.beginPath(); pts.forEach((p, i) => { const q = P(...p); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = c; g.fill(); }; f([[0, 1, 0], [1, 1, 0], [1, 1, 1], [0, 1, 1]], T[1]); f([[1, 0, 0], [1, 1, 0], [1, 1, 1], [1, 0, 1]], T[2]); f([[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]], T[0]); }
-const SUB = { x: 60, w: 880, y: 1395 };
+const SUB = { x: 60, w: 880, y: 1245 };
 function subLayout(g, bm, en) {
   g.font = '700 50px Jost'; const L1 = wrap(g, bm, SUB.w - 110); g.font = '500 29px Jost'; const L2 = wrap(g, en, SUB.w - 110);
   const h = 34 + L1.length * 58 + 10 + L2.length * 36 + 24; return { L1, L2, h };
@@ -213,7 +211,7 @@ function titleCard(g, t) {
 }
 function endCard(g, t) {
   const a = seg(t, TL.END, TL.END + .45); if (a <= 0) return;
-  const s = back(a, 1.8) * .86, x = 490, y = 1318;
+  const s = back(a, 1.8) * .86, x = 470, y = 1168;
   g.save(); g.translate(x, y); g.scale(s, s);
   g.fillStyle = 'rgba(251,248,241,.97)'; g.beginPath(); g.roundRect(-430, -70, 860, 140, 70); g.fill(); g.strokeStyle = INK; g.lineWidth = 3; g.stroke();
   // speech bubble (three-tone, extruded look)
@@ -222,10 +220,21 @@ function endCard(g, t) {
   g.fillStyle = T[0]; g.beginPath(); g.roundRect(-44, -36, 80, 58, 16); g.moveTo(-20, 20); g.lineTo(-32, 40); g.lineTo(0, 20); g.fill();
   g.fillStyle = '#FBF4E6'; for (let i = 0; i < 3; i++) { g.beginPath(); g.arc(-22 + i * 18, -7, 5.5, 0, TAU); g.fill(); }
   g.translate(345, 0);
-  haloText(g, 'Nak versi BM penuh?', -260, 18, { font: '700 54px Jost', halo: false });
+  haloText(g, 'Komen \u2018BM\u2019 \u{1F447}', -250, 20, { font: '700 60px Jost, "Noto Color Emoji"', halo: false });
   g.restore();
 }
-function channelTag(g) { cubeChip(g, 66, 212, 12, GOLD); haloText(g, 'RINGGIT, EXPLAINED', 96, 222, { font: '600 24px Jost', track: 5, haloColor: GROUND }); }
+const NOTE = { x: 40, y: 262, w: 1000, lh: 64, pad: 26, font: '500 52px Jost' };
+function noteLines(g) { g.font = NOTE.font; return wrap(g, '* Up to RM750 at a 25% tax rate. Your saving depends on your bracket.', NOTE.w - 2 * NOTE.pad); }
+function notePanel(g, a) {
+  const L = noteLines(g), h = L.length * NOTE.lh + 2 * NOTE.pad - 10;
+  g.save(); g.globalAlpha = a; g.fillStyle = '#FBF8F1'; g.beginPath(); g.roundRect(NOTE.x, NOTE.y, NOTE.w, h, 16); g.fill();
+  g.strokeStyle = INK; g.lineWidth = 2.5; g.stroke();
+  g.fillStyle = INK; g.font = NOTE.font; L.forEach((l, i) => g.fillText(l, NOTE.x + NOTE.pad, NOTE.y + NOTE.pad + 44 + i * NOTE.lh));
+  g.restore();
+}
+function channelTag(g, p = 0) {
+  if (p > 0) { g.save(); g.globalAlpha = p; g.fillStyle = '#FBF8F1'; g.beginPath(); g.roundRect(40, 176, 412, 64, 32); g.fill(); g.strokeStyle = INK; g.lineWidth = 2; g.stroke(); g.restore(); }
+  cubeChip(g, 66, 212, 12, GOLD); haloText(g, 'RINGGIT, EXPLAINED', 96, 222, { font: '600 24px Jost', track: 5, haloColor: GROUND }); }
 function dots(g) { g.fillStyle = 'rgba(38,33,43,.07)'; for (let y = 0; y < H; y += 36) for (let x = (y / 36 % 2) * 31; x < W; x += 62) { g.beginPath(); g.arc(x, y, 1.6, 0, TAU); g.fill(); } }
 
 // ---------- render ----------
@@ -277,8 +286,8 @@ export function render(g, t) {
     }
     haloText(g, '1 coin = RM50', x0, y0 + 3 * 26 + 22, { font: '500 21px Jost', track: 1, haloColor: GROUND });
   }
-  { const a = seg(t, TL.NOTE, TL.NOTE + .4) * (1 - seg(t, TL.OUT, TL.OUT + .4)); if (a > 0) { g.save(); g.globalAlpha = a; haloText(g, '* Up to RM750 at a 25% tax rate.', 64, 1322, { font: '500 26px Jost', haloColor: GROUND }); haloText(g, '  Your saving depends on your bracket.', 64, 1356, { font: '500 26px Jost', haloColor: GROUND }); g.restore(); } }
-  channelTag(g);
+  { const a = seg(t, TL.NOTE, TL.NOTE + .4) * (1 - seg(t, TL.OUT, TL.OUT + .4)); if (a > 0) notePanel(g, a); }
+  channelTag(g, ss(seg(t, TL.CAM_V, TL.CAM_V + .3)) * (1 - ss(seg(t, TL.CAM_ALI + .4, TL.CAM_ALI + .7))));   // its own panel while the vault close-up fills the frame
   titleCard(g, t); endCard(g, t);
   subtitles(g, t);
 }
@@ -286,10 +295,10 @@ export function render(g, t) {
 // ---------- texts for readcheck ----------
 export function texts(t) {
   const out = [];
-  VO.forEach(([id, , , bm, en], i) => { const [a, b] = subWin(i); if (t > a + .3 && t < b) { out.push({ id: id + '_bm', text: bm, x0: 120, y0: 1400, x1: 940, y1: 1520 }); } });
-  if (t > TL.NOTE + .4 && t < TL.OUT) out.push({ id: 'note', text: 'Up to RM750 at a 25% tax rate. Your saving depends on your bracket.', x0: 64, y0: 1300, x1: 900, y1: 1370 });
+  VO.forEach(([id, , , bm, en], i) => { const [a, b] = subWin(i); if (t > a + .3 && t < b) { out.push({ id: id + '_bm', text: bm, x0: 120, y0: 1250, x1: 940, y1: 1370 }); } });
+  if (t > TL.NOTE + .4 && t < TL.OUT) out.push({ id: 'note', text: 'Up to RM750 at a 25% tax rate. Your saving depends on your bracket.', x0: 40, y0: 262, x1: 1040, y1: 450 });
   if (t > TL.TITLE + .5) out.push({ id: 'title', text: 'DEADLINE 31 DEC', x0: 60, y0: 270, x1: 600, y1: 420 });
-  if (t > TL.END + .45) out.push({ id: 'end', text: 'Nak versi BM penuh?', x0: 120, y0: 1258, x1: 860, y1: 1378 });
+  if (t > TL.END + .45) out.push({ id: 'end', text: 'Komen BM', x0: 100, y0: 1108, x1: 840, y1: 1228 });
   return out;
 }
 // ---------- sound / cue events ----------
