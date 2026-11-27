@@ -8,7 +8,7 @@ import { cv, paperFill, finishCut, GRAIN, INK, smoothOpen } from './paper.js';
 import { makeBook, texOf, BW, BD, PG } from './book.js';
 import { cutMesh, blobShadow, thread } from './cutmesh.js';
 import { makePost } from './post.js';
-import { DUR, OPEN, TURNS, RISE, FOLD, T, CAPS, BUB, VO, MUSIC0, BEAT, BAR } from './story.js';
+import { DUR, OPEN, TURNS, RISE, FOLD, T, CAPS, BUB, VO, MUSIC0, BEAT, BAR, GRID0 } from './story.js';
 
 const Q = new URLSearchParams(location.search), THUMB = Q.has('thumb');
 const W = innerWidth || 1080, H = innerHeight || 1920;
@@ -202,12 +202,12 @@ function castPose(c, t) {
   const p = { blink: blinkAt(t, c.x * 10) };
   if (c.s === 0) { // stressed mum, then curious, then relieved
     if (t < T.klikPop) Object.assign(p, { brow: 'worried', mouthK: 'worried', look: [.3, -1], armR: .25 + .08 * Math.sin(t * 7), armL: .3 + .08 * Math.sin(t * 6) });
-    else if (t < 4.35) Object.assign(p, { eyes: 'wide', mouthK: 'o', brow: 'up', look: [.9, .5] });
+    else if (t < T.klikPop + .6) Object.assign(p, { eyes: 'wide', mouthK: 'o', brow: 'up', look: [.9, .5] });
     else Object.assign(p, { eyes: 'open', mouthK: 'open', brow: 'up', look: [.8, .3], armR: 1.2 });
   } else if (c.s === 3) Object.assign(p, { mouthK: 'open', eyes: 'happy', armR: wave(t, 2.5) });
   else if (c.s === 4) Object.assign(p, { book: true, mouthK: 'talk', talk: Math.abs(Math.sin(t * 9.5)), eyes: t > T.tick ? 'happy' : 'open', look: [-.5, -.2] });
   else if (c.s === 5) Object.assign(p, { mouthK: 'open', eyes: 'happy', armL: t > T.jump - .2 ? 2.7 : 1.3, armR: t > T.jump - .2 ? 2.7 : 1.3 });
-  else if (c.s === 6) Object.assign(p, c.a.hm > .05 ? { mouthK: 'smile', eyes: t > 22 ? 'happy' : 'open', brow: 'up', armR: .5 } : { mouthK: 'open', eyes: 'happy', armR: t > T.wave ? wave(t, 2.6) : .3 });
+  else if (c.s === 6) Object.assign(p, c.a.hm > .05 ? { mouthK: 'smile', eyes: t > 21 ? 'happy' : 'open', brow: 'up', armR: .5 } : { mouthK: 'open', eyes: 'happy', armR: t > T.wave ? wave(t, 2.6) : .3 });
   return p;
 }
 function castY(c, t) {
@@ -218,20 +218,20 @@ function klikState(t) {
   const S = { vis: false, x: .035, y: 0, z: .2, s: 1, p: { blink: blinkAt(t, 1.7), eyesK: 'open', mouthK: 'smile', armL: .3, armR: .3, press: 0 } }, p = S.p;
   const bob = (a = .0022) => Math.sin(t * 3.1) * a;
   const click = t0 => { const k = seg(t, t0 - .05, t0 + .18); return k > 0 && k < 1 ? Math.sin(k * Math.PI) : 0; };
-  if (t >= T.klikPop - .02 && t < 5.75) {
+  if (t >= T.klikPop - .02 && t < TURNS[0][0]) {
     S.vis = true; S.x = .03; S.z = .2;
     const up = back(seg(t, T.klikPop, T.klikPop + .42), 1.8), dn = ss(seg(t, T.klikHide, T.klikHide + .3));
     S.y = lerp(-.05, .014, up) - dn * .07 + bob() * up; p.press = click(T.klikPop + .05);
-    p.eyesK = t > 3.95 ? 'happy' : 'open'; p.mouthK = t > 3.9 && t < 5.2 ? 'open' : 'smile'; p.armR = t > 4.2 ? wave(t, 2.2) : .8; p.armL = .6;
-  } else if (t >= T.klikRoadIn && t < 9.75) {
+    p.eyesK = t > T.klikPop + .25 ? 'happy' : 'open'; p.mouthK = t > T.klikPop + .2 && t < 5.1 ? 'open' : 'smile'; p.armR = t > T.klikPop + .5 ? wave(t, 2.2) : .8; p.armL = .6;
+  } else if (t >= T.klikRoadIn && t < TURNS[1][0] + .05) {
     S.vis = true; const k = eo(seg(t, T.klikRoadIn, T.klikRoadIn + .9));
     S.x = lerp(.2, .042, k); S.y = .055 + bob(); S.z = .2; p.press = click(T.click1); p.eyesK = t > T.click1 ? 'happy' : 'open'; p.armR = t > T.click1 + .3 ? wave(t, 2) : .5;
-    S.s = 1 - ss(seg(t, 9.5, 9.72));
-  } else if (t >= 10.35 && t < 12.25) {
-    S.vis = true; S.s = back(seg(t, 10.35, 10.75), 1.8) * (1 - ss(seg(t, 11.95, 12.2)));
+    S.s = 1 - ss(seg(t, TURNS[1][0] - .2, TURNS[1][0]));
+  } else if (t >= TURNS[1][1] - .2 && t < TURNS[2][0] + .1) {
+    S.vis = true; S.s = back(seg(t, TURNS[1][1] - .2, TURNS[1][1] + .2), 1.8) * (1 - ss(seg(t, TURNS[2][0] - .25, TURNS[2][0])));
     S.x = .04; S.z = .13; S.y = .045 + bob() - Math.sin(seg(t, T.press - .15, T.press + .2) * Math.PI) * .006; p.press = click(T.press); p.eyesK = t > T.press ? 'happy' : 'open'; p.armL = 1.2;
-  } else if (t >= 20.6) {
-    S.vis = true; S.s = back(seg(t, 20.6, 21.0), 1.8);
+  } else if (t >= T.klikBack) {
+    S.vis = true; S.s = back(seg(t, T.klikBack, T.klikBack + .4), 1.8);
     const e = eio(seg(t, T.endFold, T.endFold + 1.0));
     S.x = lerp(.038, .0, e); S.y = lerp(.074, .052, e) + bob(); S.z = lerp(.14, .16, e); p.eyesK = 'happy'; p.mouthK = 'open'; p.armR = t > T.wave ? wave(t, 2.6) : .4; p.armL = t > T.endFold + 1 ? 1.4 : .4;
   }
@@ -242,23 +242,23 @@ function klikState(t) {
 const SH = [[
   [0.0, 0, .46, .86, 0, .07, .1, 34, .9],
   [0.85, 0, .30, .66, -.01, .05, .12, 34, 1.6],
-  [3.2, -.02, .12, .43, -.02, .052, .12, 32, 2.2],
-  [3.75, -.005, .1, .44, 0, .045, .14, 34, 2.2],
-  [5.6, 0, .105, .45, 0, .045, .14, 34, 2.2],
-  [6.6, 0, .25, .5, 0, .03, .14, 34, 1.8],
-  [9.6, .01, .23, .48, .0, .03, .14, 34, 1.8],
-  [10.4, 0, .27, .45, 0, .04, .09, 34, 1.7],
-  [12.1, 0, .25, .41, 0, .04, .09, 34, 1.9],
-  [12.8, 0, .27, .45, 0, .04, .09, 34, 1.7],
-  [14.6, 0, .25, .41, 0, .04, .09, 34, 1.9],
-  [15.3, 0, .27, .45, 0, .04, .09, 34, 1.7],
-  [17.1, 0, .25, .41, 0, .04, .09, 34, 1.9],
-  [17.8, 0, .27, .45, 0, .04, .09, 34, 1.7],
-  [19.6, 0, .25, .42, 0, .04, .1, 34, 1.9],
-  [20.6, 0, .11, .44, 0, .035, .14, 32, 2.1],
-  [25.3, 0, .2, .6, 0, .06, .12, 33, 1.7],
-  [26.5, 0, .15, .67, 0, .12, .07, 33, 1.3],
-  [30, 0, .148, .655, 0, .12, .07, 33, 1.3],
+  [3.1, -.02, .12, .43, -.02, .052, .12, 32, 2.2],
+  [3.675, -.005, .1, .44, 0, .045, .14, 34, 2.2],
+  [5.5, 0, .105, .45, 0, .045, .14, 34, 2.2],
+  [6.5, 0, .25, .5, 0, .03, .14, 34, 1.8],
+  [9.5, .01, .23, .48, .0, .03, .14, 34, 1.8],
+  [10.35, 0, .27, .45, 0, .04, .09, 34, 1.7],
+  [11.9, 0, .25, .41, 0, .04, .09, 34, 1.9],
+  [12.65, 0, .27, .45, 0, .04, .09, 34, 1.7],
+  [14.2, 0, .25, .41, 0, .04, .09, 34, 1.9],
+  [14.95, 0, .27, .45, 0, .04, .09, 34, 1.7],
+  [16.5, 0, .25, .41, 0, .04, .09, 34, 1.9],
+  [17.25, 0, .27, .45, 0, .04, .09, 34, 1.7],
+  [18.75, 0, .25, .42, 0, .04, .1, 34, 1.9],
+  [19.75, 0, .11, .44, 0, .035, .14, 32, 2.1],
+  [24.05, 0, .2, .6, 0, .06, .12, 33, 1.7],
+  [25.25, 0, .15, .67, 0, .12, .07, 33, 1.3],
+  [30.5, 0, .148, .655, 0, .12, .07, 33, 1.3],
 ]];
 const SHOTS = SH.map(keys => ({ t0: keys[0][0], f: track(keys.map(k => [k[0], k.slice(1, 9)])) }));
 const THUMB_CAM = { pos: new THREE.Vector3(.0, .3, .66), tgt: new THREE.Vector3(.005, .085, .13), fov: 34, aper: 1.0 };
@@ -280,7 +280,7 @@ for (const r of CARS) EV.push({ t: carFoldT(r), type: 'fold' }, { t: carFoldT(r)
 EV.push({ t: T.tick, type: 'ding' }); T.stars.forEach((s, i) => EV.push({ t: s, type: 'star', i })); EV.push({ t: T.jump, type: 'hop' }, { t: T.jump + .45, type: 'land' });
 EV.push({ t: T.signDrop, type: 'drop' }, { t: T.signDrop + .35, type: 'tink' }, { t: T.signDrop + .6, type: 'tink' });
 for (let i = 0; i < 5; i++) EV.push({ t: BUB[0].t0 + .1 + i * .07, type: 'blip', who: 'klik' });
-EV.push({ t: 0, type: 'tick', d: 3.75 });
+EV.push({ t: 0, type: 'tick', d: T.klikPop });
 EV.sort((a, b) => a.t - b.t);
 function carFoldT(r) { return T.carsFold + (r.g.position.z > .14 ? .14 : 0) + (r.x0 + .12) * .5; }
 window.EV = EV; window.DUR = DUR;
@@ -290,15 +290,16 @@ const CAP_Y = Math.round(H * .715), CAP_X = Math.round(W * .477), CAP_W = Math.r
 function wrap(ctx, text, maxW) { const words = text.split(' '), lines = []; let cur = ''; for (const w of words) { const t2 = cur ? cur + ' ' + w : w; if (ctx.measureText(t2).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t2; } if (cur) lines.push(cur); return lines; }
 function outlined(ctx, text, x, y, fill, stroke, lw) { ctx.lineJoin = 'round'; ctx.lineWidth = lw; ctx.strokeStyle = stroke; ctx.strokeText(text, x, y); ctx.fillStyle = fill; ctx.fillText(text, x, y); }
 function drawCaps(t) {
-  for (const c of CAPS) {
-    if (t < c.t0 - .15 || t > c.t1 + .15) continue;
-    const a = Math.min(seg(t, c.t0 - .15, c.t0 + .05), 1 - seg(t, c.t1 - .05, c.t1 + .15)); if (a <= 0) continue;
+  CAPS.forEach((c, i) => {
+    const prev = CAPS[i - 1], next = CAPS[i + 1];
+    const joinIn = prev && c.t0 - prev.t1 < .3, joinOut = next && next.t0 - c.t1 < .3;   // abutting captions cut, never cross-fade
+    const a = Math.min(joinIn ? (t >= c.t0 ? 1 : 0) : seg(t, c.t0 - .15, c.t0 + .05), joinOut ? (t < c.t1 ? 1 : 0) : 1 - seg(t, c.t1 - .05, c.t1 + .15)); if (a <= 0) return;
     OX.save(); OX.globalAlpha = a; OX.font = `600 ${Math.round(W * .058)}px Fredoka`; OX.textAlign = 'center'; OX.textBaseline = 'middle';
     const lines = wrap(OX, c.text, CAP_W), lh = W * .072, y0 = CAP_Y - (lines.length - 1) * lh / 2;
     OX.shadowColor = 'rgba(30,18,10,.45)'; OX.shadowBlur = 14; OX.shadowOffsetY = 4;
     lines.forEach((l, i) => outlined(OX, l, CAP_X, y0 + i * lh, '#fffaf0', '#3a2a24', W * .016));
     OX.restore();
-  }
+  });
 }
 const tmpV = new THREE.Vector3();
 function toScreen(v) { const p = v.clone().project(cam); if (p.z > 1) return null; return [(p.x * .5 + .5) * W, (-p.y * .5 + .5) * H]; }
@@ -399,8 +400,8 @@ window.render = function (t) {
   let focus = C.pos.distanceTo(C.tgt);
   const toW = (x, y, z) => new THREE.Vector3(x, y + PG, z);
   if (THUMB) focus = C.pos.distanceTo(toW(.018, .05, .2));
-  else if (t > 1 && t < 6) { const dm = C.pos.distanceTo(toW(-.03, .045, .15)), dk = C.pos.distanceTo(toW(.03, .03, .2)); focus = lerp(dm, dk, ss(seg(t, 3.85, 4.35))); }
-  if (t > 25.6) focus = C.pos.distanceTo(new THREE.Vector3(0, .2, .03));
+  else if (t > 1 && t < 6) { const dm = C.pos.distanceTo(toW(-.03, .045, .15)), dk = C.pos.distanceTo(toW(.03, .03, .2)); focus = lerp(dm, dk, ss(seg(t, T.klikPop + .1, T.klikPop + .6))); }
+  if (t > T.endFold + .3) focus = C.pos.distanceTo(new THREE.Vector3(0, .2, .03));
   post.dof.focus = focus; post.dof.aper = C.aper; post.dof.maxCoc = 12;
   post.vig.uniforms.warm.value = .12 + eve * .08; post.bloom.strength = .2;
   scene.updateMatrixWorld(true); post.composer.render();

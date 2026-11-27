@@ -1,0 +1,60 @@
+[
+ {
+  "id": "vo1",
+  "text": "Anak nak belajar KAFA… tapi mak ayah sibuk?",
+  "say": "Anak nak belajar KAFA... tapi mak ayah sibuk?",
+  "rate": "+6%"
+ },
+ {
+  "id": "vo2",
+  "text": "Sebenarnya, cukup satu klik.",
+  "rate": "+6%"
+ },
+ {
+  "id": "vo3",
+  "text": "Tak perlu hantar. Tak perlu tunggu dalam jem.",
+  "rate": "+8%"
+ },
+ {
+  "id": "vo4a",
+  "text": "Daftar di WhatsApp.",
+  "rate": "+6%"
+ },
+ {
+  "id": "vo4b",
+  "text": "Masuk kelas.",
+  "rate": "+6%"
+ },
+ {
+  "id": "vo4c",
+  "text": "Guru semak hafazan.",
+  "rate": "+6%"
+ },
+ {
+  "id": "vo4d",
+  "text": "Anak maju!",
+  "rate": "+6%"
+ },
+ {
+  "id": "vo5a",
+  "text": "Jom join kelas online KAFA OCLC.",
+  "say": "Jom join kelas online KAFA, O C L C.",
+  "rate": "+16%"
+ },
+ {
+  "id": "vo5b",
+  "text": "Kelas berkumpulan kecil.",
+  "rate": "+16%"
+ },
+ {
+  "id": "vo5c",
+  "text": "Guru KAFA yang akan mengajar dan semak hafazan anak-anak.",
+  "rate": "+16%"
+ },
+ {
+  "id": "vo5d",
+  "text": "Mudah, berkesan dan menyeronokkan :)",
+  "say": "Mudah, berkesan dan menyeronokkan!",
+  "rate": "+16%"
+ }
+]
