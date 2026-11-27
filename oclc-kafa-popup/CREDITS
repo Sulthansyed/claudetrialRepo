@@ -1,0 +1,29 @@
+KAFA Satu Klik — OCLC (One Click Learning Centre)
+Made in code with the Paper Pop-up Book style of the Lemo-Opuscar library. All characters, props and page art are original drawings in code.
+
+Voice
+- Narration: Microsoft Azure neural voice ms-MY-YasminNeural, generated through edge-tts (github.com/rany2/edge-tts, LGPL-3.0 tool).
+  Synthetic voice. Check Microsoft's terms for commercial use of the voice output before running paid ads.
+
+Music (original score, written for this film; sampled instruments)
+- Ukulele: FreePats project (freepats.zenvoid.org), CC0 1.0
+- Contrabass and violin pizzicato: VS Chamber Orchestra: Community Edition (Versilian Studios / Sam Gossner), CC0 1.0
+- Glockenspiel, vibraphone, woodblock, shaker, triangle: Versilian Community Sample Library (Versilian Studios), CC0 1.0
+
+Sound effects
+- Synthesized procedurally (paper, clicks, horns, ticks, swishes), no third-party recordings.
+
+Images and 3D
+- HDRI lythwood_lounge — Poly Haven (polyhaven.com/a/lythwood_lounge), CC0
+- American walnut veneer textures — Poly Haven (polyhaven.com/a/american_walnut_veneer), CC0
+- Tea set model (cup and saucer) — Poly Haven (polyhaven.com/a/tea_set_01), CC0
+
+Fonts
+- Fredoka, Lilita One — SIL Open Font License 1.1 (fonts/OFL.md)
+
+Code
+- three.js r170 (MIT)
+
+Client material
+- OCLC name, WhatsApp number and caption text supplied by the client. The OCLC mark on the end card is a stand-in drawn in code.
+- The green chat-bubble icon on page 1 is drawn in code to suggest WhatsApp; WhatsApp is a trademark of WhatsApp LLC.

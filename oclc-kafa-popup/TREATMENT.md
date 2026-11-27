@@ -4,6 +4,15 @@ Style: **Paper Pop-up Book** (`paper-popup`). 30 s, vertical 1080×1920 (9:16), 
 Client: OCLC (One Click Learning Centre), online KAFA classes for kids. Audience: busy Malaysian Muslim parents.
 Language: Malay only (voice and captions). **No Arabic, Jawi or Quran text anywhere**: every book on screen is a plain cover or a blank page.
 
+## As built (after the real voice was recorded)
+
+The Malay narration (ms-MY-YasminNeural) ran about 1.5 s longer than the estimates below, so the film was re-timed; `story.js` holds the final numbers:
+- Length **30.5 s**, 1080×1920, **30 fps**, −14 LUFS.
+- Grid **104.35 bpm in 4/4** (beat 0.575 s, bar 2.3 s), origin at 10.0 s; Klik's click at 3.675 s is on a beat and starts the music.
+- Climax pages land on bar lines **10.0 / 12.3 / 14.6 / 16.9 s**; home again at 19.2 s; end card from 24.25 s (sign drops 24.375 s, held 6 s).
+- Line 4 is four separate phrases, one per page; line 5 is four sentences from 18.7 s, ending 30.05 s.
+- Score as built: ukulele strums, glockenspiel, contrabass and violin pizzicato, shaker, woodblock, vibraphone final chord.
+
 ## 1. Three candidate structures
 
 1. **One spread pulled again and again.** One kitchen spread stays open the whole film; each pull-tab changes it (clock spins, car slides in and folds, laptop slides up, stars fill). Clear but static, and the user's brief asks for four page flips, which this fights.
