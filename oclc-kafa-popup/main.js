@@ -47,8 +47,10 @@ function cover() {
   y.fillStyle = 'rgb(0,235,0)'; y.fillRect(0, 0, w, h);
   const both = fn => { x.save(); fn(x, '#e0b456'); x.restore(); y.save(); fn(y, 'rgb(0,90,255)'); y.restore(); };
   both((k, col) => { k.strokeStyle = col; k.lineWidth = 10; k.strokeRect(90, 90, w - 180, h - 180); k.lineWidth = 8; k.strokeRect(w * .5 - 330, 150, 660, h - 300); k.fillStyle = col; k.textAlign = 'center';
-    k.font = '200px "Lilita One"'; k.fillText('KAFA', w * .5, h * .74); k.font = '112px "Lilita One"'; k.fillText('Satu Klik', w * .5, h * .855);
     for (const [cx, cy] of [[w * .5 - 330, 150], [w * .5 + 330, 150], [w * .5 - 330, h - 150], [w * .5 + 330, h - 150]]) { k.beginPath(); k.arc(cx, cy, 22, 0, Math.PI * 2); k.fill(); } });
+  // title: bright cream, matte (not foil), with a subtle dark shadow
+  x.save(); x.textAlign = 'center'; x.fillStyle = '#FFF3D6'; x.shadowColor = 'rgba(10,20,24,.55)'; x.shadowBlur = 18; x.shadowOffsetX = 0; x.shadowOffsetY = 8;
+  x.font = '200px "Lilita One"'; x.fillText('KAFA', w * .5, h * .74); x.font = '112px "Lilita One"'; x.fillText('Satu Klik', w * .5, h * .855); x.restore();
   const kc = cv(A.KLIK_W, A.KLIK_H); A.drawKlik(kc.getContext('2d'), { eyesK: 'happy', mouthK: 'open', armR: 2.3, armL: .5 }); const kw = 520; x.drawImage(finishCut(kc, 16), w * .5 - kw / 2, h * .13, kw, kw * A.KLIK_H / A.KLIK_W);
   return { c, m };
 }
