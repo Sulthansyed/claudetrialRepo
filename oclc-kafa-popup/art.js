@@ -40,6 +40,7 @@ function mouth(x, mx, my, kind, s = 1, open = 0) {
   x.lineCap = 'round'; x.strokeStyle = INK; x.lineWidth = 8 * s;
   if (kind === 'smile') { x.beginPath(); x.moveTo(mx - 26 * s, my - 4 * s); x.quadraticCurveTo(mx, my + 24 * s, mx + 26 * s, my - 4 * s); x.stroke(); }
   else if (kind === 'worried') { x.beginPath(); x.moveTo(mx - 20 * s, my + 6 * s); x.quadraticCurveTo(mx - 8 * s, my - 4 * s, mx, my + 2 * s); x.quadraticCurveTo(mx + 8 * s, my + 8 * s, mx + 20 * s, my - 2 * s); x.lineWidth = 6.5 * s; x.stroke(); }
+  else if (kind === 'frown') { x.beginPath(); x.moveTo(mx - 24 * s, my + 12 * s); x.quadraticCurveTo(mx, my - 12 * s, mx + 24 * s, my + 12 * s); x.lineWidth = 7.5 * s; x.stroke(); }
   else if (kind === 'flat') { x.beginPath(); x.moveTo(mx - 18 * s, my + 2 * s); x.lineTo(mx + 18 * s, my + 2 * s); x.lineWidth = 6.5 * s; x.stroke(); }
   else if (kind === 'o') { x.beginPath(); x.ellipse(mx, my + 4 * s, 11 * s, 14 * s, 0, 0, TAU); sh(x, '#8a2a2a', 6 * s); }
   else { // open / grin / talk
@@ -98,6 +99,11 @@ export function drawWoman(x, p = {}, C = MUM_COL) {
   x.beginPath(); x.arc(500, 616, 13, 0, TAU); sh(x, '#ffd766', 4);
   if (ear) womanArm(x, 690, 650, 'ear', 1, C);
   // features
+  if (p.sweat != null) { // a sweat drop sliding down the temple
+    const sx = 612, sy = 372 + p.sweat * 46;
+    x.beginPath(); x.moveTo(sx, sy - 34); x.bezierCurveTo(sx + 6, sy - 14, sx + 22, sy + 4, sx + 18, sy + 18); x.arc(sx, sy + 16, 18, 0, Math.PI); x.bezierCurveTo(sx - 22, sy + 4, sx - 6, sy - 14, sx, sy - 34); x.closePath(); sh(x, '#8fd6f5', 5);
+    x.beginPath(); x.ellipse(sx - 6, sy + 8, 4, 8, -.3, 0, TAU); x.fillStyle = '#fff'; x.fill();
+  }
   cheeks(x, 500, 505, 78);
   brows(x, 500, 400, 50, brow);
   eye(x, 452, 450, p); eye(x, 548, 450, p);
@@ -374,34 +380,34 @@ export function star(rm, col = '#ffd23f', shade = '#f0a81e') {
   return cut(rm * 2, rm * 2, (x, W, H) => { const f = () => starShape(x, W / 2, H / 2 + 4, W / 2 - 6, .48); crescent(x, f, shade, 8, 10, col); f(); sh(x, null, LW); }, { ax: .5, ay: .5, border: 10 });
 }
 // progress bar frame on legs, with five empty star slots
-export function barFrame(wm) {
-  return cut(wm, wm * .42, (x, W, H) => {
-    for (const px of [.12, .88]) { rr(x, W * px - 12, H * .4, 24, H * .6, 6); sh(x, '#8d5a31', LW2); }
-    x.beginPath(); x.roundRect(0, H * .05, W, H * .42, H * .21); sh(x, '#fffaf0', LW + 1);
-    x.beginPath(); x.roundRect(W * .04, H * .12, W * .92, H * .28, H * .14); sh(x, '#efe4cf', LW2);
+// progress bar on two posts; the bar body sits at the top (body height = wm * .176), posts run down to the page
+export function barFrame(wm, hm = wm * .42) {
+  return cut(wm, hm, (x, W, H) => {
+    const bh = W * .176, by = W * .021;
+    for (const px of [.12, .88]) { rr(x, W * px - 10, by + bh * .5, 20, H - by - bh * .5, 6); sh(x, '#8d5a31', LW2); }
+    x.beginPath(); x.roundRect(0, by, W, bh, bh / 2); sh(x, '#fffaf0', LW + 1);
+    x.beginPath(); x.roundRect(W * .04, by + bh * .167, W * .92, bh * .667, bh * .333); sh(x, '#efe4cf', LW2);
   });
 }
 export function barFill(wm, hm) {
   return cut(wm, hm, (x, W, H) => { x.beginPath(); x.roundRect(0, 0, W, H, H / 2); sh(x, '#ff9a2e', LW2); x.beginPath(); x.roundRect(W * .02, H * .12, W * .96, H * .26, H * .13); x.fillStyle = 'rgba(255,255,255,.35)'; x.fill(); }, { ax: 0, ay: .5, border: 6, pad: 14 });
 }
 // end-card sign: OCLC wordmark + WhatsApp number
-export function endSign(wm) {
-  return cut(wm, wm * .72, (x, W, H) => {
+// end-card sign: the official OCLC logo (on a white panel, unaltered) + WhatsApp number
+export const LOGO_CROP = [150, 180, 955, 895];   // x, y, w, h of the logo artwork inside oclc-logo.png (trims the empty margin)
+export function endSign(wm, logo) {
+  return cut(wm, wm * .98, (x, W, H) => {
     const b = () => { x.beginPath(); x.roundRect(0, 0, W, H, 40); }; crescent(x, b, '#e9dcc0', 0, 24, '#fffaf0'); b(); sh(x, null, LW + 2);
-    x.beginPath(); x.roundRect(W * .04, H * .05, W * .92, H * .9, 30); x.lineWidth = 6; x.strokeStyle = '#1fb3a6'; x.setLineDash([22, 14]); x.stroke(); x.setLineDash([]);
-    // OCLC wordmark (stand-in until the real logo file arrives): cube icon + letters
-    const ix = W * .2, iy = H * .3, s = H * .2;
-    x.beginPath(); x.moveTo(ix - s * .5, iy - s * .25); x.lineTo(ix + s * .25, iy - s * .25); x.lineTo(ix + s * .5, iy - s * .5); x.lineTo(ix - s * .25, iy - s * .5); x.closePath(); sh(x, '#8fe6dc', LW2);
-    x.beginPath(); x.moveTo(ix + s * .25, iy - s * .25); x.lineTo(ix + s * .5, iy - s * .5); x.lineTo(ix + s * .5, iy + s * .25); x.lineTo(ix + s * .25, iy + s * .5); x.closePath(); sh(x, '#1f3c6e', LW2);
-    x.beginPath(); x.roundRect(ix - s * .5, iy - s * .25, s * .75, s * .75, 8); sh(x, '#1fb3a6', LW2);
-    cursorPath(x, ix + s * .02, iy - s * .05, s / 210, -.15); sh(x, '#fff', 4);
-    x.font = `${Math.round(H * .27)}px "Lilita One"`; x.textAlign = 'left'; x.textBaseline = 'middle';
-    x.lineWidth = 14; x.strokeStyle = INK; x.lineJoin = 'round'; x.strokeText('OCLC', W * .33, H * .31); x.fillStyle = '#1f3c6e'; x.fillText('OCLC', W * .33, H * .31);
-    x.font = `600 ${Math.round(H * .066)}px Fredoka`; x.textAlign = 'center'; x.fillStyle = '#14968b'; x.fillText('One Click Learning Centre', W / 2, H * .53);
-    // WhatsApp row
-    x.beginPath(); x.roundRect(W * .07, H * .63, W * .86, H * .25, H * .125); sh(x, '#2fc46a', LW);
-    x.font = `700 ${Math.round(H * .095)}px Fredoka`; x.fillStyle = '#ffffff'; x.textAlign = 'center';
-    x.lineWidth = 8; x.strokeStyle = '#1b7a42'; x.strokeText('WhatsApp: +60 19-823 0383', W / 2, H * .757); x.fillText('WhatsApp: +60 19-823 0383', W / 2, H * .757);
+    x.beginPath(); x.roundRect(W * .04, H * .035, W * .92, H * .93, 30); x.lineWidth = 6; x.strokeStyle = '#1fb3a6'; x.setLineDash([22, 14]); x.stroke(); x.setLineDash([]);
+    const pw = W * .66, ph = pw * LOGO_CROP[3] / LOGO_CROP[2] * 1.06, px = (W - pw) / 2, py = H * .07;
+    x.beginPath(); x.roundRect(px, py, pw, ph, 22); x.fillStyle = '#ffffff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#d8ccb2'; x.stroke();
+    const lw = pw * .9, lh = lw * LOGO_CROP[3] / LOGO_CROP[2];
+    x.drawImage(logo, LOGO_CROP[0], LOGO_CROP[1], LOGO_CROP[2], LOGO_CROP[3], (W - lw) / 2, py + (ph - lh) / 2, lw, lh);
+    const wy = py + ph + H * .05, wh = H * .2;
+    x.beginPath(); x.roundRect(W * .07, wy, W * .86, wh, wh / 2); sh(x, '#2fc46a', LW);
+    x.font = `700 ${Math.round(wh * .5)}px Fredoka`; x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    let fs = Math.round(wh * .5); while (x.measureText('WhatsApp: +60 19-823 0383').width > W * .82) { fs -= 2; x.font = `700 ${fs}px Fredoka`; }
+    x.lineWidth = 8; x.strokeStyle = '#1b7a42'; x.lineJoin = 'round'; x.strokeText('WhatsApp: +60 19-823 0383', W / 2, wy + wh / 2 + 2); x.fillText('WhatsApp: +60 19-823 0383', W / 2, wy + wh / 2 + 2);
   }, { ax: .5, ay: 0 });
 }
 export function slitMark(wm) { return cut(wm, wm * .08, (x, W, H) => { x.beginPath(); x.ellipse(W / 2, H / 2, W / 2 - 4, H / 2 - 2, 0, 0, TAU); x.fillStyle = 'rgba(58,42,36,.55)'; x.fill(); }, { raw: true, ay: .5 }); }

@@ -5,7 +5,7 @@ export const BEAT = .575, BAR = BEAT * 4, GRID0 = 10.0, MUSIC0 = 3.675, BPM = 60
 export const DUR = 30.5;
 
 // book opening and page turns: [leaf starts lifting, leaf lands]
-export const OPEN = [0.0, 0.75];
+export const OPEN = [0.0, 0.5];
 export const TURNS = [
   [5.65, 6.4],     // home → road
   [9.65, 10.35],   // road → ① WhatsApp       (lands on 10.0)
@@ -15,7 +15,7 @@ export const TURNS = [
   [18.85, 19.55],  // ④ → home, evening        (19.2)
 ];
 // spread index → when its pieces rise / fold
-export const RISE = [0.45, ...TURNS.map(t => t[1] - .38)];
+export const RISE = [0.3, ...TURNS.map(t => t[1] - .38)];
 export const FOLD = [...TURNS.map(t => t[0] - .12), 24.25];
 
 const b = n => GRID0 + n * BEAT;

@@ -46,9 +46,10 @@ function cover() {
   for (let i = 0; i < w; i += 3) { x.fillStyle = `rgba(255,255,255,${.02 + R() * .04})`; x.fillRect(i, 0, 1.2, h); }
   y.fillStyle = 'rgb(0,235,0)'; y.fillRect(0, 0, w, h);
   const both = fn => { x.save(); fn(x, '#e0b456'); x.restore(); y.save(); fn(y, 'rgb(0,90,255)'); y.restore(); };
-  both((k, col) => { k.strokeStyle = col; k.lineWidth = 10; k.strokeRect(90, 90, w - 180, h - 180); k.fillStyle = col; k.textAlign = 'center';
-    k.font = '230px "Lilita One"'; k.fillText('KAFA', w * .62, h * .45); k.font = '150px "Lilita One"'; k.fillText('Satu Klik', w * .62, h * .66); });
-  const kc = cv(A.KLIK_W, A.KLIK_H); A.drawKlik(kc.getContext('2d'), { eyesK: 'happy' }); x.drawImage(finishCut(kc, 16), w * .08, h * .2, 560, 560 * A.KLIK_H / A.KLIK_W);
+  both((k, col) => { k.strokeStyle = col; k.lineWidth = 10; k.strokeRect(90, 90, w - 180, h - 180); k.lineWidth = 8; k.strokeRect(w * .5 - 330, 150, 660, h - 300); k.fillStyle = col; k.textAlign = 'center';
+    k.font = '200px "Lilita One"'; k.fillText('KAFA', w * .5, h * .74); k.font = '112px "Lilita One"'; k.fillText('Satu Klik', w * .5, h * .855);
+    for (const [cx, cy] of [[w * .5 - 330, 150], [w * .5 + 330, 150], [w * .5 - 330, h - 150], [w * .5 + 330, h - 150]]) { k.beginPath(); k.arc(cx, cy, 22, 0, Math.PI * 2); k.fill(); } });
+  const kc = cv(A.KLIK_W, A.KLIK_H); A.drawKlik(kc.getContext('2d'), { eyesK: 'happy', mouthK: 'open', armR: 2.3, armL: .5 }); const kw = 520; x.drawImage(finishCut(kc, 16), w * .5 - kw / 2, h * .13, kw, kw * A.KLIK_H / A.KLIK_W);
   return { c, m };
 }
 const book = makeBook(cover()); scene.add(book.root);
@@ -137,7 +138,7 @@ function hangingClock(s) {
   const g = new THREE.Group(), face = cm(A.clockFace(.03)), mh = cm(A.clockHand(.024, .005, '#1f3c6e')), hh = cm(A.clockHand(.016, .006, '#e8413a'));
   mh.position.z = .0012; hh.position.z = .0018; g.add(face, mh, hh);
   for (const dx of [-.018, .018]) { const th = thread(.2); th.position.set(dx, .024, -.001); g.add(th); }
-  g.position.set(-.012, .118, .02); book.sky.add(g); return { g, mh, hh, s };
+  g.position.set(-.02, .1, .02); book.sky.add(g); return { g, mh, hh, s };
 }
 const CLK = [hangingClock(0), hangingClock(6)];
 const slit = cm(A.slitMark(.034)); slit.rotation.x = -Math.PI / 2; slit.position.set(.03, .0006, .2); book.stage.add(slit);
@@ -158,12 +159,13 @@ const LAP = popper(3, cm(A.laptopScreen(.09)), .022, .0008, .095, { dir: -1, d: 
 popper(4, cm(A.tablet(.1)), -.024, 0, .055);
 const TICK = cm(A.tickBadge(.019)); TICK.position.set(.03, .096, .07); TICK.visible = false; book.stage.add(TICK);
 // spread 5: ④ progress bar + stars
-const PBAR = popper(5, cm(A.barFrame(.12)), 0, 0, .06);
-const FILL = cm(A.barFill(.1104, .0141)); const fillG = new THREE.Group(); fillG.add(FILL); fillG.position.set(-.0552, .0373, .0016); PBAR.m.add(fillG);
-const STARS = [0, 1, 2, 3, 4].map(i => { const m = cm(A.star(.008)); m.position.set(-.0443 + i * .02215, .0373, .004); m.visible = false; PBAR.m.add(m); return m; });
+const PBAR = popper(5, cm(A.barFrame(0.07, 0.082)), 0, 0, .07);
+const FILL = cm(A.barFill(0.0644, 0.0082)); const fillG = new THREE.Group(); fillG.add(FILL); fillG.position.set(-0.0322, 0.0744, .0016); PBAR.m.add(fillG);
+const STARS = [0, 1, 2, 3, 4].map(i => { const m = cm(A.star(.0052)); m.position.set(-0.0258 + i * 0.0129, 0.0744, .004); m.visible = false; PBAR.m.add(m); return m; });
 // end-card sign
-const SIGN = new THREE.Group(); { const s = cm(A.endSign(.13)); SIGN.add(s); for (const dx of [-.05, .05]) { const th = thread(.2); th.position.set(dx, 0, -.001); SIGN.add(th); } }
-SIGN.position.set(0, .255, .03); SIGN.visible = false; book.sky.add(SIGN);
+const LOGO = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = 'oclc-logo.png'; });
+const SIGN = new THREE.Group(); { const s = cm(A.endSign(.13, LOGO)); SIGN.add(s); for (const dx of [-.05, .05]) { const th = thread(.2); th.position.set(dx, 0, -.001); SIGN.add(th); } }
+SIGN.position.set(0, .262, .03); SIGN.visible = false; book.sky.add(SIGN);
 
 // ---------- characters (flat cards redrawn per quantized pose) ----------
 function actor(draw, cw, ch, foot, hm, col) {
@@ -185,12 +187,12 @@ const mkMum = c => actor(A.drawWoman, A.WOM_W, A.WOM_H, A.WOM_FOOT, .058, c);
 const mkBoy = () => actor(A.drawBoy, A.BOY_W, A.BOY_H, A.BOY_FOOT, .042);
 const mkKlik = () => actor(A.drawKlik, A.KLIK_W, A.KLIK_H, A.KLIK_H, .046);
 const CAST = [
-  { a: mkMum(A.MUM_COL), s: 0, x: -.03, z: .15, t0: T.mumPop },
+  { a: mkMum(A.MUM_COL), s: 0, x: -.02, z: .15, t0: T.mumPop },
   { a: mkBoy(), s: 3, x: -.05, z: .125 },
   { a: mkBoy(), s: 4, x: .044, z: .125 },
   { a: mkBoy(), s: 5, x: 0, z: .12 },
-  { a: mkMum(A.MUM_COL), s: 6, x: -.025, z: .15, d: .05 },
-  { a: mkBoy(), s: 6, x: .022, z: .155, d: .1 },
+  { a: mkMum(A.MUM_COL), s: 6, x: -.018, z: .15, d: .05 },
+  { a: mkBoy(), s: 6, x: .019, z: .155, d: .1 },
 ];
 for (const c of CAST) { const r = popper(c.s, c.a.root, c.x, 0, c.z, { t0: c.t0, d: c.d ?? .08 }); c.r = r; book.stage.add(c.a.shadow); c.a.shadow.position.set(c.x, .0005, c.z); }
 const klik = mkKlik(); book.stage.add(klik.root, klik.shadow);
@@ -201,7 +203,7 @@ const wave = (t, a = 2.5) => a + Math.sin(t * 11) * .35;
 function castPose(c, t) {
   const p = { blink: blinkAt(t, c.x * 10) };
   if (c.s === 0) { // stressed mum, then curious, then relieved
-    if (t < T.klikPop) Object.assign(p, { brow: 'worried', mouthK: 'worried', look: [.3, -1], armR: .25 + .08 * Math.sin(t * 7), armL: .3 + .08 * Math.sin(t * 6) });
+    if (t < T.klikPop) Object.assign(p, { brow: 'worried', mouthK: 'frown', look: [.3, -1], armR: .25 + .08 * Math.sin(t * 7), armL: .3 + .08 * Math.sin(t * 6), sweat: Math.round(((t * .9) % 1) * 8) / 8 });
     else if (t < T.klikPop + .6) Object.assign(p, { eyes: 'wide', mouthK: 'o', brow: 'up', look: [.9, .5] });
     else Object.assign(p, { eyes: 'open', mouthK: 'open', brow: 'up', look: [.8, .3], armR: 1.2 });
   } else if (c.s === 3) Object.assign(p, { mouthK: 'open', eyes: 'happy', armR: wave(t, 2.5) });
@@ -233,16 +235,17 @@ function klikState(t) {
   } else if (t >= T.klikBack) {
     S.vis = true; S.s = back(seg(t, T.klikBack, T.klikBack + .4), 1.8);
     const e = eio(seg(t, T.endFold, T.endFold + 1.0));
-    S.x = lerp(.038, .0, e); S.y = lerp(.074, .052, e) + bob(); S.z = lerp(.14, .16, e); p.eyesK = 'happy'; p.mouthK = 'open'; p.armR = t > T.wave ? wave(t, 2.6) : .4; p.armL = t > T.endFold + 1 ? 1.4 : .4;
+    S.x = lerp(.02, .0, e); S.y = lerp(.066, .052, e) + bob(); S.z = lerp(.11, .16, e); p.eyesK = 'happy'; p.mouthK = 'open'; p.armR = t > T.wave ? wave(t, 2.6) : .4; p.armL = t > T.endFold + 1 ? 1.4 : .4;
   }
   return S;
 }
 
 // ---------- camera: [t, pos xyz, target xyz, fov, aperture, focus override] ----------
 const SH = [[
-  [0.0, 0, .46, .86, 0, .07, .1, 34, .9],
-  [0.85, 0, .30, .66, -.01, .05, .12, 34, 1.6],
-  [3.1, -.02, .12, .43, -.02, .052, .12, 32, 2.2],
+  [0.0, 0, .43, .235, 0, .0, .15, 34, 1.2],
+  [0.55, 0, .26, .5, -.01, .05, .12, 34, 1.4],
+  [1.3, -.02, .072, .36, -.02, .058, .13, 32, 2.1],
+  [3.1, -.02, .07, .335, -.02, .057, .13, 32, 2.2],
   [3.675, -.005, .1, .44, 0, .045, .14, 34, 2.2],
   [5.5, 0, .105, .45, 0, .045, .14, 34, 2.2],
   [6.5, 0, .25, .5, 0, .03, .14, 34, 1.8],
@@ -253,10 +256,11 @@ const SH = [[
   [14.2, 0, .25, .41, 0, .04, .09, 34, 1.9],
   [14.95, 0, .27, .45, 0, .04, .09, 34, 1.7],
   [16.5, 0, .25, .41, 0, .04, .09, 34, 1.9],
-  [17.25, 0, .27, .45, 0, .04, .09, 34, 1.7],
-  [18.75, 0, .25, .42, 0, .04, .1, 34, 1.9],
-  [19.75, 0, .11, .44, 0, .035, .14, 32, 2.1],
-  [24.05, 0, .2, .6, 0, .06, .12, 33, 1.7],
+  [17.25, 0, .08, .315, 0, .056, .1, 34, 2.0],
+  [18.75, 0, .08, .305, 0, .056, .1, 34, 2.0],
+  [19.75, 0, .07, .38, 0, .05, .135, 32, 2.1],
+  [23.6, 0, .072, .37, 0, .05, .135, 32, 2.1],
+  [24.6, 0, .15, .55, 0, .09, .1, 33, 1.6],
   [25.25, 0, .15, .67, 0, .12, .07, 33, 1.3],
   [30.5, 0, .148, .655, 0, .12, .07, 33, 1.3],
 ]];
@@ -296,8 +300,9 @@ function drawCaps(t) {
     const a = Math.min(joinIn ? (t >= c.t0 ? 1 : 0) : seg(t, c.t0 - .15, c.t0 + .05), joinOut ? (t < c.t1 ? 1 : 0) : 1 - seg(t, c.t1 - .05, c.t1 + .15)); if (a <= 0) return;
     OX.save(); OX.globalAlpha = a; OX.font = `600 ${Math.round(W * .058)}px Fredoka`; OX.textAlign = 'center'; OX.textBaseline = 'middle';
     const lines = wrap(OX, c.text, CAP_W), lh = W * .072, y0 = CAP_Y - (lines.length - 1) * lh / 2;
-    OX.shadowColor = 'rgba(30,18,10,.45)'; OX.shadowBlur = 14; OX.shadowOffsetY = 4;
-    lines.forEach((l, i) => outlined(OX, l, CAP_X, y0 + i * lh, '#fffaf0', '#3a2a24', W * .016));
+    const pw = Math.max(...lines.map(l => OX.measureText(l).width)) + W * .07, ph = lines.length * lh + W * .035;
+    OX.beginPath(); OX.roundRect(CAP_X - pw / 2, CAP_Y - ph / 2, pw, ph, Math.min(ph / 2, W * .05)); OX.fillStyle = 'rgba(18,12,8,.6)'; OX.fill();
+    OX.fillStyle = '#ffffff'; lines.forEach((l, i) => OX.fillText(l, CAP_X, y0 + i * lh + W * .003));
     OX.restore();
   });
 }
@@ -335,7 +340,7 @@ function boxOf(obj, w, h, ax = .5, ay = 0) {
 window.TEXTS = t => {
   window.render(t); const out = [];
   if (bubBox) out.push({ id: 'bubble', text: 'klik!', x0: bubBox[0], y0: bubBox[1], x1: bubBox[2], y1: bubBox[3] });
-  if (SIGN.visible && t > T.signDrop + .9) { const b = boxOf(SIGN.children[0], .13, .0936); if (b) out.push({ id: 'sign', text: 'OCLC One Click Learning Centre WhatsApp: +60 19-823 0383', x0: Math.max(0, b[0]), y0: Math.max(0, b[1]), x1: Math.min(W, b[2]), y1: Math.min(H, b[3]) }); }
+  if (SIGN.visible && t > T.signDrop + .9) { const b = boxOf(SIGN.children[0], .13, .1274); if (b) out.push({ id: 'sign', text: 'OCLC One Click Learning Centre WhatsApp: +60 19-823 0383', x0: Math.max(0, b[0]), y0: Math.max(0, b[1]), x1: Math.min(W, b[2]), y1: Math.min(H, b[3]) }); }
   for (const h of HONK) if (h.m.visible) out.push({ id: 'honk' + h.t0, text: 'PON!', x0: 0, y0: 0, x1: 1, y1: 1, pass: true });
   if (BTN.g.visible) out.push({ id: 'btn', text: 'DAFTAR', x0: 0, y0: 0, x1: 1, y1: 1, pass: true });
   return out;
@@ -372,9 +377,9 @@ window.render = function (t) {
   }
   // clocks on strings
   for (const C of CLK) {
-    const t0 = C.s === 0 ? .55 : TURNS[5][1] - .2, tf = C.s === 0 ? FOLD[0] : T.endFold, drop = t > t0 ? 1 - spring(t - t0, 6, .35) : 1;
+    const t0 = C.s === 0 ? .35 : TURNS[5][1] - .2, tf = C.s === 0 ? FOLD[0] : T.endFold, drop = t > t0 ? 1 - spring(t - t0, 6, .35) : 1;
     C.g.visible = t > t0 && t < tf + .6 && (C.s === 0 ? t < TURNS[0][1] : t > TURNS[5][0]);
-    C.g.position.y = .118 + drop * .2 + ss(seg(t, tf, tf + .5)) * .2; C.g.rotation.z = Math.sin((t - t0) * 3) * .05 * Math.exp(-(t - t0) * 1.2);
+    C.g.position.y = .1 + drop * .2 + ss(seg(t, tf, tf + .5)) * .2; C.g.rotation.z = Math.sin((t - t0) * 3) * .05 * Math.exp(-(t - t0) * 1.2);
     if (C.s === 0) { const ang = -(t * t) * 1.1 - t * 2; C.mh.rotation.z = ang; C.hh.rotation.z = ang / 12 - 1; }
     else { C.mh.rotation.z = 0; C.hh.rotation.z = -Math.PI * 2 * 5 / 12; }
   }
@@ -385,7 +390,7 @@ window.render = function (t) {
   { const k = back(seg(t, T.tick, T.tick + .35), 2.2); TICK.visible = t > T.tick && t < TURNS[4][0]; TICK.scale.setScalar(Math.max(k, .001)); TICK.rotation.z = (1 - k) * .6; }
   fillG.visible = true;
   { let pr = 0; T.stars.forEach((s0, i) => { pr = Math.max(pr, ((i + 1) / 5) * eo(seg(t, s0 - .25, s0))); const m = STARS[i], k = back(seg(t, s0, s0 + .3), 2.4); m.visible = t > s0; m.scale.setScalar(Math.max(k, .001)); m.rotation.z = (1 - k) * 1.2; }); FILL.scale.x = Math.max(pr, .001); }
-  { const k = t - T.signDrop; SIGN.visible = k > 0; SIGN.position.y = .255 + (k > 0 ? (1 - spring(k, 5, .38)) * .22 : .22); SIGN.rotation.z = k > 0 ? Math.sin(k * 4.2) * .06 * Math.exp(-k * 1.4) : 0; }
+  { const k = t - T.signDrop; SIGN.visible = k > 0; SIGN.position.y = .262 + (k > 0 ? (1 - spring(k, 5, .38)) * .22 : .22); SIGN.rotation.z = k > 0 ? Math.sin(k * 4.2) * .06 * Math.exp(-k * 1.4) : 0; }
   // cast
   for (const c of CAST) { if (!c.r.g.visible) { c.a.shadow.visible = false; continue; } c.a.pose(castPose(c, t)); c.a.body.position.y = castY(c, t); c.a.shadow.visible = true; c.a.shadow.scale.setScalar(riseOf(c.r, t)); }
   const ks = klikState(t); klik.root.visible = klik.shadow.visible = ks.vis && ks.s > .002;
@@ -400,7 +405,7 @@ window.render = function (t) {
   let focus = C.pos.distanceTo(C.tgt);
   const toW = (x, y, z) => new THREE.Vector3(x, y + PG, z);
   if (THUMB) focus = C.pos.distanceTo(toW(.018, .05, .2));
-  else if (t > 1 && t < 6) { const dm = C.pos.distanceTo(toW(-.03, .045, .15)), dk = C.pos.distanceTo(toW(.03, .03, .2)); focus = lerp(dm, dk, ss(seg(t, T.klikPop + .1, T.klikPop + .6))); }
+  else if (t > 1 && t < 6) { const dm = C.pos.distanceTo(toW(-.02, .045, .15)), dk = C.pos.distanceTo(toW(.03, .03, .2)); focus = lerp(dm, dk, ss(seg(t, T.klikPop + .1, T.klikPop + .6))); }
   if (t > T.endFold + .3) focus = C.pos.distanceTo(new THREE.Vector3(0, .2, .03));
   post.dof.focus = focus; post.dof.aper = C.aper; post.dof.maxCoc = 12;
   post.vig.uniforms.warm.value = .12 + eve * .08; post.bloom.strength = .2;
