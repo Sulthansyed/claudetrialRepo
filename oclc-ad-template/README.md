@@ -39,10 +39,13 @@ Needs Node 20+, Playwright's Chromium, ffmpeg 7+ and Python 3. Python packages g
 npm run build        # Step 1: export rigs, render out/character-sheet.png and out/test-frame-9x16.png
 npm run step2        # Step 2: everything below, in order
 npm run vo           #   scratch VO -> out/vo-scratch/NN.wav (uses assets/vo/NN.wav instead when all 7 exist)
-npm run timing       #   fit VO, write frames into config/upkk-2027.json, out/subtitles-draft.srt, out/timing-table.txt
-npm run keyframes    #   out/frames/scene-N.png + out/frames-safezone/scene-N.png, checks safe zone + exact text
+npm run timing       #   fit VO (1.0x; only pauses shortened if needed), last scene ends with 1.5 s of no voice;
+                     #   writes frames into config/upkk-2027.json, out/subtitles-draft.srt, out/timing-table.txt
+npm run keyframes    #   out/frames/scene-N.png + out/frames-safezone/scene-N.png; checks safe zone, exact text,
+                     #   logo size/aspect, and that no hand, arm, pencil or fold touches the Jawi word's ink
 npm run jawi-check   #   out/jawi-check.png for the KAFA teacher
 npm run scene1-test  #   out/scene1-test.mp4 (scene 1 only, 30 fps, scratch VO + paper foley, -14 LUFS)
+                     #   via tools/encode.py: one RGB -> bt709 limited conversion, decoded pixels checked within 3 of the PNGs
 ```
 
 Behind a TLS-inspecting proxy, edge-tts trusts the CA bundle named in `SSL_CERT_FILE`.
@@ -80,6 +83,5 @@ Contact details are never typed into a scene: `{whatsapp_display}` and `{website
 
 - Montserrat and Noto Naskh Arabic: SIL Open Font License 1.1 (`assets/fonts/`), from Fontsource.
 - Scratch voice: Microsoft Edge neural TTS (`ms-MY-YasminNeural`) via edge-tts, for timing only; replaced by the recorded voice.
-- Mux and loudness: Lemo-Opuscar `core/render/mux.sh`.
 - Style base: Lemo-Opuscar library, style "Red Paper-cut" (`papercut-red`), materials and motion rules only.
 - Logo and Klik reference: supplied by OCLC.

@@ -180,11 +180,12 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
       layer(cal + page + books) +
       fig(rigs.klik, klikPose, lerp(1200, 805, kKlik), 1620, 1.3);
     const kl = popK(lt, 0.4, 0.35);
-    const lsz = 168, ly = 208;
-    const h = block(txt('curiosity', 'headline'), CX, 466, { max: 80, min: 64, lh: 1.04 });
-    const sub = block(txt('curiosity', 'subhead'), CX, 466 + h.h + 2, { max: 54, min: 44, weight: 700 });
+    const lsz = 224, ly = 206;                       // logo >= 220 px wide, square, never stretched
+    const hy = ly + lsz + 92;
+    const h = block(txt('curiosity', 'headline'), CX, hy, { max: 80, min: 64, lh: 1.04 });
+    const sub = block(txt('curiosity', 'subhead'), CX, hy + h.h + 2, { max: 54, min: 44, weight: 700 });
     const kh = slideK(lt, 0.7), ks = slideK(lt, 1.0), kb = popK(lt, 2.4, 0.32);
-    const by = 466 + h.h + sub.h + 40;
+    const by = hy + h.h + sub.h + 40;
     const ui =
       (kl > 0 ? `<g transform="translate(${CX} ${ly + lsz / 2}) scale(${kl}) translate(${-CX} ${-(ly + lsz / 2)})">${logo(CX - lsz / 2, ly, lsz)}</g>` : '') +
       (kh > 0 ? `<g transform="translate(${(1 - kh) * -80} 0)">${h.svg}</g>` : '') +
@@ -204,7 +205,7 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
       const y = 690 + i * 205;
       return k > 0 ? at(piece(`<rect x="-150" y="-80" width="300" height="160" rx="16" fill="${C.white_card}" stroke="${C.navy}" stroke-width="3"/>`) +
         `<text class="jawi" x="0" y="26" font-family="Noto Naskh Arabic" font-size="80" font-weight="700" fill="${C.navy}" text-anchor="middle" direction="rtl" data-essential="text">${w}</text>`,
-        lerp(1150, 770, k), y, 1, lerp(8, i % 2 ? 2 : -2, k)) : '';
+        lerp(1150, 730, k), y, 1, lerp(8, i % 2 ? 2 : -2, k)) : '';
     }).join('');
     const world = layer(disc(330, 1080, 300)) + fig(rigs.boy, pose, 300, 1510, 1.35) + layer(cards);
     const b = badge(txt('programme-1', 'badge'), CX, 270, 48);
@@ -220,7 +221,7 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
   S['programme-2'] = (lt, D) => {
     const spines = byId['programme-2'].on_screen_text.filter((x) => x.role === 'spine').map((x) => x.text);
     const style = [[C.teal, C.navy, C.navy], [C.navy, C.kurung_line, C.cream], [C.white_card, C.teal, C.navy], [C.baju_teal_deep, C.navy, C.navy], [C.kraft, C.navy, C.navy]];
-    const widths = [560, 520, 500, 540, 520], offs = [0, -14, 10, -6, 12];
+    const widths = [520, 490, 470, 500, 490], offs = [0, -14, 10, -6, 12];
     const bh = 108;
     const books = spines.map((s, i) => {
       const t0 = 0.55 + i * 0.62;
@@ -228,9 +229,9 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
       const k = clamp((lt - t0) / 0.32);
       const drop = k < 1 ? -(1 - k * k) * 700 : -Math.abs(Math.sin(Math.min(1, (lt - t0 - 0.32) / 0.3) * Math.PI)) * 22 * (1 - clamp((lt - t0 - 0.32) / 0.3));
       const [f, band, lf] = style[i];
-      return at(book(widths[i], bh - 6, f, band, s, lf, 52), 650 + offs[i], 1500 - i * bh + drop, 1, i % 2 ? 0.8 : -0.8);
+      return at(book(widths[i], bh - 6, f, band, s, lf, 52), 610 + offs[i], 1500 - i * bh + drop, 1, i % 2 ? 0.8 : -0.8);
     }).join('');
-    const world = layer(disc(640, 1180, 330)) + fig(rigs.girl, noProps(P.girl.neutral), 210, 1500, 1.12) + layer(books);
+    const world = layer(disc(600, 1180, 330)) + fig(rigs.girl, noProps(P.girl.neutral), 210, 1500, 1.12) + layer(books);
     const b = badge(txt('programme-2', 'badge'), CX, 270, 48);
     const h = block(txt('programme-2', 'headline'), CX, 410, { max: 84, min: 64 });
     const kb = popK(lt, 0.1), kh = slideK(lt, 0.3);
@@ -286,16 +287,21 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
     const pose = noProps(P.boy.writing);
     pose.expr = happy ? 'happy' : 'confused';
     // word written right to left (Jawi): reveal from the right edge, pencil tip rides the edge
-    const NBS = 1.3, wx0 = -62, wx1 = -2;                 // left page, notebook-local x range for the word
-    const rk = clamp((stepT(lt) - 0.3) / 1.1);
-    const edge = lerp(wx1, wx0, rk);                       // notebook-local x of the pencil tip
-    const tipX = edge * NBS, tipY = -262 + 10 * NBS;       // torso space
-    const jig = Math.floor(ts * 12) % 2 ? 3 : -2;
-    pose.reach = { armL: { to: [tipX - 22, tipY - 24 + (rk < 1 ? jig : 0)], bend: 'out', hand: -40 },
-      armR: { to: [92, -204], bend: 'down', hand: -20 } };
+    // right-hand page spans notebook-local x 2..63 (fold at 0); the word is centred on it with clear margins
+    const NBS = 1.4, WFS = 28, PCX = 33.5;
+    const ww = measure(byId.climax.jawi[0], `700 ${WFS}px "Noto Naskh Arabic"`);
+    const wx0 = PCX - ww / 2 - 1, wx1 = PCX + ww / 2 + 1;
+    const rk = clamp((stepT(lt) - 0.3) / 1.1);             // 0..1 while writing, right to left
+    const lift = clamp((stepT(lt) - 1.45) / 0.35);         // then the pencil lifts back to the left page
+    const edge = lerp(wx1, wx0, rk);
+    const tipX = lerp(edge, -30, inOut(lift)) * NBS, tipY = -262 + lerp(10, 26, inOut(lift)) * NBS;
+    const jig = rk < 1 && Math.floor(ts * 12) % 2 ? 3 : 0;
+    pose.reach = { armL: { to: [tipX - 22, tipY - 24 + jig], bend: 'out', hand: -40 },
+      armR: { to: [108, -252], bend: 'out', hand: -70 } };
     pose.var = { handL: 'grip', handR: 'fist' };
-    const word = `<text class="jawi" x="-32" y="14" font-family="Noto Naskh Arabic" font-size="34" font-weight="700" fill="${C.navy}" text-anchor="middle" direction="rtl" data-essential="text">${byId.climax.jawi[0]}</text>`;
-    const nb = `<g transform="scale(${NBS})">${rigs.boy.props.notebook.svg}` +
+    pose.z = { armLoR: 34, handR: 34.5 };   // the holding hand is behind the notebook, fist showing past its right edge
+    const word = `<text class="jawi" x="${PCX}" y="12" font-family="Noto Naskh Arabic" font-size="${WFS}" font-weight="700" fill="${C.navy}" text-anchor="middle" direction="rtl" data-essential="text" data-check="jawi-word">${byId.climax.jawi[0]}</text>`;
+    const nb = `<g transform="scale(${NBS})">${rigs.boy.props.notebook.svg}<rect data-check="fold" x="-2" y="-43" width="4" height="86" fill="none"/>` +
       (rk > 0 ? `<clipPath id="wr"><rect x="${edge}" y="-40" width="${wx1 - edge + 4}" height="80"/></clipPath><g clip-path="url(#wr)">${word}</g>` : '') + `</g>`;
     pose.props = [{ use: { svg: nb, fx: 'none' }, parent: 'torso', at: [0, -262], z: 35 },
       { use: 'pencil', parent: 'torso', at: [tipX, tipY], rot: -135, scale: 0.85, z: 38.5 }];
@@ -333,9 +339,10 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
       fig(rigs.boy, noProps(P.boy.books), 250, 1290, 0.98) +
       fig(rigs.girl, noProps(P.girl.books), 500, 1290, 0.98) +
       (kk > 0 ? fig(rigs.klik, noProps(P.klik.whatsapp), 790, 1300 - (1 - kk) * 80, 0.98) : '');
-    const lsz = 190, ly = 210;
-    const h = block(txt('payoff', 'headline'), CX, 500, { max: 92, min: 64 });
-    const sub = block(txt('payoff', 'subhead'), CX, 500 + h.h + 2, { max: 56, min: 44, weight: 700 });
+    const lsz = 304, ly = 204;                       // logo >= 300 px wide, square, never stretched
+    const hy = ly + lsz + 76;
+    const h = block(txt('payoff', 'headline'), CX, hy, { max: 92, min: 64 });
+    const sub = block(txt('payoff', 'subhead'), CX, hy + h.h + 2, { max: 56, min: 44, weight: 700 });
     const wa = txt('payoff', 'contact', 0), web = txt('payoff', 'contact', 1);
     const card = piece(`<rect x="${SZ.x0 + 10}" y="1338" width="${SAFE_W - 20}" height="188" rx="26" fill="${C.white_card}" stroke="${C.navy}" stroke-width="3"/>`) +
       T(wa, CX, 1418, { size: fit(wa, { max: 60, min: 44, maxW: SAFE_W - 80 }).size, lift: false }) +
@@ -343,7 +350,7 @@ export function createFilm({ brand, cfg, C, rigs, measure }) {
     const kl = popK(lt, 0.05, 0.35), kh = popK(lt, 0.35, 0.3), ks = slideK(lt, 0.7), kc = slideK(lt, 1.0, 0.5);
     const ui =
       (kl > 0 ? `<g transform="translate(${CX} ${ly + lsz / 2}) scale(${kl}) translate(${-CX} ${-(ly + lsz / 2)})">${logo(CX - lsz / 2, ly, lsz)}</g>` : '') +
-      (kh > 0 ? `<g transform="translate(${CX} 530) scale(${kh}) translate(${-CX} -530)">${h.svg}</g>` : '') +
+      (kh > 0 ? `<g transform="translate(${CX} ${hy - 24}) scale(${kh}) translate(${-CX} ${-(hy - 24)})">${h.svg}</g>` : '') +
       (ks > 0 ? `<g transform="translate(0 ${(1 - ks) * 30})">${sub.svg}</g>` : '') +
       (kc > 0 ? `<g transform="translate(0 ${(1 - kc) * 260})">${card}</g>` : '');
     return { cam: { s: lerp(1.03, 1, inOut(lt / D)), fx: 540, fy: 1000 }, world, ui };

@@ -3,10 +3,12 @@
   .venv/bin/python tools/timing.py
 
 1. Reads out/vo-scratch/NN.wav (raw lines, as measured).
-2. Fits them: long pauses inside a line are tightened (sentence breaks -> 0.35 s, comma pauses -> 0.22 s),
-   then the smallest tempo increase that makes 30 s work is applied (pitch kept, never above vo.max_speedup).
+2. Fits them, gentlest first: lines as recorded; if they do not fit with near-target padding, long pauses
+   inside lines are shortened (vo.tighten_pauses "auto"; sentence breaks -> 0.5 s, comma pauses -> 0.3 s);
+   only then a tempo increase, never above vo.max_speedup (1.0 = never). Speech itself is never altered.
    Fitted lines go to out/vo-scratch/fit/NN.wav. Raw files are not touched.
-3. Scene = lead-in + VO + breath; spare time spread evenly, last scene >= vo.min_last_scene_s.
+3. Scene = lead-in + VO + breath; the last scene ends with vo.end_hold_s of no voice (music resolution).
+   Spare time spread evenly, last scene >= vo.min_last_scene_s.
    If it still does not fit, lead-in and breath shrink (not below 0.15 / 0.2 s); if that fails, it stops
    and names the lines that are too long.
 4. Writes frames into config/upkk-2027.json, out/subtitles-draft.srt and out/timing.json, prints the table.
@@ -23,7 +25,7 @@ V = cfg["vo"]
 src, fit_dir = ROOT / V["scratch_dir"], ROOT / V["scratch_dir"] / "fit"
 fit_dir.mkdir(parents=True, exist_ok=True)
 n = len(cfg["scenes"])
-SENT, COMMA = 0.35, 0.22
+SENT, COMMA = 0.5, 0.3
 
 
 def silences(path):
@@ -61,19 +63,26 @@ def dur(p):
 
 
 raw = [dur(src / f"{i + 1:02d}.wav") for i in range(n)]
-tight = []
-for i in range(n):
-    y, sr = tighten(src / f"{i + 1:02d}.wav")
-    sf.write(fit_dir / f"_tight{i + 1:02d}.wav", y, sr, subtype="PCM_16")
-    tight.append(len(y) / sr)
-
 T = total_f / fps
 lead, breath = V["lead_in_s"], V["breath_s"]
-need = lambda f, l, b: sum(t / f for t in tight) + n * (l + b)
+hold = V.get("end_hold_s", breath)
+# the last scene's breath is the voice-free ending
+need = lambda f, l, b: sum(t / f for t in tight) + n * l + (n - 1) * b + max(b, hold)
+NEAR = 0.85   # padding may shrink to 85 % of target before pauses are touched
+tp = V.get("tighten_pauses", "auto")
+tight = raw[:]
+tightened = tp is True or (tp == "auto" and need(1.0, lead * NEAR, breath * NEAR) > T)
+for i in range(n):
+    if tightened:
+        y, sr = tighten(src / f"{i + 1:02d}.wav")
+    else:
+        y, sr = sf.read(src / f"{i + 1:02d}.wav")
+    sf.write(fit_dir / f"_tight{i + 1:02d}.wav", y, sr, subtype="PCM_16")
+    tight[i] = len(y) / sr
 tempo = 1.0
 if need(1.0, lead, breath) > T:
-    tempo = min(V["max_speedup"], sum(tight) / (T - n * (lead + breath)))
-    tempo = max(tempo, 1.0)
+    room = T - (n * lead + (n - 1) * breath + max(breath, hold))
+    tempo = max(1.0, min(V["max_speedup"], sum(tight) / room)) if room > 0 else V["max_speedup"]
     while need(tempo, lead, breath) > T and (lead > 0.15 or breath > 0.2):
         lead, breath = max(0.15, lead - 0.01), max(0.2, breath - 0.01)
 if need(tempo, lead, breath) > T:
@@ -92,8 +101,9 @@ for i in range(n):
     (fit_dir / f"_tight{i + 1:02d}.wav").unlink()
     fitted.append(dur(out))
 
-# scene lengths, spare spread evenly, last scene >= min
+# scene lengths, spare spread evenly, last scene >= min, last scene ends with the voice-free hold
 L = [lead + d + breath for d in fitted]
+L[-1] = lead + fitted[-1] + max(breath, hold)
 spare = T - sum(L)
 L = [x + spare / n for x in L]
 short = V["min_last_scene_s"] - L[-1]
@@ -120,11 +130,14 @@ for i, sc in enumerate(cfg["scenes"]):
                 "raw_s": round(raw[i], 3), "fitted_s": round(fitted[i], 3), "tempo": round(tempo, 4),
                 "start_frame": v0, "end_frame": v1}
     t1 = min(s1, v1 + round(0.5 * fps))
+    if i == n - 1:
+        assert s1 - v1 >= round(hold * fps), "end hold too short"
     cues.append((v0 / fps, t1 / fps, sc["vo_text"]))
     rows.append((i + 1, sc["id"], s0, s1, (s1 - s0) / fps, raw[i], fitted[i], (s1 - s0) / fps - fitted[i]))
 
 cfg["vo"]["fit"] = {"tempo": round(tempo, 4), "lead_s": round(lead, 3), "breath_s": round(breath, 3),
-                    "pauses": f"sentence {SENT}s, comma {COMMA}s"}
+                    "pauses": f"shortened: sentence {SENT}s, comma {COMMA}s" if tightened else "as recorded",
+                    "end_hold_s": round((edges[-1] - cfg["scenes"][-1]["vo"]["end_frame"]) / fps, 3)}
 CFG.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n")
 
 
@@ -137,7 +150,8 @@ def ts(t):
     "\n".join(f"{k + 1}\n{ts(a)} --> {ts(b)}\n{t}\n" for k, (a, b, t) in enumerate(cues)), encoding="utf-8")
 (ROOT / "out/timing.json").write_text(json.dumps([{"scene": r[0], "id": r[1], "start_frame": r[2], "end_frame": r[3]} for r in rows], indent=1))
 
-print(f"fit: pauses tightened (sentence {SENT}s, comma {COMMA}s), tempo {tempo:.3f}x, lead {lead:.2f}s, breath {breath:.2f}s")
+print(f"fit: tempo {tempo:.3f}x (speech untouched), pauses {'shortened to sentence ' + str(SENT) + 's / comma ' + str(COMMA) + 's' if tightened else 'as recorded'}, "
+      f"lead {lead:.2f}s, breath {breath:.2f}s, VO-free ending {cfg['vo']['fit']['end_hold_s']:.2f}s")
 print(f"{'#':>2} {'scene':<12} {'start':>14} {'end':>14} {'VO raw':>7} {'VO fit':>7} {'gap':>6}")
 for i, sid, s0, s1, L_, r, f, g in rows:
     print(f"{i:>2} {sid:<12} {s0:>4}f {s0 / fps:6.3f}s  {s1:>4}f {s1 / fps:6.3f}s  {r:6.3f}s {f:6.3f}s {g:5.2f}s")

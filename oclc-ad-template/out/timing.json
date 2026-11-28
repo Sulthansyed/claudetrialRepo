@@ -3,42 +3,42 @@
   "scene": 1,
   "id": "hook",
   "start_frame": 0,
-  "end_frame": 104
+  "end_frame": 111
  },
  {
   "scene": 2,
   "id": "curiosity",
-  "start_frame": 104,
-  "end_frame": 253
+  "start_frame": 111,
+  "end_frame": 241
  },
  {
   "scene": 3,
   "id": "programme-1",
-  "start_frame": 253,
-  "end_frame": 373
+  "start_frame": 241,
+  "end_frame": 355
  },
  {
   "scene": 4,
   "id": "programme-2",
-  "start_frame": 373,
-  "end_frame": 527
+  "start_frame": 355,
+  "end_frame": 517
  },
  {
   "scene": 5,
   "id": "structure",
-  "start_frame": 527,
-  "end_frame": 664
+  "start_frame": 517,
+  "end_frame": 647
  },
  {
   "scene": 6,
   "id": "climax",
-  "start_frame": 664,
-  "end_frame": 773
+  "start_frame": 647,
+  "end_frame": 759
  },
  {
   "scene": 7,
   "id": "payoff",
-  "start_frame": 773,
+  "start_frame": 759,
   "end_frame": 900
  }
 ]

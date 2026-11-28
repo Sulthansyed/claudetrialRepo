@@ -28,15 +28,19 @@
     "scratch_dir": "out/vo-scratch",
     "scratch_voice": "ms-MY-YasminNeural",
     "scratch_rate": "+0%",
-    "max_speedup": 1.08,
+    "max_speedup": 1.0,
     "lead_in_s": 0.3,
     "breath_s": 0.4,
     "min_last_scene_s": 4.0,
+    "tighten_pauses": "auto",
+    "end_hold_s": 1.5,
+    "_note": "scratch lines play at 1.0x, untouched; the last scene ends with end_hold_s of no voice for the music to resolve",
     "fit": {
-      "tempo": 1.08,
-      "lead_s": 0.26,
-      "breath_s": 0.36,
-      "pauses": "sentence 0.35s, comma 0.22s"
+      "tempo": 1.0,
+      "lead_s": 0.27,
+      "breath_s": 0.37,
+      "pauses": "shortened: sentence 0.5s, comma 0.3s",
+      "end_hold_s": 1.5
     }
   },
   "jawi_words": [
@@ -107,19 +111,19 @@
       ],
       "timing": {
         "start_frame": 0,
-        "end_frame": 104,
-        "frames": 104,
+        "end_frame": 111,
+        "frames": 111,
         "start_s": 0.0,
-        "end_s": 3.467
+        "end_s": 3.7
       },
       "vo": {
         "file": "out/vo-scratch/fit/01.wav",
         "raw_file": "out/vo-scratch/01.wav",
         "raw_s": 3.054,
-        "fitted_s": 2.829,
-        "tempo": 1.08,
+        "fitted_s": 3.054,
+        "tempo": 1.0,
         "start_frame": 8,
-        "end_frame": 93
+        "end_frame": 100
       }
     },
     {
@@ -139,8 +143,8 @@
           "text": "2 PILIHAN"
         }
       ],
-      "vo_text": "Manfaatkan cuti sekolah bersama OCLC. Ada dua pilihan!",
-      "vo_tts_text": "Manfaatkan cuti sekolah bersama O C L C. Ada dua pilihan!",
+      "vo_text": "Cuti sekolah ini, OCLC ada dua pilihan!",
+      "vo_tts_text": "Cuti sekolah ini, O C L C ada dua pilihan!",
       "characters": [
         {
           "id": "klik",
@@ -174,20 +178,20 @@
         "pop as badge lands"
       ],
       "timing": {
-        "start_frame": 104,
-        "end_frame": 253,
-        "frames": 149,
-        "start_s": 3.467,
-        "end_s": 8.433
+        "start_frame": 111,
+        "end_frame": 241,
+        "frames": 130,
+        "start_s": 3.7,
+        "end_s": 8.033
       },
       "vo": {
         "file": "out/vo-scratch/fit/02.wav",
         "raw_file": "out/vo-scratch/02.wav",
-        "raw_s": 5.319,
-        "fitted_s": 4.33,
-        "tempo": 1.08,
-        "start_frame": 112,
-        "end_frame": 242
+        "raw_s": 3.766,
+        "fitted_s": 3.65,
+        "tempo": 1.0,
+        "start_frame": 119,
+        "end_frame": 229
       }
     },
     {
@@ -207,8 +211,8 @@
           "text": "Membaca • Mengeja • Menulis"
         }
       ],
-      "vo_text": "Kuasai kemahiran membaca, mengeja dan menulis Jawi.",
-      "vo_tts_text": "Kuasai kemahiran membaca, mengeja dan menulis Jawi.",
+      "vo_text": "Kuasai membaca, mengeja dan menulis Jawi.",
+      "vo_tts_text": "Kuasai membaca, mengeja dan menulis Jawi.",
       "jawi": [
         "ممباچ",
         "مڠيجا",
@@ -236,20 +240,20 @@
         "pencil scratch"
       ],
       "timing": {
-        "start_frame": 253,
-        "end_frame": 373,
-        "frames": 120,
-        "start_s": 8.433,
-        "end_s": 12.433
+        "start_frame": 241,
+        "end_frame": 355,
+        "frames": 114,
+        "start_s": 8.033,
+        "end_s": 11.833
       },
       "vo": {
         "file": "out/vo-scratch/fit/03.wav",
         "raw_file": "out/vo-scratch/03.wav",
-        "raw_s": 3.897,
-        "fitted_s": 3.372,
-        "tempo": 1.08,
-        "start_frame": 261,
-        "end_frame": 363
+        "raw_s": 3.322,
+        "fitted_s": 3.162,
+        "tempo": 1.0,
+        "start_frame": 249,
+        "end_frame": 344
       }
     },
     {
@@ -285,8 +289,8 @@
           "text": "Bahasa Arab"
         }
       ],
-      "vo_text": "Atau kukuhkan asas Akidah, Ibadah, Adab, Sirah dan Bahasa Arab.",
-      "vo_tts_text": "Atau kukuhkan asas Akidah, Ibadah, Adab, Sirah dan Bahasa Arab.",
+      "vo_text": "Atau ulang kaji Akidah, Ibadah, Adab, Sirah dan Bahasa Arab.",
+      "vo_tts_text": "Atau ulang kaji Akidah, Ibadah, Adab, Sirah dan Bahasa Arab.",
       "characters": [
         {
           "id": "girl",
@@ -306,20 +310,20 @@
         "paper settle"
       ],
       "timing": {
-        "start_frame": 373,
-        "end_frame": 527,
-        "frames": 154,
-        "start_s": 12.433,
-        "end_s": 17.567
+        "start_frame": 355,
+        "end_frame": 517,
+        "frames": 162,
+        "start_s": 11.833,
+        "end_s": 17.233
       },
       "vo": {
         "file": "out/vo-scratch/fit/04.wav",
         "raw_file": "out/vo-scratch/04.wav",
-        "raw_s": 5.434,
-        "fitted_s": 4.489,
-        "tempo": 1.08,
-        "start_frame": 381,
-        "end_frame": 516
+        "raw_s": 5.096,
+        "fitted_s": 4.753,
+        "tempo": 1.0,
+        "start_frame": 363,
+        "end_frame": 506
       }
     },
     {
@@ -343,8 +347,8 @@
           "text": "6–8 MURID SEKELAS"
         }
       ],
-      "vo_text": "Empat minggu, tiga kelas seminggu, online dalam kumpulan kecil.",
-      "vo_tts_text": "Empat minggu, tiga kelas seminggu, online dalam kumpulan kecil.",
+      "vo_text": "Empat minggu, tiga kelas seminggu, secara online.",
+      "vo_tts_text": "Empat minggu, tiga kelas seminggu, secara online.",
       "characters": [],
       "props": [
         "paper calendar: 4 weeks, 3 ticked days each, no dates or month",
@@ -365,20 +369,20 @@
         "tick marks"
       ],
       "timing": {
-        "start_frame": 527,
-        "end_frame": 664,
-        "frames": 137,
-        "start_s": 17.567,
-        "end_s": 22.133
+        "start_frame": 517,
+        "end_frame": 647,
+        "frames": 130,
+        "start_s": 17.233,
+        "end_s": 21.567
       },
       "vo": {
         "file": "out/vo-scratch/fit/05.wav",
         "raw_file": "out/vo-scratch/05.wav",
-        "raw_s": 4.594,
-        "fitted_s": 3.912,
-        "tempo": 1.08,
-        "start_frame": 535,
-        "end_frame": 653
+        "raw_s": 3.888,
+        "fitted_s": 3.662,
+        "tempo": 1.0,
+        "start_frame": 525,
+        "end_frame": 635
       }
     },
     {
@@ -398,8 +402,8 @@
           "text": "Laporan Kemajuan"
         }
       ],
-      "vo_text": "Lengkap dengan modul digital dan laporan kemajuan murid.",
-      "vo_tts_text": "Lengkap dengan modul digital dan laporan kemajuan murid.",
+      "vo_text": "Lengkap dengan modul digital dan laporan kemajuan.",
+      "vo_tts_text": "Lengkap dengan modul digital dan laporan kemajuan.",
       "jawi": [
         "جاوي"
       ],
@@ -431,20 +435,20 @@
         "bright ding on the gold tick"
       ],
       "timing": {
-        "start_frame": 664,
-        "end_frame": 773,
-        "frames": 109,
-        "start_s": 22.133,
-        "end_s": 25.767
+        "start_frame": 647,
+        "end_frame": 759,
+        "frames": 112,
+        "start_s": 21.567,
+        "end_s": 25.3
       },
       "vo": {
         "file": "out/vo-scratch/fit/06.wav",
         "raw_file": "out/vo-scratch/06.wav",
-        "raw_s": 3.248,
-        "fitted_s": 3.007,
-        "tempo": 1.08,
-        "start_frame": 672,
-        "end_frame": 763
+        "raw_s": 3.074,
+        "fitted_s": 3.074,
+        "tempo": 1.0,
+        "start_frame": 655,
+        "end_frame": 748
       }
     },
     {
@@ -468,8 +472,8 @@
           "text": "{website}"
         }
       ],
-      "vo_text": "Tempat terhad. Daftar sekarang bersama OCLC!",
-      "vo_tts_text": "Tempat terhad. Daftar sekarang bersama O C L C!",
+      "vo_text": "Tempat terhad. Daftar sekarang!",
+      "vo_tts_text": "Tempat terhad. Daftar sekarang!",
       "characters": [
         {
           "id": "boy",
@@ -502,20 +506,20 @@
         "soft chime on the logo"
       ],
       "timing": {
-        "start_frame": 773,
+        "start_frame": 759,
         "end_frame": 900,
-        "frames": 127,
-        "start_s": 25.767,
+        "frames": 141,
+        "start_s": 25.3,
         "end_s": 30.0
       },
       "vo": {
         "file": "out/vo-scratch/fit/07.wav",
         "raw_file": "out/vo-scratch/07.wav",
-        "raw_s": 4.543,
-        "fitted_s": 3.591,
-        "tempo": 1.08,
-        "start_frame": 781,
-        "end_frame": 889
+        "raw_s": 3.431,
+        "fitted_s": 2.916,
+        "tempo": 1.0,
+        "start_frame": 767,
+        "end_frame": 855
       }
     }
   ]

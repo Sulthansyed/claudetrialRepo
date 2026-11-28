@@ -50,6 +50,33 @@ window.checkSafe = () => {
 window.textSizes = () => [...root.querySelectorAll('text[data-essential]')].map((el) => {
   return { text: el.textContent, size: +el.getAttribute('font-size'), px: Math.round(el.getBoundingClientRect().height) };
 });
+// Exact check for a Jawi word marked data-check="jawi-word": rasterise its ink, then hit-test every ink pixel.
+// Fails if a hand, forearm or the pencil is drawn above any ink pixel, or if ink crosses the fold.
+window.checkJawiClear = () => {
+  const el = root.querySelector('[data-check="jawi-word"]');
+  if (!el) return null;
+  const m = el.getScreenCTM();
+  const fs = +el.getAttribute('font-size') * Math.hypot(m.a, m.b);
+  const x = m.e + m.a * +el.getAttribute('x'), y = m.f + m.d * +el.getAttribute('y');
+  const cv = document.createElement('canvas'); cv.width = innerWidth; cv.height = innerHeight;
+  const c = cv.getContext('2d');
+  c.font = `700 ${fs}px "Noto Naskh Arabic"`; c.textAlign = 'center'; c.direction = 'rtl';
+  c.fillText(el.textContent, x, y);
+  const r = el.getBoundingClientRect();
+  const x0 = Math.floor(r.left), y0 = Math.floor(r.top), w = Math.ceil(r.width), h = Math.ceil(r.height);
+  const px = c.getImageData(x0, y0, w, h).data;
+  const fold = root.querySelector('[data-check="fold"]').getBoundingClientRect();
+  const isOccluder = (e) => { const g = e.closest('[data-part]'); return g && /^(hand|armLo|prop-pencil)/.test(g.dataset.part) ? g.dataset.part : null; };
+  const hits = new Set(); let ink = 0, inFold = 0;
+  for (let j = 0; j < h; j += 2) for (let i = 0; i < w; i += 2) {
+    if (px[(j * w + i) * 4 + 3] < 128) continue;
+    ink++;
+    const X = x0 + i, Y = y0 + j;
+    if (X >= fold.left && X <= fold.right) inFold++;
+    for (const e of document.elementsFromPoint(X, Y)) { if (e === el) break; const o = isOccluder(e); if (o) hits.add(o); }
+  }
+  return { inkPixels: ink, covered: [...hits], inkInFold: inFold };
+};
 window.render(0);
 // wait for the logo
 await new Promise((ok) => { const i = new Image(); i.onload = ok; i.onerror = ok; i.src = '../assets/oclc-logo.png'; });

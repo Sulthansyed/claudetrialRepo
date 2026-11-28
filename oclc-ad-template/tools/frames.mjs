@@ -26,6 +26,17 @@ if (cmd === 'keyframes') {
     const sizes = await pg.evaluate(() => window.textSizes());
     await shot(t, path.join(ROOT, `out/frames-safezone/scene-${i + 1}.png`), true);
     const minPx = Math.min(...sizes.map((x) => x.size));
+    // logo: rendered size and aspect (must stay square, i.e. undistorted)
+    const lines = [];
+    const logos = await pg.evaluate(() => [...document.querySelectorAll('[data-essential="logo"]')].map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10]; }));
+    for (const [w, h] of logos) lines.push(`   logo ${w} x ${h} px${Math.abs(w - h) > 0.5 ? '  DISTORTED' : ''}`);
+    // a Jawi word marked data-check="jawi-word": nothing drawn over its ink, no ink in the fold
+    const jw = await pg.evaluate(() => window.checkJawiClear());
+    if (jw) {
+      const ok = jw.inkPixels > 0 && !jw.covered.length && !jw.inkInFold;
+      lines.push(`   jawi word: ${jw.inkPixels} ink samples, covered by: ${jw.covered.join(', ') || 'nothing'}, ink in fold: ${jw.inkInFold}${ok ? '' : '  FAIL'}`);
+      if (!ok) problems++;
+    }
     // every on-screen text from the config must appear on screen (wrapped lines joined with a space)
     const brand = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/brand.json'), 'utf8'));
     const shown = ' ' + sizes.map((x) => x.text).join(' ') + ' ';
@@ -34,10 +45,11 @@ if (cmd === 'keyframes') {
       if (!shown.includes(' ' + want + ' ')) { problems++; console.log('   MISSING TEXT', JSON.stringify(want)); }
     }
     console.log(`scene ${i + 1} ${s.id.padEnd(12)} t=${t.toFixed(2)}s  texts=${sizes.length}  smallest=${minPx}px  outside safe zone: ${bad.length}`);
+    for (const l of lines) console.log(l);
     for (const b of bad) { problems++; console.log('   OUTSIDE', JSON.stringify(b)); }
     for (const x of sizes) console.log(`   ${String(x.size).padStart(3)}px  ${x.text}`);
   }
-  console.log(problems ? `${problems} essential element(s) outside the safe zone` : 'all essential text and logos inside the safe zone');
+  console.log(problems ? `${problems} problem(s): see OUTSIDE / MISSING / FAIL above` : 'all checks pass: text and logos inside the safe zone, all text present, Jawi clear');
 } else if (cmd === 'seq') {
   const [t0, t1, dir] = [+args[0], +args[1], path.resolve(ROOT, args[2])];
   fs.rmSync(dir, { recursive: true, force: true });
