@@ -1,0 +1,19 @@
+RM2,000 or RM0? (SSPN) — third-party material in this film (Stage A: picture + scratch voice; music and foley come in Stage B)
+
+PICTURE
+- Everything on screen is drawn in code (film.js); no images, footage or generated pictures. The spreadsheet shell is
+  generic and hand-drawn: no product name, logo or brand colours. File name on screen: SSPN_2026.xlsx.
+- Small helpers in film.js (easing, hash, the cell / grid / selection drawing approach) follow the Lemo-Opuscar
+  library's Spreadsheet Film demo, https://github.com/lemomo-ai/lemo-opuscar · Copyright (c) 2026 Lemomo (LemoLab) · MIT licence.
+
+FONT
+- Inter — Rasmus Andersson · SIL Open Font License 1.1 (fonts/Inter-OFL.txt), from https://github.com/rsms/inter (v4.0).
+
+VOICE
+- Narration: Kokoro-82M text-to-speech, voice "am_onyx", speed 0.92 (hexgrad, https://huggingface.co/hexgrad/Kokoro-82M)
+  Apache License 2.0; ONNX export by thewh1teagle/kokoro-onnx (runtime MIT).
+- Speech check: faster-whisper "base.en" (Systran) · MIT.
+
+CONTENT
+- Aisyah and Ali are fictional. No bank, PTPTN, LHDN or spreadsheet-software logo or colour appears.
+- Tax figures: see FACTS.md. This film is general information, not financial or tax advice.
