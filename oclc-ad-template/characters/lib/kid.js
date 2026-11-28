@@ -46,9 +46,11 @@ export function kidParts(C, kind) {
     `<path d="M-80,-486 L-72,-565 Q-71,-575 -61,-576 L61,-576 Q71,-575 72,-565 L80,-486 Q0,-478 -80,-486 Z" fill="${C.navy}"/>` +
     `<path d="M-61,-576 L61,-576 Q70,-575 71.5,-567 Q0,-562 -71.5,-567 Q-70,-575 -61,-576 Z" fill="${C.songkok_top}"/>`;
 
-  const girlFace = `<ellipse cx="0" cy="-424" rx="77" ry="83" fill="${C.skin}"/>` +
-    // navy under-scarf band across the forehead
-    `<path d="M-64,-470 C-52,-506 52,-506 64,-470 C48,-490 -48,-490 -64,-470 Z" fill="${C.navy}"/>` + nose;
+  const girlFace = `<ellipse cx="0" cy="-424" rx="77" ry="83" fill="${C.skin}"/>` + nose;
+  // inner cap (anak tudung): its own paper piece, covers the whole hairline so no hair shows
+  const innerCap = `<path d="M-76,-446 C-80,-548 80,-548 76,-446 C58,-476 32,-486 0,-487 C-32,-486 -58,-476 -74,-452 Z" fill="${C.inner_cap}"/>`;
+  // girl's brows: smaller strips sitting just below the cap
+  const girlBrow = `<path d="M-47,-463 C-41,-471 -28,-472 -21,-467 L-22,-459 C-29,-463 -41,-463 -46,-456 Z" fill="${C.hair}"/>`;
   const hood =
     `<path fill-rule="evenodd" d="M0,-554 C76,-554 118,-505 118,-432 C118,-378 102,-345 76,-328 L-76,-328 C-102,-345 -118,-378 -118,-432 C-118,-505 -76,-554 0,-554 Z ` +
     `M-71,-424 A71,79 0 1,0 71,-424 A71,79 0 1,0 -71,-424 Z" fill="${C.hijab}" stroke="${C.navy}" stroke-width="3.2" stroke-linejoin="round"/>` +
@@ -107,7 +109,8 @@ export function kidParts(C, kind) {
     ...(girl ? [{ id: 'drape', parent: 'torso', pivot: [0, -340], z: 36, svg: drape }] : []),
     { id: 'cheeks', parent: 'head', pivot: [0, -400], z: 54, svg: cheeks, fx: 's' },
     { id: 'eyeL', parent: 'head', pivot: [-34, -430], z: 57, pair: true, variants: eye, def: 'dot', fx: 's' },
-    { id: 'browL', parent: 'head', pivot: [-36, -468], z: 58, pair: true, svg: brow, fx: 's' },
+    ...(girl ? [{ id: 'cap', parent: 'head', pivot: [0, -480], z: 52, svg: innerCap }] : []),
+    { id: 'browL', parent: 'head', pivot: girl ? [-34, -463] : [-36, -468], z: 58, pair: true, svg: girl ? girlBrow : brow, fx: 's' },
     { id: 'mouth', parent: 'head', pivot: [0, -388], z: 57, variants: mouth, def: 'neutral', fx: 's' },
     { id: 'armUpL', parent: 'torso', pivot: [-64, -330], z: 30, pair: true, svg: armUp },
     { id: 'armLoL', parent: 'armUpL', pivot: [-66, -263], z: 38, pair: true, svg: armLo },
@@ -125,6 +128,17 @@ export const kidExpressions = {
   confident: { var: { eyeL: 'dot', eyeR: 'dot', mouth: 'smirk' }, rot: { browL: 7, browR: 3 }, off: { browL: [0, -2], browR: [0, -4] } },
   focused: { var: { eyeL: 'down', eyeR: 'down', mouth: 'neutral' }, rot: { browL: 9, browR: 9 }, off: { browL: [0, 4], browR: [0, 4] } },
 };
+
+// The girl's brows sit just below her inner cap, so they lift less (they must stay clear of the cap edge).
+export function kidExpressionsFor(kind) {
+  if (kind !== 'girl') return kidExpressions;
+  const k = 0.6;
+  return Object.fromEntries(Object.entries(kidExpressions).map(([name, e]) => {
+    const off = { ...(e.off || {}) };
+    for (const b of ['browL', 'browR']) if (off[b]) off[b] = [off[b][0], off[b][1] < 0 ? off[b][1] * k : off[b][1]];
+    return [name, { ...e, off }];
+  }));
+}
 
 export const kidChains = { armL: ['armUpL', 'armLoL', 'handL'], armR: ['armUpR', 'armLoR', 'handR'] };
 export const kidRest = { rot: { armUpL: 5, armUpR: 5 } };
