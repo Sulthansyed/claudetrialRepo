@@ -9,7 +9,7 @@ A new ad should only need new files in `config/`.
 oclc-ad-template/
   config/
     brand.json            colours (navy/teal sampled from the logo), fonts, logo rules, contact, class size
-    upkk-2027.json        script / scenes / timings (stub, filled in Step 3)
+    upkk-2027.json        scenes: text, VO, characters, props, camera, sfx, frame timings
   characters/
     lib/paper.js          paper finish as SVG filters (edge wobble, grain, cut rims, layer shadows)
     lib/rig.js            separate-part rig: compose(rig, pose), two-bone IK, mirrored L/R pairs
