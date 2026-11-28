@@ -1,0 +1,129 @@
+{
+  "name": "One Click Learning Centre",
+  "short_name": "OCLC",
+
+  "colors": {
+    "navy": {
+      "hex": "#0D2047",
+      "source": "sampled from assets/oclc-logo.png: median of the three navy squares (wordmark measures #0E2048)",
+      "use": "primary; all body and headline text on cream; outlines"
+    },
+    "teal": {
+      "hex": "#14BDBF",
+      "source": "sampled from assets/oclc-logo.png: median of the 'L' square",
+      "use": "primary accent; never for text on cream (2.13:1)"
+    },
+    "cream": {
+      "hex": "#F8F5EC",
+      "use": "background"
+    },
+    "gold": {
+      "hex": "#E9B949",
+      "use": "small highlights only: stars, ticks, underlines"
+    },
+    "terracotta": {
+      "hex": "#C97862",
+      "use": "cheeks and small warm details only"
+    }
+  },
+
+  "text": {
+    "color": "navy",
+    "background": "cream",
+    "contrast": {
+      "navy_on_cream": 14.65,
+      "navy_on_teal": 6.89,
+      "teal_on_cream": 2.13,
+      "rule": "text must be >= 4.5:1; navy on cream passes, teal on cream does not and is used for shapes only"
+    }
+  },
+
+  "fonts": {
+    "headline": {
+      "family": "Montserrat",
+      "weight": 800,
+      "files": ["assets/fonts/montserrat-latin-800-normal.woff2", "assets/fonts/montserrat-latin-ext-800-normal.woff2"],
+      "license": "SIL OFL 1.1 (assets/fonts/OFL-Montserrat.txt)"
+    },
+    "body": {
+      "family": "Montserrat",
+      "weight": 400,
+      "files": ["assets/fonts/montserrat-latin-400-normal.woff2", "assets/fonts/montserrat-latin-ext-400-normal.woff2"],
+      "license": "SIL OFL 1.1"
+    },
+    "label": {
+      "family": "Montserrat",
+      "weight": 700,
+      "files": ["assets/fonts/montserrat-latin-700-normal.woff2"],
+      "license": "SIL OFL 1.1"
+    },
+    "jawi": {
+      "family": "Noto Naskh Arabic",
+      "weights": [400, 700],
+      "files": ["assets/fonts/noto-naskh-arabic-arabic-400-normal.woff2", "assets/fonts/noto-naskh-arabic-arabic-700-normal.woff2"],
+      "license": "SIL OFL 1.1 (assets/fonts/OFL-NotoNaskhArabic.txt)",
+      "rendering": "always set as live text in the browser (dir=rtl, lang=ms-Arab) so letters join; never as individual glyph shapes"
+    },
+    "malay_support": "Bahasa Melayu (Rumi) uses basic Latin only; Montserrat latin subset covers it"
+  },
+
+  "logo": {
+    "file": "assets/oclc-logo.png",
+    "size_px": [1254, 1254],
+    "aspect": "1:1",
+    "rules": [
+      "use the file as is; never redraw, recolour, crop into, stretch or add effects",
+      "scale uniformly only",
+      "place on cream; keep clear space of at least one logo square on every side"
+    ]
+  },
+
+  "contact": {
+    "whatsapp_display": "019-823 0383",
+    "whatsapp_international": "+60 19-823 0383",
+    "website": "oneclicklearningcentre.com"
+  },
+
+  "class_size": {
+    "en": "6–8 pupils per class",
+    "ms": "6–8 murid sekelas"
+  },
+
+  "style": {
+    "name": "layered cardstock paper-cut",
+    "base_library_style": "Lemo-Opuscar papercut-red (materials and motion only; palette replaced by this file)",
+    "rules": [
+      "flat cut-paper pieces, subtle grain, slightly irregular hand-cut edges",
+      "2-3 depth layers with soft drop shadows; light from top-left",
+      "no gradients, no gloss, no 3D shading",
+      "characters step at about 12 fps inside a 30 fps film (pose sampled at floor(t*12)/12, holds of 2-3 frames); camera, light and text move every frame"
+    ]
+  },
+
+  "illustration_palette": {
+    "_note": "supporting paper tones for characters and props; brand colours above stay the heroes",
+    "skin": "#E0AA82",
+    "skin_shade": "#C98F66",
+    "hair": "#2B211D",
+    "white_card": "#FFFFFF",
+    "baju_teal": "#A8DDD8",
+    "baju_teal_deep": "#8DCFCA",
+    "baju_teal_line": "#6CB9B4",
+    "hijab": "#FFFCF4",
+    "hijab_fold": "#E9E1CF",
+    "kurung": "#1B2F62",
+    "kurung_deep": "#0D2047",
+    "kurung_line": "#3A5089",
+    "songkok_top": "#22397A",
+    "klik_teal": "#2EA9B0",
+    "klik_teal_light": "#41B8BC",
+    "klik_teal_deep": "#23949C",
+    "klik_screen": "#17254A",
+    "klik_bezel": "#293B69",
+    "klik_glow": "#D8F7F9",
+    "klik_glow_halo": "#2C6A8E",
+    "kraft": "#DCC6A0",
+    "kraft_deep": "#C7AD84",
+    "ink_line": "#0D2047"
+  }
+}

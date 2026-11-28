@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OCLC Character Sheet</title>
+<style id="fonts"></style>
+<style>
+  html, body { margin: 0; background: #F8F5EC; }
+  svg { display: block; }
+  text { font-family: 'Montserrat', sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+import { loadBrand, fontCSS, fontsReady, fig, paperDefs, imagesReady } from './common.js';
+import { piece } from '../characters/lib/paper.js';
+import boy from '../characters/boy/rig.js';
+import girl from '../characters/girl/rig.js';
+import klik from '../characters/klik/rig.js';
+import { poses, expressionsShown } from '../characters/poses.js';
+
+document.getElementById('fonts').textContent = fontCSS;
+const { brand, C } = await loadBrand();
+const RIG = { boy: boy(C), girl: girl(C), klik: klik(C) };
+const W = 4800, H = 3300;
+const CARD = '#FFFDF7';
+
+const txt = (x, y, s, { size = 40, weight = 700, fill = C.navy, anchor = 'middle', ls = 0 } = {}) =>
+  `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" letter-spacing="${ls}">${s}</text>`;
+const card = (x, y, w, h, title) =>
+  `<g filter="url(#pp-drop)"><g filter="url(#pp-tex)"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="18" fill="${CARD}"/></g></g>` +
+  (title ? txt(x + 44, y + 74, title, { size: 46, weight: 800, anchor: 'start', ls: 3 }) +
+    `<rect x="${x + 46}" y="${y + 92}" width="90" height="7" rx="3.5" fill="${C.gold}"/>` : '');
+const label = (x, y, en, ms) => txt(x, y, en, { size: 40, weight: 700 }) + txt(x, y + 46, ms, { size: 32, weight: 400, fill: '#3B4A6B' });
+
+const out = [];
+out.push(`<rect width="${W}" height="${H}" fill="${C.cream}" filter="url(#pp-card)"/>`);
+
+// ---------- header ----------
+out.push(`<image href="../assets/oclc-logo.png" x="96" y="40" width="250" height="250" preserveAspectRatio="xMidYMid meet"/>`);
+out.push(txt(400, 150, 'UPKK 2027 · CHARACTER SHEET', { size: 92, weight: 800, anchor: 'start', ls: 2 }));
+out.push(`<rect x="404" y="176" width="300" height="10" rx="5" fill="${C.gold}"/>`);
+out.push(txt(400, 250, 'Step 1 for approval · layered cardstock paper-cut · separate-part rigs, stepped at 12 fps inside a 30 fps film', { size: 40, weight: 400, anchor: 'start' }));
+
+// ---------- boy poses ----------
+const S = 1.16;
+out.push(card(80, 320, 3150, 990, 'BOY'));
+const boyPoses = [['confused', 'Confused', 'Keliru'], ['excited', 'Excited', 'Teruja'], ['writing', 'Writing with a pencil', 'Menulis'], ['books', 'Holding books, confident', 'Yakin']];
+boyPoses.forEach(([k, en, ms], i) => {
+  const cx = 80 + 230 + i * 770;
+  out.push(fig(RIG.boy, poses.boy[k], cx + 120, 1170, S));
+  out.push(label(cx + 120, 1236, en, ms));
+});
+
+// ---------- expressions ----------
+out.push(card(3280, 320, 1440, 990, 'EXPRESSIONS'));
+const exLabel = { neutral: ['Neutral', 'Tenang'], confused: ['Confused', 'Keliru'], happy: ['Happy', 'Gembira'], excited: ['Excited', 'Teruja'] };
+['boy', 'girl'].forEach((who, r) => {
+  expressionsShown.forEach((e, i) => {
+    const cx = 3280 + 210 + i * 340, mid = 640 + r * 385, s = 1.22;
+    out.push(fig(RIG[who], { expr: e }, cx, mid + 455 * s, s, { only: 'head' }));
+    if (r === 1) out.push(label(cx, 1236, ...exLabel[e]));
+  });
+});
+
+// ---------- girl poses ----------
+out.push(card(80, 1360, 2380, 990, 'GIRL'));
+const girlPoses = [['neutral', 'Neutral', 'Tenang'], ['excited', 'Excited', 'Teruja'], ['books', 'Holding books, confident', 'Yakin']];
+girlPoses.forEach(([k, en, ms], i) => {
+  const cx = 80 + 350 + i * 770;
+  out.push(fig(RIG.girl, poses.girl[k], cx, 2210, S));
+  out.push(label(cx, 2276, en, ms));
+});
+
+// ---------- size line-up ----------
+out.push(card(2510, 1360, 2210, 990, 'SIZE LINE-UP'));
+{
+  const g = 2210, s = 1.16, xs = [2900, 3350, 3820];
+  const lines = [
+    { y: -576, t: 'Boy 576 u · 100%' }, { y: -554, t: 'Girl 554 u · 96%' },
+    { y: -432, t: 'Klik body top' }, { y: -224, t: 'Klik body base' },
+  ];
+  lines.forEach(({ y, t }, i) => {
+    const yy = g + y * s;
+    out.push(`<path d="M2600,${yy} L4200,${yy}" stroke="${C.navy}" stroke-width="2.5" stroke-dasharray="14 12" opacity="0.45"/>`);
+    out.push(txt(4230, yy + (i === 1 ? 30 : i === 0 ? -6 : 12), t, { size: 30, weight: 400, anchor: 'start' }));
+  });
+  out.push(`<path d="M2600,${g} L4650,${g}" stroke="${C.navy}" stroke-width="4" opacity="0.7"/>`);
+  out.push(fig(RIG.boy, poses.boy.neutral, xs[0], g, s));
+  out.push(fig(RIG.girl, poses.girl.neutral, xs[1], g, s));
+  out.push(fig(RIG.klik, poses.klik.neutral, xs[2], g, s));
+  ['Klik floats at kid chest height', 'Kid ≈ 3.3 heads tall', 'Klik cube ≈ 1.2 kid-head widths'].forEach((t, i) =>
+    out.push(txt(4230, g - 200 + i * 44, t, { size: 30, weight: 400, anchor: 'start' })));
+  ['Boy', 'Girl', 'Klik'].forEach((n, i) => out.push(txt(xs[i], g + 66, n, { size: 40 })));
+}
+
+// ---------- Klik ----------
+out.push(card(80, 2400, 2830, 840, 'KLIK'));
+const klikPoses = [['neutral', 'Neutral float', 'Terapung'], ['tap', 'Taps its cursor: "click"', 'Klik!'], ['happy', 'Happy face', 'Gembira'], ['whatsapp', 'WhatsApp face', 'Hubungi kami']];
+klikPoses.forEach(([k, en, ms], i) => {
+  const cx = 80 + 380 + i * 670;
+  const ks = 1.25;
+  out.push(`<ellipse cx="${cx}" cy="3052" rx="${92 * ks}" ry="${12 * ks}" fill="${C.navy}" opacity="0.13"/>`);
+  out.push(fig(RIG.klik, { ...poses.klik[k], hide: ['shadow'] }, cx, 3010 + 224 * ks, ks));
+  out.push(label(cx, 3136, en, ms));
+});
+
+// ---------- palette ----------
+out.push(card(2960, 2400, 1760, 840, 'PALETTE'));
+{
+  const brandSw = [['navy', 'Navy', 'logo · text'], ['teal', 'Teal', 'logo · accent'], ['cream', 'Cream', 'background'], ['gold', 'Gold', 'highlights only'], ['terracotta', 'Terracotta', 'cheeks · warm bits']];
+  brandSw.forEach(([k, n, u], i) => {
+    const x = 3010 + i * 336, y = 2530;
+    out.push(piece(`<rect x="${x}" y="${y}" width="300" height="150" rx="10" fill="${C[k]}"${k === 'cream' ? ` stroke="${C.navy}" stroke-width="2" stroke-opacity="0.25"` : ''}/>`));
+    out.push(txt(x, y + 200, n, { size: 36, weight: 800, anchor: 'start' }));
+    out.push(txt(x, y + 240, C[k], { size: 32, weight: 400, anchor: 'start' }));
+    out.push(txt(x, y + 278, u, { size: 26, weight: 400, anchor: 'start', fill: '#3B4A6B' }));
+  });
+  const sup = [['skin', 'Skin'], ['hair', 'Hair · brows'], ['baju_teal', 'Baju Melayu'], ['baju_teal_deep', 'Trousers'], ['hijab', 'Hijab'], ['kurung', 'Baju kurung'], ['klik_teal', 'Klik body'], ['klik_screen', 'Klik screen'], ['klik_glow', 'Klik glow'], ['kraft', 'Desk kraft']];
+  sup.forEach(([k, n], i) => {
+    const x = 3010 + (i % 5) * 336, y = 2850 + Math.floor(i / 5) * 160;
+    out.push(piece(`<rect x="${x}" y="${y}" width="70" height="70" rx="8" fill="${C[k]}"${['hijab', 'klik_glow'].includes(k) ? ` stroke="${C.navy}" stroke-width="2.4"` : ''}/>`, { small: true }));
+    out.push(txt(x + 88, y + 30, n, { size: 28, weight: 700, anchor: 'start' }));
+    out.push(txt(x + 88, y + 64, C[k], { size: 26, weight: 400, anchor: 'start' }));
+  });
+  const ratio = brand.text.contrast.navy_on_cream;
+  out.push(`<path d="M3018,3186 l12,12 l22,-26" fill="none" stroke="${C.gold}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`);
+  out.push(txt(3068, 3198, `Navy text on cream = ${ratio.toFixed(2)} : 1 (needs 4.5). Navy and teal sampled from the logo file.`, { size: 28, weight: 400, anchor: 'start' }));
+}
+
+const root = document.getElementById('root');
+root.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${paperDefs({ ink: C.navy })}${out.join('\n')}</svg>`;
+await fontsReady(['800 40px Montserrat', '700 40px Montserrat', '400 40px Montserrat']);
+await imagesReady(root);
+await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+window.READY = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>OCLC Test Frame</title>
+<style id="fonts"></style>
+<style>
+  html, body { margin: 0; background: #F8F5EC; }
+  svg { display: block; }
+  text { font-family: 'Montserrat', sans-serif; }
+  .jawi { font-family: 'Noto Naskh Arabic', serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+// Scale check on a phone: the boy, confused, at his study desk. 1080 x 1920.
+import { loadBrand, fontCSS, fontsReady, fig, paperDefs } from './common.js';
+import { piece } from '../characters/lib/paper.js';
+import boy from '../characters/boy/rig.js';
+import { poses } from '../characters/poses.js';
+
+document.getElementById('fonts').textContent = fontCSS;
+const { C } = await loadBrand();
+const W = 1080, H = 1920;
+const B = boy(C);
+const o = [];
+
+// layer 0: the cream card
+o.push(`<rect width="${W}" height="${H}" fill="${C.cream}" filter="url(#pp-card)"/>`);
+
+// layer 1: back wall pieces (furthest, smallest shadow)
+o.push(`<g filter="url(#pp-drop)">` +
+  piece(`<circle cx="560" cy="860" r="330" fill="#E3F2EF"/>`) +
+  piece(`<rect x="70" y="520" width="250" height="20" rx="4" fill="${C.kraft_deep}"/>`) +
+  piece(`<rect x="96" y="418" width="34" height="102" rx="4" fill="${C.teal}"/>`) +
+  piece(`<rect x="134" y="436" width="30" height="84" rx="4" fill="${C.navy}"/>`) +
+  piece(`<rect x="168" y="408" width="36" height="112" rx="4" fill="${C.white_card}" stroke="${C.navy}" stroke-width="2.4"/>`) +
+  piece(`<rect x="206" y="446" width="28" height="74" rx="4" fill="${C.baju_teal_deep}" transform="rotate(14 220 520)"/>`) +
+  `</g>`);
+
+// layer 2: chair back + the boy
+o.push(`<g filter="url(#pp-drop)">` + piece(`<rect x="378" y="1010" width="324" height="300" rx="34" fill="${C.kraft_deep}"/>`) + `</g>`);
+const s = 1.6;
+o.push(fig(B, poses.boy.confused, 540, 1280 + 194 * s, s));
+
+// layer 3: the desk (nearest)
+const desk =
+  piece(`<rect x="90" y="1240" width="900" height="190" rx="14" fill="${C.kraft}"/>`) +
+  piece(`<rect x="70" y="1418" width="940" height="34" rx="10" fill="${C.kraft_deep}"/>`) +
+  piece(`<rect x="110" y="1452" width="860" height="300" rx="8" fill="${C.kraft_deep}"/>`) +
+  piece(`<rect x="370" y="1500" width="340" height="110" rx="10" fill="${C.kraft}"/>`) +
+  piece(`<rect x="505" y="1546" width="70" height="16" rx="8" fill="${C.navy}"/>`);
+// the open Jawi workbook lying on the desk: real Jawi, set as live text so the letters join
+const book =
+  piece(`<rect x="330" y="1268" width="420" height="136" rx="8" fill="${C.teal}"/>`) +
+  piece(`<rect x="342" y="1276" width="194" height="120" rx="4" fill="${C.white_card}"/><rect x="544" y="1276" width="194" height="120" rx="4" fill="${C.white_card}"/>`) +
+  `<text class="jawi" x="439" y="1352" font-size="62" font-weight="700" fill="${C.navy}" text-anchor="middle" direction="rtl">جاوي</text>` +
+  `<text class="jawi" x="641" y="1328" font-size="34" fill="${C.navy}" text-anchor="middle" direction="rtl">ا ب ت ث ج چ</text>` +
+  `<path d="M566,1360 L716,1360 M566,1382 L716,1382" stroke="#C8D0DE" stroke-width="2.4" stroke-linecap="round"/>`;
+const cup =
+  piece(`<rect x="826" y="1170" width="14" height="110" rx="4" fill="${C.gold}" transform="rotate(-10 833 1280)"/>`) +
+  piece(`<rect x="852" y="1160" width="14" height="120" rx="4" fill="${C.navy}" transform="rotate(8 859 1280)"/>`) +
+  piece(`<path d="M800,1222 L900,1222 L890,1320 Q888,1330 878,1330 L822,1330 Q812,1330 810,1320 Z" fill="${C.teal}"/>`);
+const stack =
+  piece(`<rect x="130" y="1296" width="150" height="30" rx="5" fill="${C.navy}"/>`) +
+  piece(`<rect x="140" y="1266" width="132" height="30" rx="5" fill="${C.baju_teal_deep}"/>`) +
+  piece(`<rect x="134" y="1238" width="140" height="28" rx="5" fill="${C.white_card}" stroke="${C.navy}" stroke-width="2.4"/>`);
+const pencil = piece(B.props.pencil.svg);
+o.push(`<g filter="url(#pp-drop)">${desk}${book}${cup}${stack}<g transform="translate(196 1428) rotate(-6) scale(1.3)">${pencil}</g></g>`);
+
+const root = document.getElementById('root');
+root.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${paperDefs({ ink: C.navy })}${o.join('\n')}</svg>`;
+await fontsReady(['700 40px "Noto Naskh Arabic"', '400 40px "Noto Naskh Arabic"']);
+await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+window.READY = true;
+</script>
+</body>
+</html>

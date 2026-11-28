@@ -1,0 +1,11 @@
+{
+  "name": "oclc-ad-template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "rigs": "node tools/export-rigs.mjs",
+    "sheet": "node tools/render.mjs sheet/character-sheet.html out/character-sheet.png 4800 3300",
+    "test-frame": "node tools/render.mjs sheet/test-frame-9x16.html out/test-frame-9x16.png 1080 1920",
+    "build": "npm run rigs && npm run sheet && npm run test-frame"
+  }
+}

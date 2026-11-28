@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-140 -600 280 290" width="280" height="290"><defs>
+<filter id="pp-tex" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7" result="w"/>
+  <feDisplacementMap in="SourceGraphic" in2="w" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="s"/>
+  <feTurbulence type="fractalNoise" baseFrequency="0.9 0.55" numOctaves="3" seed="3" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0.55 0 0 0 0.225  0.55 0 0 0 0.225  0.55 0 0 0 0.225  0 0 0 0 1" result="g"/>
+  <feBlend in="g" in2="s" mode="soft-light" result="b"/>
+  <feComposite in="b" in2="s" operator="in"/>
+</filter>
+<filter id="pp-tex-s" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="1" seed="5" result="w"/>
+  <feDisplacementMap in="SourceGraphic" in2="w" scale="1.4" xChannelSelector="R" yChannelSelector="G" result="s"/>
+  <feTurbulence type="fractalNoise" baseFrequency="0.9 0.55" numOctaves="2" seed="3" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0.4 0 0 0 0.3  0.4 0 0 0 0.3  0.4 0 0 0 0.3  0 0 0 0 1" result="g"/>
+  <feBlend in="g" in2="s" mode="soft-light" result="b"/>
+  <feComposite in="b" in2="s" operator="in"/>
+</filter>
+<filter id="pp-lift" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+  <feOffset in="SourceAlpha" dx="1.5" dy="1.5" result="o1"/>
+  <feComposite in="SourceGraphic" in2="o1" operator="out" result="e1"/>
+  <feFlood flood-color="#FFFFFF" flood-opacity="0.55"/>
+  <feComposite in2="e1" operator="in" result="hi"/>
+  <feOffset in="SourceAlpha" dx="-1.5" dy="-1.5" result="o2"/>
+  <feComposite in="SourceGraphic" in2="o2" operator="out" result="e2"/>
+  <feFlood flood-color="#0D2047" flood-opacity="0.35"/>
+  <feComposite in2="e2" operator="in" result="lo"/>
+  <feGaussianBlur in="SourceAlpha" stdDeviation="2.6"/>
+  <feOffset dx="2.2" dy="3.6" result="sb"/>
+  <feFlood flood-color="#0D2047" flood-opacity="0.30"/>
+  <feComposite in2="sb" operator="in" result="sh"/>
+  <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/><feMergeNode in="hi"/><feMergeNode in="lo"/></feMerge>
+</filter>
+<filter id="pp-drop" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="7"/>
+  <feOffset dx="8" dy="13" result="sb"/>
+  <feFlood flood-color="#0D2047" flood-opacity="0.20"/>
+  <feComposite in2="sb" operator="in" result="sh"/>
+  <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="pp-card" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency="0.8 0.5" numOctaves="3" seed="21" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="0.45 0 0 0 0.275  0.45 0 0 0 0.275  0.45 0 0 0 0.275  0 0 0 0 1" result="g"/>
+  <feBlend in="g" in2="SourceGraphic" mode="soft-light" result="b"/>
+  <feComposite in="b" in2="SourceGraphic" operator="in"/>
+</filter>
+</defs><g filter="url(#pp-drop)"><g class="rig rig-boy"><g data-part="head" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex)"><circle cx="-90" cy="-428" r="17" fill="#E0AA82"/><path d="M-94,-436 Q-100,-428 -93,-420" fill="none" stroke="#C98F66" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="-428" r="17" fill="#E0AA82"/><path d="M94,-436 Q100,-428 93,-420" fill="none" stroke="#C98F66" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="0" cy="-430" rx="92" ry="86" fill="#E0AA82"/><path d="M-88,-452 C-92,-478 -84,-497 -70,-500 L70,-500 C84,-497 92,-478 88,-452 L82,-454 C80,-468 72,-476 56,-479 C30,-486 -30,-486 -56,-479 C-72,-476 -80,-468 -82,-454 Z" fill="#2B211D"/><path d="M-5,-411 Q0,-405 5,-411" fill="none" stroke="#C98F66" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></g></g></g>
+<g data-part="cheeks" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex-s)"><ellipse cx="-55" cy="-399" rx="13" ry="8" fill="#C97862"/><ellipse cx="55" cy="-399" rx="13" ry="8" fill="#C97862"/></g></g></g>
+<g data-part="songkok" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex)"><path d="M-80,-486 L-72,-565 Q-71,-575 -61,-576 L61,-576 Q71,-575 72,-565 L80,-486 Q0,-478 -80,-486 Z" fill="#0D2047"/><path d="M-61,-576 L61,-576 Q70,-575 71.5,-567 Q0,-562 -71.5,-567 Q-70,-575 -61,-576 Z" fill="#22397A"/></g></g></g>
+<g data-part="eyeL" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex-s)"><circle cx="-34" cy="-430" r="10" fill="#0D2047"/><circle cx="-30.5" cy="-433.5" r="3.2" fill="#FFFFFF"/></g></g></g>
+<g data-part="eyeR" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex-s)"><g transform="scale(-1 1)"><circle cx="-34" cy="-430" r="10" fill="#0D2047"/><circle cx="-30.5" cy="-433.5" r="3.2" fill="#FFFFFF"/></g></g></g></g>
+<g data-part="mouth" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex-s)"><path d="M-12,-388 Q0,-384 12,-388" fill="none" stroke="#0D2047" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></g></g></g>
+<g data-part="browL" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex-s)"><path d="M-53,-467 C-45,-476 -28,-477 -19,-471 L-20,-462 C-29,-467 -44,-467 -52,-459 Z" fill="#2B211D"/></g></g></g>
+<g data-part="browR" filter="url(#pp-lift)"><g transform="matrix(1 0 0 1 0 0)"><g filter="url(#pp-tex-s)"><g transform="scale(-1 1)"><path d="M-53,-467 C-45,-476 -28,-477 -19,-471 L-20,-462 C-29,-467 -44,-467 -52,-459 Z" fill="#2B211D"/></g></g></g></g></g></g></svg>
