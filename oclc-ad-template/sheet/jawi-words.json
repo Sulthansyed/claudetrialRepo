@@ -1,0 +1,146 @@
+[
+ {
+  "rumi": "Jawi",
+  "jawi": "جاوي",
+  "letters": [
+   {
+    "ch": "ج",
+    "cp": "U+062C",
+    "unicode_name": "ARABIC LETTER JEEM",
+    "jawi_name": "jim"
+   },
+   {
+    "ch": "ا",
+    "cp": "U+0627",
+    "unicode_name": "ARABIC LETTER ALEF",
+    "jawi_name": "alif"
+   },
+   {
+    "ch": "و",
+    "cp": "U+0648",
+    "unicode_name": "ARABIC LETTER WAW",
+    "jawi_name": "wau"
+   },
+   {
+    "ch": "ي",
+    "cp": "U+064A",
+    "unicode_name": "ARABIC LETTER YEH",
+    "jawi_name": "ya"
+   }
+  ]
+ },
+ {
+  "rumi": "membaca",
+  "jawi": "ممباچ",
+  "letters": [
+   {
+    "ch": "م",
+    "cp": "U+0645",
+    "unicode_name": "ARABIC LETTER MEEM",
+    "jawi_name": "mim"
+   },
+   {
+    "ch": "م",
+    "cp": "U+0645",
+    "unicode_name": "ARABIC LETTER MEEM",
+    "jawi_name": "mim"
+   },
+   {
+    "ch": "ب",
+    "cp": "U+0628",
+    "unicode_name": "ARABIC LETTER BEH",
+    "jawi_name": "ba"
+   },
+   {
+    "ch": "ا",
+    "cp": "U+0627",
+    "unicode_name": "ARABIC LETTER ALEF",
+    "jawi_name": "alif"
+   },
+   {
+    "ch": "چ",
+    "cp": "U+0686",
+    "unicode_name": "ARABIC LETTER TCHEH",
+    "jawi_name": "ca"
+   }
+  ]
+ },
+ {
+  "rumi": "mengeja",
+  "jawi": "مڠيجا",
+  "letters": [
+   {
+    "ch": "م",
+    "cp": "U+0645",
+    "unicode_name": "ARABIC LETTER MEEM",
+    "jawi_name": "mim"
+   },
+   {
+    "ch": "ڠ",
+    "cp": "U+06A0",
+    "unicode_name": "ARABIC LETTER AIN WITH THREE DOTS ABOVE",
+    "jawi_name": "nga"
+   },
+   {
+    "ch": "ي",
+    "cp": "U+064A",
+    "unicode_name": "ARABIC LETTER YEH",
+    "jawi_name": "ya"
+   },
+   {
+    "ch": "ج",
+    "cp": "U+062C",
+    "unicode_name": "ARABIC LETTER JEEM",
+    "jawi_name": "jim"
+   },
+   {
+    "ch": "ا",
+    "cp": "U+0627",
+    "unicode_name": "ARABIC LETTER ALEF",
+    "jawi_name": "alif"
+   }
+  ]
+ },
+ {
+  "rumi": "menulis",
+  "jawi": "منوليس",
+  "letters": [
+   {
+    "ch": "م",
+    "cp": "U+0645",
+    "unicode_name": "ARABIC LETTER MEEM",
+    "jawi_name": "mim"
+   },
+   {
+    "ch": "ن",
+    "cp": "U+0646",
+    "unicode_name": "ARABIC LETTER NOON",
+    "jawi_name": "nun"
+   },
+   {
+    "ch": "و",
+    "cp": "U+0648",
+    "unicode_name": "ARABIC LETTER WAW",
+    "jawi_name": "wau"
+   },
+   {
+    "ch": "ل",
+    "cp": "U+0644",
+    "unicode_name": "ARABIC LETTER LAM",
+    "jawi_name": "lam"
+   },
+   {
+    "ch": "ي",
+    "cp": "U+064A",
+    "unicode_name": "ARABIC LETTER YEH",
+    "jawi_name": "ya"
+   },
+   {
+    "ch": "س",
+    "cp": "U+0633",
+    "unicode_name": "ARABIC LETTER SEEN",
+    "jawi_name": "sin"
+   }
+  ]
+ }
+]

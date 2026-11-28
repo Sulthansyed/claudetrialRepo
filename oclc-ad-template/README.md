@@ -3,7 +3,7 @@
 Reusable set-up for One Click Learning Centre ads made in code, in a **layered cardstock paper-cut** style.
 A new ad should only need new files in `config/`.
 
-**Status: Step 1 (brand config, character rigs and a character sheet for approval). No video yet.**
+**Status:** Step 1 approved (brand, rigs, character sheet). Step 2 done for approval: scene config, scratch VO, timing map, key frames, Jawi check, scene 1 motion test. The full 30 s film is Step 3.
 
 ```
 oclc-ad-template/
@@ -21,7 +21,8 @@ oclc-ad-template/
       rig.svg             every part at rest, one <g> per part, with data-parent / data-pivot / data-z
       poses/*.svg         each pose, composed
       expressions/*.svg   kids' heads: neutral, confused, happy, excited
-  sheet/                  pages that draw the sheet and the test frame from the real rigs
+  scenes/film.html, film.js   the film: render(t) for any time t, driven by config/upkk-2027.json
+  sheet/                  character sheet, test frame and Jawi check pages
   tools/
     render.mjs            page -> PNG with headless Chromium
     export-rigs.mjs       rig.js -> rig.svg, poses/*.svg, expressions/*.svg
@@ -31,11 +32,26 @@ oclc-ad-template/
 
 ## Build
 
-Needs Node 20+ and Playwright's Chromium.
+Needs Node 20+, Playwright's Chromium, ffmpeg 7+ and Python 3. Python packages go in a local `.venv`
+(`python3 -m venv .venv && .venv/bin/pip install edge-tts numpy scipy soundfile fonttools brotli`).
 
 ```sh
-npm run build        # export rigs, then render out/character-sheet.png and out/test-frame-9x16.png
+npm run build        # Step 1: export rigs, render out/character-sheet.png and out/test-frame-9x16.png
+npm run step2        # Step 2: everything below, in order
+npm run vo           #   scratch VO -> out/vo-scratch/NN.wav (uses assets/vo/NN.wav instead when all 7 exist)
+npm run timing       #   fit VO, write frames into config/upkk-2027.json, out/subtitles-draft.srt, out/timing-table.txt
+npm run keyframes    #   out/frames/scene-N.png + out/frames-safezone/scene-N.png, checks safe zone + exact text
+npm run jawi-check   #   out/jawi-check.png for the KAFA teacher
+npm run scene1-test  #   out/scene1-test.mp4 (scene 1 only, 30 fps, scratch VO + paper foley, -14 LUFS)
 ```
+
+Behind a TLS-inspecting proxy, edge-tts trusts the CA bundle named in `SSL_CERT_FILE`.
+
+## A new ad
+
+Copy `config/upkk-2027.json`, change the scenes (text, VO, characters, props, camera, sfx), drop the recorded
+VO into `assets/vo/01.wav`...`NN.wav` and run `npm run step2`. Scene layouts live in `scenes/film.js`, one function per scene id.
+Contact details are never typed into a scene: `{whatsapp_display}` and `{website}` come from `config/brand.json`.
 
 ## How the rigs work
 
@@ -63,5 +79,7 @@ npm run build        # export rigs, then render out/character-sheet.png and out/
 ## Credits
 
 - Montserrat and Noto Naskh Arabic: SIL Open Font License 1.1 (`assets/fonts/`), from Fontsource.
+- Scratch voice: Microsoft Edge neural TTS (`ms-MY-YasminNeural`) via edge-tts, for timing only; replaced by the recorded voice.
+- Mux and loudness: Lemo-Opuscar `core/render/mux.sh`.
 - Style base: Lemo-Opuscar library, style "Red Paper-cut" (`papercut-red`), materials and motion rules only.
 - Logo and Klik reference: supplied by OCLC.

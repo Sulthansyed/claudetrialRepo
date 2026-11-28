@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Jawi Check</title>
+<style id="fonts"></style>
+<style>
+  html, body { margin: 0; background: #F8F5EC; }
+  body { width: 1800px; padding: 70px 80px; box-sizing: border-box; font-family: Montserrat, sans-serif; color: #0D2047; }
+  h1 { font-weight: 800; font-size: 60px; margin: 0 0 6px; letter-spacing: 1px; }
+  .sub { font-size: 28px; margin: 0 0 40px; }
+  .row { display: grid; grid-template-columns: 560px 1fr; gap: 40px; align-items: center; background: #FFFDF7;
+         border: 3px solid #0D2047; border-radius: 20px; padding: 30px 40px; margin-bottom: 30px; }
+  .word { font-family: 'Noto Naskh Arabic'; font-weight: 700; font-size: 170px; line-height: 1.4; text-align: center; direction: rtl; }
+  .rumi { font-weight: 800; font-size: 46px; margin-bottom: 14px; }
+  .rumi span { font-weight: 400; font-size: 26px; margin-left: 14px; }
+  table { border-collapse: collapse; font-size: 25px; width: 100%; }
+  td, th { border-bottom: 1.5px solid #C8D0DE; padding: 5px 10px; text-align: left; }
+  th { font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+  td.g { font-family: 'Noto Naskh Arabic'; font-size: 40px; text-align: center; width: 70px; }
+  td.cp { font-family: monospace; font-size: 26px; width: 120px; }
+  .cps { font-family: monospace; font-size: 24px; margin-top: 12px; }
+  .sign { margin-top: 40px; font-size: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+  .sign div { border-top: 3px solid #0D2047; padding-top: 12px; }
+  .note { font-size: 22px; margin-top: 24px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h1>JAWI CHECK · UPKK 2027 AD</h1>
+<p class="sub">Every Jawi word used in the ad, rendered exactly as in the film (Chromium / HarfBuzz shaping, Noto Naskh Arabic Bold).
+Letters are listed in writing order, right to left.</p>
+<div id="rows"></div>
+<p class="note">No other Arabic-script text appears in the ad. Decorative workbook lines are plain lines.
+Scenes: <b>جاوي</b> on the workbook (scene 1) and written by the boy (scene 6); <b>ممباچ</b>, <b>مڠيجا</b>, <b>منوليس</b> on the word cards (scene 3).</p>
+<div class="sign"><div>Disemak oleh guru KAFA (nama &amp; tandatangan)</div><div>Tarikh</div></div>
+<script type="module">
+import { fontCSS, fontsReady } from './common.js';
+document.getElementById('fonts').textContent = fontCSS;
+const words = await (await fetch('./jawi-words.json')).json();
+document.getElementById('rows').innerHTML = words.map((w) => `
+  <div class="row">
+    <div class="word" lang="ms-Arab">${w.jawi}</div>
+    <div>
+      <div class="rumi">${w.rumi}<span>${w.letters.length} letters</span></div>
+      <table><tr><th>#</th><th>Letter</th><th>Code point</th><th>Jawi name</th><th>Unicode name</th></tr>
+      ${w.letters.map((l, i) => `<tr><td>${i + 1}</td><td class="g">${l.ch}</td><td class="cp">${l.cp}</td><td>${l.jawi_name}</td><td>${l.unicode_name}</td></tr>`).join('')}
+      </table>
+      <div class="cps">${w.letters.map((l) => l.cp).join(' ')}</div>
+    </div>
+  </div>`).join('');
+await fontsReady(['800 40px Montserrat', '400 40px Montserrat', '700 40px Montserrat', '700 40px "Noto Naskh Arabic"']);
+await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+window.READY = true;
+</script>
+</body>
+</html>

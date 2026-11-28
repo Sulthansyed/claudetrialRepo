@@ -6,6 +6,12 @@
     "rigs": "node tools/export-rigs.mjs",
     "sheet": "node tools/render.mjs sheet/character-sheet.html out/character-sheet.png 4800 3300",
     "test-frame": "node tools/render.mjs sheet/test-frame-9x16.html out/test-frame-9x16.png 1080 1920",
-    "build": "npm run rigs && npm run sheet && npm run test-frame"
+    "build": "npm run rigs && npm run sheet && npm run test-frame",
+    "vo": ".venv/bin/python tools/vo_scratch.py",
+    "timing": ".venv/bin/python tools/timing.py | tee out/timing-table.txt",
+    "keyframes": "node tools/frames.mjs keyframes",
+    "jawi-check": "node -e \"import('./tools/page.mjs').then(async({openPage})=>{const{pg,close}=await openPage('sheet/jawi-check.html',1800,2400);const h=await pg.evaluate(()=>document.body.scrollHeight);await pg.setViewportSize({width:1800,height:h});await pg.screenshot({path:'out/jawi-check.png',fullPage:true});await close();})\"",
+    "scene1-test": "sh tools/scene1-test.sh",
+    "step2": "npm run vo && npm run timing && npm run keyframes && npm run jawi-check && npm run scene1-test"
   }
 }

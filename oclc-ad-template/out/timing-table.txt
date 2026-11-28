@@ -1,0 +1,10 @@
+fit: pauses tightened (sentence 0.35s, comma 0.22s), tempo 1.080x, lead 0.26s, breath 0.36s
+ # scene                 start            end  VO raw  VO fit    gap
+ 1 hook            0f  0.000s   104f  3.467s   3.054s  2.829s  0.64s
+ 2 curiosity     104f  3.467s   253f  8.433s   5.319s  4.330s  0.64s
+ 3 programme-1   253f  8.433s   373f 12.433s   3.897s  3.372s  0.63s
+ 4 programme-2   373f 12.433s   527f 17.567s   5.434s  4.489s  0.64s
+ 5 structure     527f 17.567s   664f 22.133s   4.594s  3.912s  0.65s
+ 6 climax        664f 22.133s   773f 25.767s   3.248s  3.007s  0.63s
+ 7 payoff        773f 25.767s   900f 30.000s   4.543s  3.591s  0.64s
+total frames: 900 = 30.000 s

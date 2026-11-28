@@ -1,16 +1,522 @@
 {
-  "_status": "STUB. Filled in Step 3. Do not render from this file yet.",
   "id": "upkk-2027",
+  "title": "UPKK 2027: Program Cuti Sekolah",
   "brand": "config/brand.json",
-  "format": { "width": 1080, "height": 1920, "fps": 30, "duration_s": 30, "language": "ms" },
-  "cast": ["boy", "girl", "klik"],
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration_s": 30,
+    "frames": 900,
+    "language": "ms"
+  },
+  "safe_zone": {
+    "_note": "TikTok / Reels. All essential text and the logo stay inside this box.",
+    "x0": 72,
+    "x1": 940,
+    "y0": 200,
+    "y1": 1536,
+    "min_headline_px": 64,
+    "min_body_px": 44
+  },
+  "motion": {
+    "character_fps": 12,
+    "_note": "characters step at 12 fps (pose sampled at floor(t*12)/12); camera, text and props move every frame"
+  },
+  "vo": {
+    "final_dir": "assets/vo",
+    "scratch_dir": "out/vo-scratch",
+    "scratch_voice": "ms-MY-YasminNeural",
+    "scratch_rate": "+0%",
+    "max_speedup": 1.08,
+    "lead_in_s": 0.3,
+    "breath_s": 0.4,
+    "min_last_scene_s": 4.0,
+    "fit": {
+      "tempo": 1.08,
+      "lead_s": 0.26,
+      "breath_s": 0.36,
+      "pauses": "sentence 0.35s, comma 0.22s"
+    }
+  },
+  "jawi_words": [
+    {
+      "rumi": "Jawi",
+      "jawi": "جاوي"
+    },
+    {
+      "rumi": "membaca",
+      "jawi": "ممباچ"
+    },
+    {
+      "rumi": "mengeja",
+      "jawi": "مڠيجا"
+    },
+    {
+      "rumi": "menulis",
+      "jawi": "منوليس"
+    }
+  ],
   "scenes": [
-    { "id": "hook",        "t0": 0.0,  "t1": 3.5,  "beat": "Hook",        "onscreen": "ANAK BAKAL MENDUDUKI UPKK 2027?" },
-    { "id": "curiosity",   "t0": 3.5,  "t1": 7.0,  "beat": "Curiosity",   "onscreen": "PROGRAM CUTI SEKOLAH · 2 PILIHAN" },
-    { "id": "programme-1", "t0": 7.0,  "t1": 12.0, "beat": "Programme 1", "onscreen": "KELAS JAWI INTENSIF" },
-    { "id": "programme-2", "t0": 12.0, "t1": 17.0, "beat": "Programme 2", "onscreen": "KELAS ULANG KAJI UPKK" },
-    { "id": "structure",   "t0": 17.0, "t1": 22.0, "beat": "Structure",   "onscreen": "4 MINGGU · 3 KELAS SEMINGGU · 12 SESI · 6–8 MURID SEKELAS" },
-    { "id": "climax",      "t0": 22.0, "t1": 25.0, "beat": "Climax",      "onscreen": "Modul Digital • Ujian Diagnostik • Laporan Kemajuan" },
-    { "id": "payoff",      "t0": 25.0, "t1": 30.0, "beat": "Payoff",      "onscreen": "PENDAFTARAN DIBUKA!" }
+    {
+      "id": "hook",
+      "beat": "Hook",
+      "on_screen_text": [
+        {
+          "role": "headline",
+          "text": "ANAK BAKAL MENDUDUKI"
+        },
+        {
+          "role": "headline",
+          "text": "UPKK 2027?"
+        }
+      ],
+      "vo_text": "Anak bakal menduduki UPKK tahun depan?",
+      "vo_tts_text": "Anak bakal menduduki U P K K tahun depan?",
+      "jawi": [
+        "جاوي"
+      ],
+      "characters": [
+        {
+          "id": "boy",
+          "pose": "confused"
+        }
+      ],
+      "props": [
+        "desk",
+        "chair",
+        "jawi-workbook",
+        "question-marks",
+        "pencil-cup",
+        "book-stack",
+        "wall-shelf"
+      ],
+      "camera": {
+        "move": "push-in",
+        "from_scale": 1.0,
+        "to_scale": 1.12,
+        "focus": [
+          540,
+          900
+        ]
+      },
+      "sfx": [
+        "paper-rustle bed",
+        "pop on each question mark",
+        "paper slide as headline lands"
+      ],
+      "timing": {
+        "start_frame": 0,
+        "end_frame": 104,
+        "frames": 104,
+        "start_s": 0.0,
+        "end_s": 3.467
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/01.wav",
+        "raw_file": "out/vo-scratch/01.wav",
+        "raw_s": 3.054,
+        "fitted_s": 2.829,
+        "tempo": 1.08,
+        "start_frame": 8,
+        "end_frame": 93
+      }
+    },
+    {
+      "id": "curiosity",
+      "beat": "Curiosity",
+      "on_screen_text": [
+        {
+          "role": "headline",
+          "text": "PROGRAM CUTI SEKOLAH"
+        },
+        {
+          "role": "subhead",
+          "text": "PERSEDIAAN UPKK 2027"
+        },
+        {
+          "role": "badge",
+          "text": "2 PILIHAN"
+        }
+      ],
+      "vo_text": "Manfaatkan cuti sekolah bersama OCLC. Ada dua pilihan!",
+      "vo_tts_text": "Manfaatkan cuti sekolah bersama O C L C. Ada dua pilihan!",
+      "characters": [
+        {
+          "id": "klik",
+          "pose": "tap"
+        },
+        {
+          "id": "boy",
+          "pose": "excited"
+        }
+      ],
+      "props": [
+        "holiday-calendar (no dates)",
+        "pages folding into books",
+        "logo"
+      ],
+      "logo": true,
+      "camera": {
+        "move": "pull-out",
+        "from_scale": 1.08,
+        "to_scale": 1.0,
+        "focus": [
+          540,
+          1000
+        ]
+      },
+      "sfx": [
+        "whoosh as Klik floats in",
+        "click on antenna tap",
+        "page flips",
+        "paper fold snaps",
+        "pop as badge lands"
+      ],
+      "timing": {
+        "start_frame": 104,
+        "end_frame": 253,
+        "frames": 149,
+        "start_s": 3.467,
+        "end_s": 8.433
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/02.wav",
+        "raw_file": "out/vo-scratch/02.wav",
+        "raw_s": 5.319,
+        "fitted_s": 4.33,
+        "tempo": 1.08,
+        "start_frame": 112,
+        "end_frame": 242
+      }
+    },
+    {
+      "id": "programme-1",
+      "beat": "Programme 1",
+      "on_screen_text": [
+        {
+          "role": "badge",
+          "text": "PROGRAM 1"
+        },
+        {
+          "role": "headline",
+          "text": "KELAS JAWI INTENSIF"
+        },
+        {
+          "role": "body",
+          "text": "Membaca • Mengeja • Menulis"
+        }
+      ],
+      "vo_text": "Kuasai kemahiran membaca, mengeja dan menulis Jawi.",
+      "vo_tts_text": "Kuasai kemahiran membaca, mengeja dan menulis Jawi.",
+      "jawi": [
+        "ممباچ",
+        "مڠيجا",
+        "منوليس"
+      ],
+      "characters": [
+        {
+          "id": "boy",
+          "pose": "writing"
+        }
+      ],
+      "props": [
+        "paper Jawi word cards (membaca, mengeja, menulis)",
+        "pencil",
+        "exercise book"
+      ],
+      "camera": {
+        "move": "pan-left",
+        "from_x": 40,
+        "to_x": -20
+      },
+      "sfx": [
+        "paper tile slides",
+        "soft snap as each word joins",
+        "pencil scratch"
+      ],
+      "timing": {
+        "start_frame": 253,
+        "end_frame": 373,
+        "frames": 120,
+        "start_s": 8.433,
+        "end_s": 12.433
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/03.wav",
+        "raw_file": "out/vo-scratch/03.wav",
+        "raw_s": 3.897,
+        "fitted_s": 3.372,
+        "tempo": 1.08,
+        "start_frame": 261,
+        "end_frame": 363
+      }
+    },
+    {
+      "id": "programme-2",
+      "beat": "Programme 2",
+      "on_screen_text": [
+        {
+          "role": "badge",
+          "text": "PROGRAM 2"
+        },
+        {
+          "role": "headline",
+          "text": "KELAS ULANG KAJI UPKK"
+        },
+        {
+          "role": "spine",
+          "text": "Akidah"
+        },
+        {
+          "role": "spine",
+          "text": "Ibadah"
+        },
+        {
+          "role": "spine",
+          "text": "Adab"
+        },
+        {
+          "role": "spine",
+          "text": "Sirah"
+        },
+        {
+          "role": "spine",
+          "text": "Bahasa Arab"
+        }
+      ],
+      "vo_text": "Atau kukuhkan asas Akidah, Ibadah, Adab, Sirah dan Bahasa Arab.",
+      "vo_tts_text": "Atau kukuhkan asas Akidah, Ibadah, Adab, Sirah dan Bahasa Arab.",
+      "characters": [
+        {
+          "id": "girl",
+          "pose": "neutral"
+        }
+      ],
+      "props": [
+        "five books dropping one by one (staggered drop, soft bounce)"
+      ],
+      "camera": {
+        "move": "crane-up",
+        "from_y": 60,
+        "to_y": 0
+      },
+      "sfx": [
+        "book thud x5, rising pitch",
+        "paper settle"
+      ],
+      "timing": {
+        "start_frame": 373,
+        "end_frame": 527,
+        "frames": 154,
+        "start_s": 12.433,
+        "end_s": 17.567
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/04.wav",
+        "raw_file": "out/vo-scratch/04.wav",
+        "raw_s": 5.434,
+        "fitted_s": 4.489,
+        "tempo": 1.08,
+        "start_frame": 381,
+        "end_frame": 516
+      }
+    },
+    {
+      "id": "structure",
+      "beat": "Structure",
+      "on_screen_text": [
+        {
+          "role": "stat",
+          "text": "4 MINGGU"
+        },
+        {
+          "role": "stat",
+          "text": "3 KELAS SEMINGGU"
+        },
+        {
+          "role": "stat",
+          "text": "12 SESI"
+        },
+        {
+          "role": "stat",
+          "text": "6–8 MURID SEKELAS"
+        }
+      ],
+      "vo_text": "Empat minggu, tiga kelas seminggu, online dalam kumpulan kecil.",
+      "vo_tts_text": "Empat minggu, tiga kelas seminggu, online dalam kumpulan kecil.",
+      "characters": [],
+      "props": [
+        "paper calendar: 4 weeks, 3 ticked days each, no dates or month",
+        "laptop with 6 paper-cut class tiles"
+      ],
+      "camera": {
+        "move": "push-in",
+        "from_scale": 1.0,
+        "to_scale": 1.05,
+        "focus": [
+          540,
+          1100
+        ]
+      },
+      "sfx": [
+        "card stack thumps x4",
+        "laptop open click",
+        "tick marks"
+      ],
+      "timing": {
+        "start_frame": 527,
+        "end_frame": 664,
+        "frames": 137,
+        "start_s": 17.567,
+        "end_s": 22.133
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/05.wav",
+        "raw_file": "out/vo-scratch/05.wav",
+        "raw_s": 4.594,
+        "fitted_s": 3.912,
+        "tempo": 1.08,
+        "start_frame": 535,
+        "end_frame": 653
+      }
+    },
+    {
+      "id": "climax",
+      "beat": "Climax",
+      "on_screen_text": [
+        {
+          "role": "label",
+          "text": "Modul Latihan Digital"
+        },
+        {
+          "role": "label",
+          "text": "Ujian Diagnostik & Penilaian Akhir"
+        },
+        {
+          "role": "label",
+          "text": "Laporan Kemajuan"
+        }
+      ],
+      "vo_text": "Lengkap dengan modul digital dan laporan kemajuan murid.",
+      "vo_tts_text": "Lengkap dengan modul digital dan laporan kemajuan murid.",
+      "jawi": [
+        "جاوي"
+      ],
+      "characters": [
+        {
+          "id": "boy",
+          "pose": "writing",
+          "expr_from": "confused",
+          "expr_to": "happy"
+        }
+      ],
+      "props": [
+        "digital worksheet",
+        "test paper",
+        "progress report card with bars (no numbers) + gold tick"
+      ],
+      "camera": {
+        "move": "push-in",
+        "from_scale": 1.0,
+        "to_scale": 1.08,
+        "focus": [
+          540,
+          900
+        ]
+      },
+      "sfx": [
+        "pencil scratch",
+        "three paper slides",
+        "bright ding on the gold tick"
+      ],
+      "timing": {
+        "start_frame": 664,
+        "end_frame": 773,
+        "frames": 109,
+        "start_s": 22.133,
+        "end_s": 25.767
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/06.wav",
+        "raw_file": "out/vo-scratch/06.wav",
+        "raw_s": 3.248,
+        "fitted_s": 3.007,
+        "tempo": 1.08,
+        "start_frame": 672,
+        "end_frame": 763
+      }
+    },
+    {
+      "id": "payoff",
+      "beat": "Payoff / CTA",
+      "on_screen_text": [
+        {
+          "role": "headline",
+          "text": "PENDAFTARAN DIBUKA!"
+        },
+        {
+          "role": "subhead",
+          "text": "Persediaan UPKK 2027"
+        },
+        {
+          "role": "contact",
+          "text": "WhatsApp {whatsapp_display}"
+        },
+        {
+          "role": "contact",
+          "text": "{website}"
+        }
+      ],
+      "vo_text": "Tempat terhad. Daftar sekarang bersama OCLC!",
+      "vo_tts_text": "Tempat terhad. Daftar sekarang bersama O C L C!",
+      "characters": [
+        {
+          "id": "boy",
+          "pose": "books"
+        },
+        {
+          "id": "girl",
+          "pose": "books"
+        },
+        {
+          "id": "klik",
+          "pose": "whatsapp"
+        }
+      ],
+      "props": [
+        "logo"
+      ],
+      "logo": true,
+      "camera": {
+        "move": "hold",
+        "from_scale": 1.03,
+        "to_scale": 1.0,
+        "focus": [
+          540,
+          960
+        ]
+      },
+      "sfx": [
+        "paper pop as headline lands",
+        "soft chime on the logo"
+      ],
+      "timing": {
+        "start_frame": 773,
+        "end_frame": 900,
+        "frames": 127,
+        "start_s": 25.767,
+        "end_s": 30.0
+      },
+      "vo": {
+        "file": "out/vo-scratch/fit/07.wav",
+        "raw_file": "out/vo-scratch/07.wav",
+        "raw_s": 4.543,
+        "fitted_s": 3.591,
+        "tempo": 1.08,
+        "start_frame": 781,
+        "end_frame": 889
+      }
+    }
   ]
 }

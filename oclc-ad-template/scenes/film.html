@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>UPKK 2027 Film</title>
+<style id="fonts"></style>
+<style>
+  html, body { margin: 0; background: #F8F5EC; overflow: hidden; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+// Page contract (Lemo-Opuscar style): window.DUR, window.render(t), window.EV, window.READY.
+// ?safe=1 draws the TikTok/Reels safe zone. window.checkSafe() lists essential elements outside it.
+import { loadBrand, fontCSS, fontsReady } from '../sheet/common.js';
+import { createFilm } from './film.js';
+import boy from '../characters/boy/rig.js';
+import girl from '../characters/girl/rig.js';
+import klik from '../characters/klik/rig.js';
+import { poses } from '../characters/poses.js';
+
+document.getElementById('fonts').textContent = fontCSS;
+const { brand, C } = await loadBrand();
+const cfg = await (await fetch('../config/upkk-2027.json')).json();
+await fontsReady(['800 40px Montserrat', '700 40px Montserrat', '400 40px Montserrat', '700 40px "Noto Naskh Arabic"']);
+const ctx = document.createElement('canvas').getContext('2d');
+const cache = new Map();
+const measure = (s, font) => { const k = font + '|' + s; if (!cache.has(k)) { ctx.font = font; cache.set(k, ctx.measureText(s).width); } return cache.get(k); };
+const rigs = { boy: boy(C), girl: girl(C), klik: klik(C), poses };
+const film = createFilm({ brand, cfg, C, rigs, measure });
+const safe = new URLSearchParams(location.search).has('safe');
+const root = document.getElementById('root');
+
+window.DUR = film.DUR;
+window.EV = film.events;
+window.SCENES = film.scenes.map((s) => ({ id: s.id, t0: s.t0, t1: s.t1 }));
+window.render = (t, opts = {}) => { root.innerHTML = film.frame(t, { safe: opts.safe ?? safe }); };
+window.checkSafe = () => {
+  const z = cfg.safe_zone, bad = [];
+  for (const el of root.querySelectorAll('[data-essential]')) {
+    const r = el.getBoundingClientRect();
+    if (r.width === 0) continue;
+    if (r.left < z.x0 - 0.5 || r.right > z.x1 + 0.5 || r.top < z.y0 - 0.5 || r.bottom > z.y1 + 0.5)
+      bad.push({ what: el.dataset.essential, text: el.textContent || el.getAttribute('href'), box: [r.left, r.top, r.right, r.bottom].map(Math.round) });
+  }
+  return bad;
+};
+window.textSizes = () => [...root.querySelectorAll('text[data-essential]')].map((el) => {
+  return { text: el.textContent, size: +el.getAttribute('font-size'), px: Math.round(el.getBoundingClientRect().height) };
+});
+window.render(0);
+// wait for the logo
+await new Promise((ok) => { const i = new Image(); i.onload = ok; i.onerror = ok; i.src = '../assets/oclc-logo.png'; });
+window.READY = true;
+</script>
+</body>
+</html>
