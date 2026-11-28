@@ -1,0 +1,48 @@
+[
+ {
+  "id": "v1",
+  "voice": "bm_george",
+  "speed": 1.08,
+  "lang": "en-gb",
+  "text": "Nineteen forty-six. Britain pastes one big patch over the Malay states, and calls it the Malayan Union.",
+  "asr": "1946. Britain pastes one big patch over the Malay states and calls it the Malayan Union."
+ },
+ {
+  "id": "v2",
+  "voice": "bm_george",
+  "speed": 1.08,
+  "lang": "en-gb",
+  "text": "The Malays won't have it. And the patch won't lie flat.",
+  "asr": "The malaise won't have it. And the patch won't lie flat."
+ },
+ {
+  "id": "v3",
+  "voice": "bm_george",
+  "speed": 1.08,
+  "lang": "en-gb",
+  "text": "Ten years later, in London, both sides agree on a date."
+ },
+ {
+  "id": "v4",
+  "voice": "bm_george",
+  "speed": 1.05,
+  "lang": "en-gb",
+  "text": "Thirty-first of August, nineteen fifty-seven.",
+  "asr": "31st of August, 1957."
+ },
+ {
+  "id": "v5",
+  "voice": "bm_george",
+  "speed": 1.0,
+  "lang": "en-gb",
+  "text": "And Britain lets go.",
+  "asr": "And Britain let's go."
+ },
+ {
+  "id": "v6",
+  "voice": "bm_george",
+  "speed": 1.05,
+  "lang": "en-gb",
+  "text": "No war. Just talks, and a lot of paper."
+ }
+]

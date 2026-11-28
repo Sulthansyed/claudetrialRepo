@@ -1,0 +1,875 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: 'FellSC'; src: url(fonts/IMFeENsc28P.ttf); font-display: block; }
+@font-face { font-family: 'Fell'; src: url(fonts/IMFeENrm28P.ttf); font-display: block; }
+@font-face { font-family: 'FellIt'; src: url(fonts/IMFeENit28P.ttf); font-display: block; }
+@font-face { font-family: 'Lilita'; src: url(fonts/LilitaOne-Regular.ttf); font-display: block; }
+/* every number in the film: Old Standard TT, lining figures (IM FELL has only old-style figures) */
+@font-face { font-family: 'OldStd'; src: url(fonts/OldStandard-Regular.ttf); font-display: block; }
+@font-face { font-family: 'OldStdB'; src: url(fonts/OldStandard-Bold.ttf); font-display: block; }
+@font-face { font-family: 'OldStdIt'; src: url(fonts/OldStandard-Italic.ttf); font-display: block; }
+html, body { margin: 0; background: #1d1a17; }
+canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Merdeka, 1946–1957 (Comic History Cartoon, 9:16, 30 s): one comic page, three story panels and a title panel.
+// 1946: Britain slaps one big patch over the Malay states (the Malayan Union); Malaya shouts NO UNION!; the patch won't lie flat.
+// 1956, London: an agreement on a desk, AGREED stamped, a handshake. 1957: Malaya peels the patch off; Britain lets go; MERDEKA!
+// The page camera pulls back to the whole page as the title card lands.
+const W = 1080, H = 1920, DUR = 30;
+const QS = new URLSearchParams(location.search), FROM = +(QS.get('from') || 0), TO = +(QS.get('to') || DUR);
+window.DUR = TO - FROM;
+const cv = document.getElementById('c'), MAIN = cv.getContext('2d');
+
+// ---------------------------------------------------------------- palette
+const C = {
+  paper: '#F1E8D2', ink: '#2B2219',
+  br: '#D08C82',        // Britain's printed colour (Singapore, still a British colony in 1957)
+  brPatch: '#BE6F66',   // Britain's patch: one step deeper than its print, so it reads as new paper laid on top
+  my: '#4F9A8A',        // Malaya's printed colour (teal, like his baju), revealed under the patch
+  th: '#E2C27A', id: '#A9B98A', nb: '#C9B48E',
+  sea: '#A6CCD3', red: '#C8463A', brass: '#D9B158', caption: '#F5E9C4', table: '#7B6A57',
+};
+
+// ---------------------------------------------------------------- small maths
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x)), lerp = (a, b, u) => a + (b - a) * u;
+const EASE = {
+  lin: u => u,
+  io: u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2,
+  o: u => 1 - Math.pow(1 - u, 3),
+  i: u => u * u * u,
+  back: u => { const c = 1.7; return 1 + (c + 1) * Math.pow(u - 1, 3) + c * Math.pow(u - 1, 2); },
+  el: u => u >= 1 ? 1 : 1 - Math.exp(-5.5 * u) * Math.cos(u * Math.PI * 3.1),
+};
+function K(t, keys) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) {
+    const [t1, v1, e] = keys[i];
+    if (t <= t1) {
+      const [t0, v0] = keys[i - 1], u = EASE[e || 'io'](clamp((t - t0) / Math.max(t1 - t0, 1e-6), 0, 1));
+      return Array.isArray(v0) ? v0.map((a, j) => lerp(a, v1[j], u)) : lerp(v0, v1, u);
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+const wob = (t, t0, amp, f = 5, d = 7) => t < t0 ? 0 : amp * Math.exp(-(t - t0) * d) * Math.sin(2 * Math.PI * f * (t - t0));
+const popIn = (t, t0, d = 0.17) => t < t0 ? 0 : t - t0 < d ? EASE.el((t - t0) / d) : 1;
+function hash(n) { n = (n ^ 61) ^ (n >>> 16); n = (n + (n << 3)) | 0; n ^= n >>> 4; n = Math.imul(n, 0x27d4eb2d); n ^= n >>> 15; return (n >>> 0) / 4294967296; }
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const D2R = Math.PI / 180;
+const twos = t => Math.floor(t * 12 + 1e-6) / 12;          // puppets move on twos
+function canvas(w, h) { const c = document.createElement('canvas'); c.width = Math.ceil(w); c.height = Math.ceil(h); return c; }
+const len = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+const angOf = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]);
+
+// ---------------------------------------------------------------- the timeline (film seconds)
+const T1 = {   // panel 1 · 1946, the Malayan Union
+  hop: [0.6, 1.1, 1.6, 2.1], wind: 2.6, smear: 3.0, slap: 3.25,
+  nounion: 7.45, puff: [8.0, 8.5], curl: 9.5,
+};
+const T2 = { stamp: 14.3, shake: 15.2 };   // panel 2 · 1956, London
+const T = {    // panel 3 · 1957 (the peel)
+  hop: [18.6, 19.1, 19.6], grip: 20.1,
+  tug: [20.6, 21.3, 22.0],
+  sigh: 22.3,                              // "And Britain"
+  letgo: 23.15,                            // "lets go"
+  peel: 23.45, strip: 23.6, merdeka: 23.7, pin: 23.95,
+};
+const TT = { title: 27.2 };                // panel 4 · the title card
+const SUBS = [
+  [0.05, 7.35, ['1946. Britain pastes one big patch over', 'the Malay states, and calls it the Malayan Union.']],
+  [7.37, 11.38, ["The Malays won't have it.", "And the patch won't lie flat."]],
+  [11.4, 15.9, ['Ten years later, in London,', 'both sides agree on a date.']],
+  [17.4, 21.2, ['31st of August, 1957.']],
+  [21.9, 24.7, ['And Britain lets go.']],
+  [26.45, 29.95, ['No war. Just talks, and a lot of paper.']],
+];
+window.SUBS = SUBS;
+const VO = [['v1', 0.1], ['v2', 7.4], ['v3', 11.6], ['v4', 17.5], ['v5', 22.3], ['v6', 26.5]];
+
+// ---------------------------------------------------------------- projection (equirectangular, cos(lat0) aspect)
+const LON0 = 102.0, LAT0 = 4.0, CX = 540, CY = 840, KS = 178;
+const KX = KS * Math.cos(LAT0 * D2R);
+const P = (lon, lat) => [CX + (lon - LON0) * KX, CY - (lat - LAT0) * KS];
+function pathOf(polys, g) {
+  g.beginPath();
+  for (const poly of polys) for (const r of poly) { r.forEach(([lo, la], i) => { const [x, y] = P(lo, la); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.closePath(); }
+}
+const GROUPS = [
+  { fill: C.th, members: ['Thailand'] },
+  { fill: C.id, members: ['Indonesia'] },
+  { fill: C.nb, members: ['Myanmar', 'Cambodia', 'Vietnam'] },
+  { fill: C.my, members: ['Malaya'] },
+  { fill: C.br, members: ['Singapore'] },
+];
+let geo, idx, img = {}, paperTex, pagePat, tablePat, deskPat, MAP, PATCH, FOLDP, LAYER;
+const MS = 1.25, PR = 2;
+
+// ---------------------------------------------------------------- paper texture (generated)
+function makePaper(w, h, seed) {
+  const c = canvas(w, h), g = c.getContext('2d'), r = rng(seed);
+  g.fillStyle = '#808080'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 900 * w * h / (W * H); i++) {
+    const x = r() * w, y = r() * h, rad = 20 + r() * 150, v = r() < .5 ? 0 : 255;
+    const gr = g.createRadialGradient(x, y, 0, x, y, rad);
+    gr.addColorStop(0, `rgba(${v},${v},${v},${0.03 + r() * 0.03})`); gr.addColorStop(1, `rgba(${v},${v},${v},0)`);
+    g.fillStyle = gr; g.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+  }
+  for (let i = 0; i < 6000 * w * h / (W * H); i++) {
+    const x = r() * w, y = r() * h, a = r() * Math.PI * 2, l = 4 + r() * 20, v = r() < .55 ? 40 : 230;
+    g.strokeStyle = `rgba(${v},${v},${v},${0.04 + r() * 0.07})`; g.lineWidth = 0.6 + r() * 0.9;
+    g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(a + 1) * l * .5, y + Math.sin(a + 1) * l * .5, x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke();
+  }
+  const d = g.getImageData(0, 0, w, h), p = d.data;
+  for (let i = 0; i < p.length; i += 4) { const n = (r() - .5) * 22; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
+  g.putImageData(d, 0, 0);
+  return c;
+}
+// numbers: Old Standard TT lining figures, at about 0.9 of the surrounding size, on the same baseline
+const NUM_RE = /\d+(?:[.–]\d+)*/g;
+function numFont(base) {
+  const m = base.match(/(\d+(?:\.\d+)?)px\s+(\S+)/); if (!m) return base;
+  const size = +m[1], fam = m[2], face = /It/.test(fam) ? 'OldStdIt' : /Lilita/.test(fam) ? 'OldStdB' : 'OldStd';
+  return `${Math.round(size * (face === 'OldStdB' ? 0.92 : 0.9))}px ${face}`;
+}
+function textRuns(text) { const out = []; let i = 0; for (const m of text.matchAll(NUM_RE)) { if (m.index > i) out.push([text.slice(i, m.index), 0]); out.push([m[0], 1]); i = m.index + m[0].length; } if (i < text.length) out.push([text.slice(i), 0]); return out; }
+function measureMixed(g, text, base) { const nf = numFont(base); let w = 0; for (const [t, n] of textRuns(text)) { g.font = n ? nf : base; w += g.measureText(t).width; } g.font = base; return w; }
+function fillMixed(g, text, x, y, base, align = 'left') {
+  const nf = numFont(base), w = measureMixed(g, text, base), a0 = g.textAlign;
+  let cx = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+  g.textAlign = 'left';
+  for (const [t, n] of textRuns(text)) { g.font = n ? nf : base; g.fillText(t, cx, y); cx += g.measureText(t).width; }
+  g.font = base; g.textAlign = a0; return w;
+}
+function spacedLeft(g, text, x, y, sp) { const a = g.textAlign; g.textAlign = 'left'; let cx = x; for (const c of text) { g.fillText(c, cx, y); cx += g.measureText(c).width + sp; } g.textAlign = a; }
+function spaced(g, text, x, y, sp) {
+  const ch = [...text], w = ch.map(c => g.measureText(c).width), tot = w.reduce((a, b) => a + b, 0) + sp * (ch.length - 1);
+  let cx = x - tot / 2; ch.forEach((c, i) => { g.fillText(c, cx, y); cx += w[i] + sp; });
+  return tot;
+}
+
+// ---------------------------------------------------------------- the printed map (baked once)
+function drawMap(g) {
+  g.fillStyle = C.sea; g.fillRect(-2000, -2000, W + 4000, H + 4000);
+  const all = []; for (const G of GROUPS) for (const m of G.members) if (geo[m]) all.push(...geo[m]);
+  g.save(); g.lineJoin = 'round';
+  for (let i = 6; i >= 1; i--) { pathOf(all, g); g.lineWidth = i * 9; g.strokeStyle = i % 2 ? '#97BEC6' : '#AACED4'; g.stroke(); }
+  g.restore();
+  g.save(); g.strokeStyle = 'rgba(40,70,90,.20)'; g.lineWidth = 1; g.setLineDash([2, 5]);
+  for (let lon = 96; lon <= 108; lon += 2) { const [x0, y0] = P(lon, 14), [x1, y1] = P(lon, -4); g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); }
+  for (let lat = -2; lat <= 12; lat += 2) { const [x0, y0] = P(94, lat), [x1, y1] = P(110, lat); g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); }
+  g.restore();
+  for (const G of GROUPS) { pathOf(G.members.flatMap(m => geo[m] || []), g); g.fillStyle = G.fill; g.fill('evenodd'); }
+  for (const G of GROUPS) {
+    const polys = G.members.flatMap(m => geo[m] || []);
+    g.save(); pathOf(polys, g); g.clip('evenodd'); pathOf(polys, g); g.lineWidth = 12; g.strokeStyle = 'rgba(255,248,230,.20)'; g.stroke(); g.restore();
+  }
+  g.save(); g.lineJoin = 'round';
+  for (const G of GROUPS) for (const m of G.members) { if (!geo[m]) continue; pathOf(geo[m], g); g.lineWidth = 1.3; g.strokeStyle = 'rgba(55,40,30,.5)'; g.stroke(); }
+  pathOf(all, g); g.lineWidth = 2.2; g.strokeStyle = 'rgba(40,55,70,.7)'; g.stroke();
+  g.restore();
+  // engraved place names: small caps, ink only, clear of the puppets, the bubble and the caption band
+  g.fillStyle = 'rgba(43,34,25,.86)'; g.textBaseline = 'middle'; g.textAlign = 'left';
+  const L = (t, lon, lat, size, sp, rot = 0) => { const [x, y] = P(lon, lat); g.save(); g.translate(x, y); g.rotate(rot * D2R); g.font = `${size}px FellSC`; spaced(g, t, 0, 0, sp); g.restore(); };
+  L('malaya', 102.65, 2.8, 54, 14, -14);
+  L('thailand', 101.55, 6.95, 34, 10, -8);
+  L('sumatra', 99.95, -0.1, 32, 8, -40);
+  L('singapore', 104.05, 0.98, 20, 2);
+  g.font = 'italic 26px FellIt'; g.fillStyle = 'rgba(30,60,75,.55)';
+  { const [x, y] = P(99.85, 3.35); g.save(); g.translate(x, y); g.rotate(-50 * D2R); spaced(g, 'Strait of Malacca', 0, 0, 3); g.restore(); }
+  { const [x, y] = P(104.2, 7.7); g.save(); g.translate(x, y); g.rotate(-6 * D2R); spaced(g, 'South China Sea', 0, 0, 3); g.restore(); }
+  // compass rose and a kilometre scale bar, bottom right above the caption band
+  { const cx = 990, cy = 1460; g.save(); g.translate(cx, cy); g.strokeStyle = C.ink; g.fillStyle = C.ink; g.lineWidth = 1.5;
+    g.beginPath(); g.arc(0, 0, 30, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.arc(0, 0, 25, 0, Math.PI * 2); g.lineWidth = .8; g.stroke(); g.lineWidth = 1.5;
+    for (let i = 0; i < 4; i++) { g.rotate(Math.PI / 2); g.beginPath(); g.moveTo(0, -42); g.lineTo(6, 0); g.lineTo(-6, 0); g.closePath(); i === 3 ? g.fill() : g.stroke(); }
+    g.font = '20px FellSC'; g.textAlign = 'center'; g.fillText('n', 0, -55); g.restore(); }
+  { const km = KS / 111.2, x0 = 700, y0 = 1580, L100 = 100 * km; g.save(); g.fillStyle = C.ink; g.strokeStyle = C.ink; g.lineWidth = 1.2;
+    for (let i = 0; i < 4; i++) { const xa = x0 + i * L100 / 2; i % 2 ? g.strokeRect(xa, y0, L100 / 2, 7) : g.fillRect(xa, y0, L100 / 2, 7); }
+    g.font = '17px OldStd'; g.textAlign = 'center'; g.textBaseline = 'bottom';
+    [0, 100, 200].forEach((k, i) => g.fillText(String(k), x0 + i * L100, y0 - 5)); g.font = '18px Fell'; g.textAlign = 'left'; g.fillText('km', x0 + 2 * L100 + 26, y0 - 5); g.restore(); }
+}
+function bakeMap() {
+  const c = canvas(W * MS, H * MS), g = c.getContext('2d');
+  g.scale(MS, MS); drawMap(g);
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.globalCompositeOperation = 'overlay'; g.globalAlpha = 0.55; g.drawImage(paperTex, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  return c;
+}
+
+// ---------------------------------------------------------------- Britain's patch (baked at PR, cream card margin, dashed inner line)
+let PB, PATCH_C;
+function malPath(g) { pathOf(geo['Malaya'], g); }
+function silhouette(src, col) { const c = canvas(src.width, src.height), g = c.getContext('2d'); g.drawImage(src, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = col; g.fillRect(0, 0, c.width, c.height); return c; }
+function bakePatch(col, seed) {
+  const w = (PB.x1 - PB.x0) * PR, h = (PB.y1 - PB.y0) * PR, toW = g => g.setTransform(PR, 0, 0, PR, -PB.x0 * PR, -PB.y0 * PR);
+  const shape = canvas(w, h), k = shape.getContext('2d');
+  toW(k); k.save(); malPath(k); k.clip('evenodd'); k.fillStyle = col; k.fillRect(PB.x0, PB.y0, PB.x1 - PB.x0, PB.y1 - PB.y0);
+  malPath(k); k.lineWidth = 14; k.strokeStyle = 'rgba(255,248,230,.18)'; k.stroke();
+  k.setLineDash([7, 6]); malPath(k); k.lineWidth = 3.5; k.strokeStyle = 'rgba(60,30,26,.5)'; k.stroke(); k.restore();
+  k.setTransform(1, 0, 0, 1, 0, 0);
+  const tex = makePaper(Math.ceil(w), Math.ceil(h), seed);
+  const t2 = canvas(w, h), q2 = t2.getContext('2d'); q2.drawImage(shape, 0, 0); q2.globalCompositeOperation = 'overlay'; q2.globalAlpha = .6; q2.drawImage(tex, 0, 0);
+  q2.globalCompositeOperation = 'destination-in'; q2.globalAlpha = 1; q2.drawImage(shape, 0, 0);
+  const card = canvas(w, h), q = card.getContext('2d'), r = rng(seed + 3);
+  for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2, rr = 7 * PR * (0.92 + r() * 0.16); q.drawImage(shape, Math.cos(a) * rr, Math.sin(a) * rr); }
+  q.globalCompositeOperation = 'source-in'; q.fillStyle = C.paper; q.fillRect(0, 0, w, h);
+  q.globalCompositeOperation = 'source-over';
+  q.save(); q.shadowColor = 'rgba(40,28,15,.35)'; q.shadowBlur = 2.5; q.drawImage(t2, 0, 0); q.restore();
+  return { cv: card };
+}
+function cutPiece(Pc, poly) {   // a piece of the patch inside a polygon given in patch-local coords (relative to PATCH_C)
+  const c = canvas(Pc.cv.width, Pc.cv.height), g = c.getContext('2d');
+  g.setTransform(PR, 0, 0, PR, -(PB.x0 - PATCH_C[0]) * PR, -(PB.y0 - PATCH_C[1]) * PR);
+  g.beginPath(); poly.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.clip();
+  g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(Pc.cv, 0, 0);
+  return { cv: c };
+}
+// draw a patch with its centre at c, rotation rot (deg), lift h (0 glued: thin shadow; 1 held up: big soft shadow)
+function drawPatch(g, Pc, o = {}) {
+  const c = o.c || PATCH_C, h = o.h || 0, k = (o.k || 1) * (1 + 0.08 * h), z = o.z || 1;
+  g.save();
+  g.shadowColor = `rgba(30,20,10,${(o.shadowA ?? 0.5) - 0.18 * h})`; g.shadowBlur = (3 + 30 * h) * z; g.shadowOffsetX = (3 + 30 * h) * z; g.shadowOffsetY = (4 + 42 * h) * z;
+  g.translate(c[0], c[1]); g.rotate((o.rot || 0) * D2R); g.scale(k, k);
+  g.drawImage(Pc.cv, PB.x0 - PATCH_C[0], PB.y0 - PATCH_C[1], Pc.cv.width / PR, Pc.cv.height / PR);
+  g.restore();
+}
+// the curling corner: the part beyond the line A→B (patch-local) is turned up by th degrees (0 flat, 180 folded back)
+let FOLD;
+function foldPieces(Pc) {
+  const { A, B } = FOLD, d = [B[0] - A[0], B[1] - A[1]], L = Math.hypot(...d), n = [d[1] / L, -d[0] / L];
+  const far = 1400, ext = 4;
+  const side = s => [[A[0] - d[0] * ext, A[1] - d[1] * ext], [B[0] + d[0] * ext, B[1] + d[1] * ext], [B[0] + d[0] * ext + s * n[0] * far, B[1] + d[1] * ext + s * n[1] * far], [A[0] - d[0] * ext + s * n[0] * far, A[1] - d[1] * ext + s * n[1] * far]];
+  const flap = cutPiece(Pc, side(1)), rest = cutPiece(Pc, side(-1));
+  return { flap, rest, back: { cv: silhouette(flap.cv, '#E8DDC5') }, n };
+}
+function foldMat(th) { const s = 1 - Math.cos(th * D2R), [nx, ny] = FOLDP.n, An = FOLD.A[0] * nx + FOLD.A[1] * ny; return [1 - s * nx * nx, -s * nx * ny, -s * nx * ny, 1 - s * ny * ny, s * An * nx, s * An * ny]; }
+function drawFolded(g, th, o = {}) {
+  drawPatch(g, FOLDP.rest, o);
+  const c = PATCH_C;
+  g.save(); g.translate(c[0], c[1]);
+  g.transform(...foldMat(th));
+  g.shadowColor = 'rgba(30,20,10,.35)'; g.shadowBlur = 12 * Math.sin(th * D2R) + 2; g.shadowOffsetX = 6 + 10 * Math.sin(th * D2R); g.shadowOffsetY = 10 * Math.sin(th * D2R) + 3;
+  g.drawImage((th > 90 ? FOLDP.back : FOLDP.flap).cv, PB.x0 - PATCH_C[0], PB.y0 - PATCH_C[1], FOLDP.flap.cv.width / PR, FOLDP.flap.cv.height / PR);
+  g.restore();
+}
+function foldTip(th) {   // where the corner's tip is (world), for Malaya's hand
+  const m = foldMat(th), [x, y] = FOLD.tip;
+  return [PATCH_C[0] + m[0] * x + m[2] * y + m[4], PATCH_C[1] + m[1] * x + m[3] * y + m[5]];
+}
+function foldAngle(t) {
+  if (t < T.grip) return 96 + 22 * Math.sin(2 * Math.PI * 1.25 * twos(t));   // flapping on its own: it won't lie flat
+  const k = T.tug.filter(x => t >= x).length;
+  if (k === 0) return K(t, [[T.grip, 100], [T.grip + .2, 108, 'o']]);
+  let th = [108, 126, 144, 160][k] - 18 * Math.exp(-(t - T.tug[k - 1]) * 9) * Math.cos(2 * Math.PI * 3 * (t - T.tug[k - 1]));   // a yank, then the paper springs back a little
+  if (t > T.tug[2] + .3) th += 3 * Math.sin(2 * Math.PI * 3 * (twos(t) - T.tug[2]));   // straining at full stretch
+  return th;
+}
+
+// ---------------------------------------------------------------- puppets (pivots read off parts/*_debug.jpg, sheet px)
+const RIG = {
+  br: {
+    s: 0.6, neck: [525, 382], sh: { L: [423, 446], R: [624, 446] }, hip: { L: [462, 712], R: [592, 712] },
+    uarm: { L: { id: 5, p: [264, 424], e: [196, 580] }, R: { id: 6, p: [802, 423], e: [866, 582] } },
+    farm: { L: { id: 8, p: [187, 618], h: [158, 840] }, R: { id: 9, p: [860, 623], h: [885, 845] } },
+    leg: { L: { id: 11, p: [433, 796], f: [405, 1040] }, R: { id: 10, p: [605, 796], f: [640, 1040] } },
+    torso: 4, heads: { n: [0, 198, 312], strain: [2, 554, 311], sigh: [1, 902, 315], wow: [3, 1246, 315] },
+    headTop: 50, hat: { id: 7, p: [1190, 651], k: 0.8 },
+  },
+  my: {
+    s: 0.6, neck: [530, 379], sh: { L: [431, 435], R: [623, 435] }, hip: { L: [468, 712], R: [596, 712] },
+    uarm: { L: { id: 5, p: [259, 420], e: [190, 578] }, R: { id: 6, p: [796, 421], e: [862, 578] } },
+    farm: { L: { id: 8, p: [188, 613], h: [160, 812] }, R: { id: 9, p: [859, 616], h: [885, 840] } },
+    leg: { L: { id: 11, p: [434, 788], f: [410, 1040] }, R: { id: 10, p: [611, 788], f: [640, 1040] } },
+    torso: 4, heads: { n: [0, 198, 311], grit: [2, 552, 312], joy: [1, 902, 312], smug: [3, 1256, 312] },
+    headTop: 24, hat: { id: 7, p: [1178, 637], k: 0.85 },
+  },
+};
+function put(g, sheet, id, pv, at, rotRad, s) {
+  const m = idx[sheet].parts[id], im = img[`${sheet}_${id}`];
+  g.save(); g.translate(at[0], at[1]); g.rotate(rotRad); g.scale(s / 2, s / 2);
+  g.drawImage(im, -(pv[0] * 2 - m.x), -(pv[1] * 2 - m.y));
+  g.restore();
+}
+function follow(pv, q, at, rotRad, s) {
+  const dx = (q[0] - pv[0]) * s, dy = (q[1] - pv[1]) * s, c = Math.cos(rotRad), sn = Math.sin(rotRad);
+  return [at[0] + dx * c - dy * sn, at[1] + dx * sn + dy * c];
+}
+function ik(S, Tg, L1, L2, bend) {
+  const d = clamp(len(S, Tg), Math.abs(L1 - L2) + 1, L1 + L2 - 0.5), a = angOf(S, Tg);
+  const th = a + bend * Math.acos(clamp((L1 * L1 + d * d - L2 * L2) / (2 * L1 * d), -1, 1));
+  const E = [S[0] + L1 * Math.cos(th), S[1] + L1 * Math.sin(th)], Hh = [S[0] + d * Math.cos(a), S[1] + d * Math.sin(a)];
+  return { E, H: Hh, ua: th, fa: angOf(E, Hh) };
+}
+function layerShadow(g, on) {
+  if (on) { g.shadowColor = 'rgba(35,22,8,0.40)'; g.shadowBlur = 6; g.shadowOffsetX = 3; g.shadowOffsetY = 4; }
+  else { g.shadowColor = 'transparent'; g.shadowBlur = 0; g.shadowOffsetX = 0; g.shadowOffsetY = 0; }
+}
+// pose: { at (neck), rot, head, headRot, pop, hat:[dx,dy,rot], leg:{L,R} (deg, 90 = straight down), hand:{L,R} targets, bend:{L,R}, behind }
+function drawPuppet(g, key, pose) {
+  const R = RIG[key], s = pose.s || R.s, tr = pose.rot * D2R, at = pose.at;
+  const Tf = q => follow(R.neck, q, at, tr, s);
+  for (const side of ['L', 'R']) { const Lg = R.leg[side]; put(g, key, Lg.id, Lg.p, Tf(R.hip[side]), pose.leg[side] * D2R - angOf(Lg.p, Lg.f), s); }
+  const arms = {};
+  for (const side of ['L', 'R']) {
+    const U = R.uarm[side], F = R.farm[side], S = Tf(R.sh[side]);
+    arms[side] = { U, F, S, sol: ik(S, pose.hand[side], len(U.p, U.e) * s, len(F.p, F.h) * s, pose.bend[side]) };
+  }
+  const drawArm = side => { const a = arms[side]; put(g, key, a.U.id, a.U.p, a.S, a.sol.ua - angOf(a.U.p, a.U.e), s); put(g, key, a.F.id, a.F.p, a.sol.E, a.sol.fa - angOf(a.F.p, a.F.h), s); };
+  for (const side of ['L', 'R']) if (pose.behind && pose.behind[side]) drawArm(side);
+  put(g, key, R.torso, R.neck, at, tr, s);
+  const hd = R.heads[pose.head], hr = (pose.rot + pose.headRot) * D2R, hs = s * pose.pop;
+  put(g, key, hd[0], [hd[1], hd[2]], at, hr, hs);
+  const top = follow([hd[1], hd[2]], [hd[1], R.headTop], at, hr, hs);
+  const hatAt = [top[0] + pose.hat[0], top[1] + pose.hat[1]];
+  if (!pose.noHat) put(g, key, R.hat.id, R.hat.p, hatAt, hr + pose.hat[2] * D2R, s * R.hat.k * pose.pop);
+  for (const side of ['L', 'R']) if (!(pose.behind && pose.behind[side])) drawArm(side);
+  return { hand: { L: arms.L.sol.H, R: arms.R.sol.H }, mouth: follow([hd[1], hd[2]], [hd[1], 240], at, hr, hs), hatAt };
+}
+function drawLayer(dst, cam, fn) {   // a puppet is assembled on its own layer, then dropped onto the scene with one cast shadow
+  const g = LAYER.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+  applyCam(g, cam); layerShadow(g, true);
+  const r = fn(g);
+  dst.save(); dst.setTransform(1, 0, 0, 1, 0, 0);
+  dst.shadowColor = 'rgba(30,18,6,.42)'; dst.shadowBlur = 18 * cam.z; dst.shadowOffsetX = 13 * cam.z; dst.shadowOffsetY = 17 * cam.z;
+  dst.drawImage(LAYER, 0, 0); dst.restore();
+  return r;
+}
+function applyCam(g, cam) {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.translate(540 + cam.sx, 960 + cam.sy); g.rotate(cam.sr * D2R); g.scale(cam.z, cam.z); g.translate(-cam.f[0], -cam.f[1]);
+}
+function shake(t, t0, amp, f = 15, d = 11) {
+  if (t < t0) return [0, 0, 0];
+  const u = t - t0, e = Math.exp(-u * d);
+  return [-amp * .45 * e * Math.sin(2 * Math.PI * (f - 4) * u + 1), amp * e * Math.sin(2 * Math.PI * f * u), amp * .022 * e * Math.sin(2 * Math.PI * 9 * u)];
+}
+
+// ---------------------------------------------------------------- props
+function cardStroke(g, path, fill, w = 7) { g.lineJoin = 'round'; g.lineWidth = w; g.strokeStyle = C.paper; g.stroke(path); g.fillStyle = fill; g.fill(path); }
+function brass(g, x, y, r) {
+  const gr = g.createRadialGradient(x - r * .35, y - r * .4, r * .1, x, y, r);
+  gr.addColorStop(0, '#FFF1BF'); gr.addColorStop(.35, C.brass); gr.addColorStop(1, '#7A5A1E');
+  g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = 'rgba(60,40,10,.55)'; g.lineWidth = 1; g.stroke();
+}
+function ticks(g, t, t0, c, sc = 1) {   // ink strokes around an impact, three drawings on twos
+  const u = (twos(t) - t0) / 0.25; if (u < 0 || u > 1) return;
+  const r = rng(5);
+  g.save(); g.strokeStyle = C.ink; g.lineCap = 'round'; g.lineWidth = 6;
+  for (let i = 0; i < 9; i++) {
+    const a = -Math.PI * 0.95 + i / 8 * Math.PI * 1.9 + (r() - .5) * .2, l = 34 * (1 - u * .5), ex = 150 * sc * (1 + u * .35), ey = 150 * sc * (1 + u * .35);
+    g.beginPath(); g.moveTo(c[0] + Math.cos(a) * ex, c[1] + Math.sin(a) * ey); g.lineTo(c[0] + Math.cos(a) * (ex + l), c[1] + Math.sin(a) * (ey + l)); g.stroke();
+  }
+  g.restore();
+}
+function flecks(g, t, t0, c, cols, n = 14, sc = 1) {
+  const tt = t - t0; if (tt < 0 || tt > 0.75) return;
+  const r = rng(19 + Math.round(t0 * 10));
+  for (let i = 0; i < n; i++) {
+    const a = r() * Math.PI * 2, v = (260 + r() * 320) * sc, spin = (r() - .5) * 18, sz = (7 + r() * 9) * sc, col = cols[Math.floor(r() * cols.length)];
+    const x = c[0] + Math.cos(a) * (95 * sc + v * tt), y = c[1] + Math.sin(a) * (130 * sc + v * tt) + 700 * tt * tt;
+    const k = 1 - clamp((tt - 0.5) / 0.25, 0, 1);
+    g.save(); g.translate(x, y); g.rotate(spin * tt); g.scale(k, k);
+    g.fillStyle = col; g.shadowColor = 'rgba(30,20,10,.35)'; g.shadowBlur = 3; g.shadowOffsetX = 2; g.shadowOffsetY = 3;
+    g.beginPath(); g.moveTo(-sz, -sz * .4); g.lineTo(sz * .8, -sz * .6); g.lineTo(sz * .2, sz * .7); g.closePath(); g.fill(); g.restore();
+  }
+}
+function smearLines(g, c, ang) {   // the one in-between drawing of the peel: ink motion arcs behind the flying patch
+  g.save(); g.translate(c[0], c[1]); g.rotate(ang); g.strokeStyle = C.ink; g.lineCap = 'round'; g.lineWidth = 6;
+  for (let i = -2; i <= 2; i++) { g.beginPath(); g.arc(0, 260, 300 + i * 22, -Math.PI * .62, -Math.PI * .38); g.stroke(); }
+  g.restore();
+}
+let TXT = [];
+function noteText(g, id, text, x0, y0, x1, y1) {
+  const m = g.getTransform(), pts = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].map(([x, y]) => [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f]);
+  TXT.push({ id, text, x0: Math.min(...pts.map(p => p[0])), y0: Math.min(...pts.map(p => p[1])), x1: Math.max(...pts.map(p => p[0])), y1: Math.max(...pts.map(p => p[1])) });
+}
+function bubble(g, id, text, x, y, tail, k) {   // a shout: jagged paper balloon, one English line in Lilita
+  if (k <= 0.001) return;
+  g.save();
+  g.font = '84px Lilita'; const tw = g.measureText(text).width;
+  const w = tw + 90, h = 132;
+  g.translate(x, y); g.rotate(-3 * D2R); g.scale(k, k);
+  const b = new Path2D(), tx = (tail[0] - x) / k, ty = (tail[1] - y) / k;
+  const n = 20, r = rng(3);
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2, rr = (i % 2 ? 1.0 : 1.17) + (r() - .5) * .04; const px = Math.cos(a) * w * .56 * rr, py = Math.sin(a) * h * .66 * rr; i ? b.lineTo(px, py) : b.moveTo(px, py); }
+  b.closePath();
+  const base = Math.atan2(ty, tx), bx = Math.cos(base) * w * .42, by = Math.sin(base) * h * .48;
+  const wd = new Path2D(); wd.moveTo(bx - 20 * Math.sin(base), by + 20 * Math.cos(base)); wd.lineTo(tx, ty); wd.lineTo(bx + 20 * Math.sin(base), by - 20 * Math.cos(base)); wd.closePath(); b.addPath(wd);
+  g.shadowColor = 'rgba(30,20,10,.38)'; g.shadowBlur = 12; g.shadowOffsetX = 6; g.shadowOffsetY = 9;
+  g.fillStyle = '#FBF6EA'; g.fill(b); g.shadowColor = 'transparent';
+  g.lineWidth = 4; g.strokeStyle = C.ink; g.lineJoin = 'round'; g.stroke(b);
+  g.fillStyle = C.ink; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = '84px Lilita'; g.fillText(text, 0, 4);
+  noteText(g, id, text, -tw / 2, -40, tw / 2, 44);
+  g.restore();
+}
+// the year tag: a printed slip pasted into the panel's top-left corner; a dated slip pasted under it later
+function yearTag(g, t, t0, x, y, year, line, id, strip) {
+  const u = clamp((t - t0) / 0.22, 0, 1); if (u <= 0) return;
+  g.save();
+  g.font = '68px OldStdB'; const yw = [...year].reduce((a, c) => a + g.measureText(c).width + 2, -2);
+  g.font = '30px FellIt'; const lw = g.measureText(line).width, w = Math.max(250, lw + 60, yw + 60);
+  g.translate(x, lerp(y - 240, y, EASE.back(u))); g.rotate(lerp(-9, -1.4, EASE.o(u)) * D2R);
+  g.shadowColor = 'rgba(30,20,10,.32)'; g.shadowBlur = 8; g.shadowOffsetX = 3; g.shadowOffsetY = 5;
+  g.fillStyle = '#F3EAD6'; g.fillRect(0, 0, w, 148); g.shadowColor = 'transparent';
+  g.strokeStyle = C.ink; g.lineWidth = 2; g.strokeRect(9, 9, w - 18, 130); g.lineWidth = 1; g.strokeRect(14, 14, w - 28, 120);
+  g.fillStyle = C.ink; g.textBaseline = 'alphabetic'; g.textAlign = 'left';
+  g.font = '68px OldStdB'; spacedLeft(g, year, 30, 86, 2); noteText(g, id, year, 30, 32, 30 + yw, 88);
+  g.strokeStyle = 'rgba(43,34,25,.55)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(32, 97); g.lineTo(30 + yw, 97); g.stroke();
+  g.font = '30px FellIt'; g.fillStyle = '#5A4A3A'; g.fillText(line, 32, 126); noteText(g, id + '-l', line, 32, 100, 32 + lw, 132);
+  g.restore();
+  if (!strip) return;
+  const v = clamp((t - strip[0]) / 0.25, 0, 1); if (v <= 0) return;
+  g.save();
+  const sw = measureMixed(g, strip[1], 'italic 34px FellIt') + 48;
+  g.translate(lerp(-520, x + 24, EASE.back(v)), y + 160); g.rotate(lerp(-4, 0.8, EASE.o(v)) * D2R);
+  g.shadowColor = 'rgba(30,20,10,.32)'; g.shadowBlur = 7; g.shadowOffsetX = 3; g.shadowOffsetY = 4;
+  g.fillStyle = '#F3EAD6'; g.fillRect(0, 0, sw, 60); g.shadowColor = 'transparent';
+  g.fillStyle = C.ink; g.textBaseline = 'middle'; fillMixed(g, strip[1], 24, 31, 'italic 34px FellIt');
+  noteText(g, id + '-s', strip[1], 24, 10, sw - 24, 52);
+  g.fillStyle = 'rgba(222,205,165,.96)';
+  [[-14, 4, -12], [sw - 20, 0, 10]].forEach(([tx, ty, ta]) => { g.save(); g.translate(tx + 17, ty + 10); g.rotate(ta * D2R); g.fillRect(-20, -11, 40, 22); g.restore(); });
+  g.restore();
+}
+const KL = () => P(101.69, 3.14);   // Kuala Lumpur
+function pinFlag(g, x, y, k) {   // a map pin: brass head, paper flag, the city's name
+  if (k <= 0) return;
+  g.save(); g.translate(x, y); g.scale(k, k);
+  g.shadowColor = 'rgba(30,20,10,.4)'; g.shadowBlur = 8; g.shadowOffsetX = 5; g.shadowOffsetY = 7;
+  g.strokeStyle = '#8E969E'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -150); g.stroke();
+  g.font = '40px FellSC'; const w = [...'kuala lumpur'].reduce((a, ch) => a + g.measureText(ch).width + 3, -3) + 44;
+  const f = new Path2D(); f.moveTo(0, -150); f.lineTo(w, -150); f.lineTo(w - 18, -122); f.lineTo(w, -94); f.lineTo(0, -94); f.closePath();
+  cardStroke(g, f, '#FBF6EA', 6); g.shadowColor = 'transparent';
+  g.strokeStyle = C.ink; g.lineWidth = 2.5; g.stroke(f);
+  g.fillStyle = C.ink; g.textBaseline = 'middle'; g.textAlign = 'left'; g.font = '40px FellSC'; spaced(g, 'kuala lumpur', (w - 18) / 2 + 4, -121, 3);
+  noteText(g, 'pin', 'kuala lumpur', 0, -150, w, -94);
+  brass(g, 0, -150, 11);
+  g.restore();
+}
+function vignette(g, a = .24, w = W, h = H) {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  const v = g.createRadialGradient(w * .5, h * .46, h * .3, w * .5, h * .5, Math.max(w, h) * .75);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, `rgba(40,25,10,${a})`);
+  g.fillStyle = v; g.fillRect(0, 0, w, h);
+}
+
+// ================================================================ the poses
+// Britain: stands in the South China Sea, leaning in, his left hand pressing the patch down on the east coast
+function brPose(t) {
+  const x = 905, y = 640;
+  const strain = t >= T.tug[0] - .05 && t < T.sigh;
+  let rot = K(t, [[0, -10], [T.tug[0], -10], [T.tug[0] + .2, -16, 'o'], [T.sigh, -16], [T.sigh + .4, -6, 'back'], [T.letgo, -6], [T.letgo + .25, 4, 'el']]);
+  if (t < T.tug[0]) rot += 1.5 * Math.sin(2 * Math.PI * .5 * t);
+  if (strain) rot += (hash(Math.floor(t * 12)) - .5) * 2.4;   // trembling with effort
+  rot += wob(t, T.peel, 5, 4, 7);
+  const head = t < T.tug[0] - .05 ? 'n' : t < T.sigh ? 'strain' : t < T.peel ? 'sigh' : t < T.peel + .9 ? 'wow' : 'sigh';
+  const pop = 1 + wob(t, T.tug[0] - .05, 0.08, 3, 10) + wob(t, T.sigh, 0.08, 3, 10) + wob(t, T.peel, 0.09, 3, 10) + wob(t, T.peel + .9, 0.06, 3, 10);
+  const headRot = K(t, [[0, 0], [T.tug[0], -6], [T.sigh, -6], [T.sigh + .3, 8, 'el'], [T.peel, 8], [T.peel + .2, -4, 'el'], [T.peel + .9, 6, 'el']]);
+  // the helmet jumps off at the peel and lands back, a little crooked
+  const hatDy = K(t, [[T.peel, 0], [T.peel + .25, -150, 'o'], [T.peel + .55, 0, 'i']]) + wob(t, T.peel + .55, -7, 6, 10);
+  const hatRot = K(t, [[T.peel, 0], [T.peel + .25, -30, 'o'], [T.peel + .55, 7, 'i']]) + wob(t, T.peel + .55, 6, 5, 8);
+  // left hand: pressing the patch (east coast), lifted off on "lets go"; right hand on his hip, then both hands up: "fine"
+  const press = P(103.15, 4.55);
+  const pr = [press[0] + (strain ? (hash(Math.floor(t * 12) + 3) - .5) * 6 : 0), press[1]];
+  const hL = t < T.letgo ? pr : K(t, [[T.letgo, pr], [T.letgo + .3, [x - 150, y - 60], 'back']]);
+  const hR = t < T.letgo ? [x + 95, y + 175] : K(t, [[T.letgo, [x + 95, y + 175]], [T.letgo + .3, [x + 150, y - 60], 'back']]);
+  return { at: [x, y], rot, head, headRot, pop, hat: [0, hatDy, hatRot], leg: { L: 98, R: 76 }, hand: { L: hL, R: hR }, bend: { L: t < T.letgo ? 1 : -1, R: t < T.letgo ? -1 : 1 } };
+}
+// Malaya: hops in along the bottom on the beat, grips the Johor corner, and walks it back north-west, one tug at a time
+const GRIPOFF = [-190, 100];   // neck relative to the hand on the corner
+function myPose(t, tip) {
+  let x, y, rot = 0, legL = 104, legR = 78, headRot = 0, head = 'n';
+  const g0 = foldTip(foldAngle(T.grip)), gx = g0[0] + GRIPOFF[0], gy = g0[1] + GRIPOFF[1];
+  const hopX = [-260, 40, 340, gx];
+  let lean = 0;
+  if (t < T.grip) {
+    const i = clamp(Math.floor((t - (T.hop[0] - .5)) / .5), 0, 2), u = clamp((t - (T.hop[i] - .5)) / .5, 0, 1);
+    const air = clamp((u - 0.2) / 0.8, 0, 1), ground = u < 0.2 ? Math.sin(u / 0.2 * Math.PI) : 0;
+    x = lerp(hopX[i], hopX[i + 1], EASE.io(air)); y = gy - [70, 60, 45][i] * Math.sin(Math.PI * air) + 10 * ground;
+    rot = 8 * Math.sin(Math.PI * air) - 3 * ground; legL = lerp(104, 82, Math.sin(Math.PI * air)); legR = lerp(78, 58, Math.sin(Math.PI * air));
+    headRot = -4 * Math.sin(Math.PI * air * 2);
+    if (t >= T.hop[2]) { const v = clamp((t - T.hop[2]) / .5, 0, 1); x = lerp(hopX[2], gx, EASE.io(v)); y = gy - 45 * Math.sin(Math.PI * v); rot = 6 * Math.sin(Math.PI * v); }
+  } else {
+    head = t < T.tug[0] - .05 ? 'smug' : t < T.peel ? 'grit' : 'joy';
+    const k = T.tug.filter(a => t >= a).length;
+    lean = k === 0 ? K(t, [[T.grip, 0], [T.grip + .2, 5, 'o']]) : 9 + 3 * k + 10 * Math.exp(-(t - T.tug[k - 1]) * 8);   // each tug: yank back, overshoot, settle
+    if (t > T.tug[2] + .3 && t < T.peel) lean += (hash(Math.floor(t * 12) + 11) - .5) * 3;
+    const tp = t < T.peel ? tip : foldTip(foldAngle(T.peel - .01));
+    x = tp[0] + GRIPOFF[0] - lean * 2.0; y = tp[1] + GRIPOFF[1] + lean * .6;
+    rot = -lean;
+    legL = 104 + lean * .9; legR = 70 - lean * .3;
+    headRot = -lean * .35;
+    if (t >= T.peel) {
+      rot = K(t, [[T.peel, -lean], [T.peel + .12, 12, 'o'], [T.merdeka, 3, 'back']]); legL = K(t, [[T.peel, legL], [T.merdeka, 100]]); legR = K(t, [[T.peel, legR], [T.merdeka, 80]]);
+      x += K(t, [[T.peel, 0], [T.merdeka, -50, 'back']]); y -= K(t, [[T.peel, 0], [T.merdeka, lean * .6, 'back']]);
+      if (t >= T.merdeka) y -= 12 * Math.abs(Math.sin(2 * Math.PI * 1.25 * (twos(t) - T.merdeka))) * Math.exp(-(t - T.merdeka) * .5);   // hopping for joy
+      headRot = 6 * Math.sin(2 * Math.PI * .9 * (twos(t) - T.peel));
+    }
+  }
+  const pop = 1 + wob(t, T.grip, .07, 3, 10) + wob(t, T.tug[0] - .05, .08, 3, 10) + wob(t, T.peel, .1, 3, 9);
+  const sh = follow(RIG.my.neck, RIG.my.sh.R, [x, y], rot * D2R, RIG.my.s), shL = follow(RIG.my.neck, RIG.my.sh.L, [x, y], rot * D2R, RIG.my.s);
+  let hR, hL, bendR = -1, bendL = 1;
+  if (t < T.grip - .12) hR = [x + 100, y + 165 + (t < T.grip ? 14 * Math.sin(Math.PI * 4 * t) : 0)];
+  else if (t < T.peel) { hR = t < T.grip ? K(t, [[T.grip - .12, [x + 100, y + 165]], [T.grip, tip]]) : tip; bendR = 1; }
+  else { hR = K(t, [[T.peel, [sh[0] + 160, sh[1] - 60]], [T.peel + .12, [sh[0] + 50, sh[1] - 230], 'o'], [T.merdeka, [sh[0] + 30, sh[1] - 236], 'back']]); bendR = 1; }   // the throw; the fist stays up
+  if (t >= T.merdeka) { const kk = Math.sin(2 * Math.PI * 1.25 * (twos(t) - T.merdeka)); hR = [hR[0] + 10 * kk, hR[1] - 16 * Math.abs(kk)]; }
+  if (t < T.grip + .2) hL = [x - 100, y + 165];
+  else if (t < T.peel) hL = [tip[0] - 30, tip[1] + 34];
+  else hL = K(t, [[T.peel, [x - 100, y + 165]], [T.merdeka, [x - 100, y + 165]], [T.merdeka + .15, [shL[0] - 70, shL[1] - 220], 'back']]);
+  if (t >= T.merdeka + .15) { const kk = Math.sin(2 * Math.PI * 1.25 * (twos(t) - T.merdeka) + 1.5); hL = [hL[0] - 8 * kk, hL[1] - 14 * Math.abs(kk)]; bendL = -1; }
+  return { at: [x, y], rot, head, headRot, pop, hat: [0, wob(t, T.grip, -10, 4, 7) + wob(t, T.peel, -18, 4, 7), 0], leg: { L: legL, R: legR }, hand: { L: hL, R: hR }, bend: { L: bendL, R: bendR }, behind: { L: t >= T.grip + .2 && t < T.peel } };
+}
+// the peel: at the release the whole patch comes up in Malaya's hand and is flung away, up and out of frame to the left
+function flyPatch(t) {
+  const u = clamp((t - T.peel) / 0.34, 0, 1);
+  const c = [lerp(PATCH_C[0], -520, EASE.i(u)), lerp(PATCH_C[1], -700, EASE.i(u)) - 120 * Math.sin(Math.PI * u)];
+  return { c, rot: lerp(0, -40, EASE.i(u)), h: clamp(u * 5, 0, 1), k: lerp(1, .75, u), done: u >= 1 };
+}
+
+// ================================================================ PANEL 3 · 1957 (the peel)
+function sceneCam(t) {
+  const z = K(t, [[0, 1.0], [T.tug[2], 1.05], [T.peel, 1.05], [T.peel + .5, 1.02, 'o']]);
+  const f = K(t, [[0, [540, 960]], [T.tug[2], [520, 980]], [T.peel, [520, 980]], [T.peel + .5, [540, 960], 'o']]);
+  const sh = [shake(t, T.tug[0], 5, 14, 12), shake(t, T.tug[1], 6, 14, 12), shake(t, T.tug[2], 8, 14, 12), shake(t, T.peel, 18), shake(t, T.pin, 6, 14, 13)];
+  return { z, f, sx: sh.reduce((a, s) => a + s[0], 0), sy: sh.reduce((a, s) => a + s[1], 0), sr: sh.reduce((a, s) => a + s[2], 0) };
+}
+function scene57(g, t) {
+  const tq = twos(t), cam = sceneCam(t);
+  applyCam(g, cam);
+  g.drawImage(MAP, 0, 0, W, H);
+  // Britain's patch: curling corner until the peel; then it flies
+  const th = foldAngle(tq), tip = foldTip(th);
+  if (tq < T.peel) drawFolded(g, th, { z: cam.z });
+  const bp = brPose(tq);
+  drawLayer(g, cam, q => drawPuppet(q, 'br', bp));
+  const mp = myPose(tq, tip);
+  const me = drawLayer(g, cam, q => drawPuppet(q, 'my', mp));
+  if (tq >= T.peel) {
+    const fp = flyPatch(tq);
+    if (!fp.done) { drawPatch(g, PATCH, { c: fp.c, rot: fp.rot, h: fp.h, k: fp.k, z: cam.z }); if (tq < T.peel + .09) smearLines(g, [PATCH_C[0] + 60, PATCH_C[1] + 160], -0.6); }
+  }
+  ticks(g, t, T.peel, [PATCH_C[0] - 40, PATCH_C[1]], 1.3); flecks(g, tq, T.peel, PATCH_C, [C.paper, C.brPatch, C.my], 18, 1.2);
+  // the pin drops onto Kuala Lumpur
+  if (tq >= T.pin - .3) {
+    const kl = KL(), u = EASE.i(clamp((tq - (T.pin - .3)) / .3, 0, 1));
+    pinFlag(g, kl[0], lerp(kl[1] - 700, kl[1], u), 1);
+    ticks(g, t, T.pin, [kl[0], kl[1] - 10], .22);
+  }
+  // MERDEKA!: Malaya's shout, above his head, the tail to his mouth
+  const kB = popIn(tq, T.merdeka, .2);
+  bubble(g, 'merdeka', 'MERDEKA!', 330, 560, [me.mouth[0] + 10, me.mouth[1] - 120], kB);
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  yearTag(g, t, 17.45, 44, 44, '1957', 'Federation of Malaya', 'y57', [T.strip, '31 August 1957']);
+  vignette(g);
+}
+
+// ================================================================ PANEL 1 · 1946, the Malayan Union
+// Britain hops in from the right, holding the big patch up by its east edge (height is shadow); a wind-up, one in-between
+// drawing, SLAP. Malaya stands in the Strait with his arms crossed: NO UNION! Then the Johor corner starts to curl up.
+const BR_HOME = [905, 640];
+function patch46(t) {
+  const hopX = [1420, 1250, 1110, 1000, BR_HOME[0]];
+  let bx = BR_HOME[0], by = BR_HOME[1];
+  if (t < T1.hop[3]) {
+    const i = clamp(Math.floor((t - (T1.hop[0] - .5)) / .5), 0, 3), u = clamp((t - (T1.hop[i] - .5)) / .5, 0, 1);
+    const air = clamp((u - .2) / .8, 0, 1);
+    bx = lerp(hopX[i], hopX[i + 1], EASE.io(air)); by = BR_HOME[1] - [50, 44, 36, 26][i] * Math.sin(Math.PI * air);
+  }
+  const rel0 = [PATCH_C[0] - BR_HOME[0] + 70, PATCH_C[1] - BR_HOME[1] - 110];
+  let c = [bx + rel0[0], by + rel0[1]], rot = -4 + (t < T1.hop[3] ? 3 * Math.sin(2 * Math.PI * t) : 0), h = 0.8;
+  if (t >= T1.wind) {   // wind-up: lifted higher, tilted, trembling
+    const u = EASE.o(clamp((t - T1.wind) / .3, 0, 1));
+    c = [c[0] + 20 * u, c[1] - 70 * u]; rot = lerp(-4, 6, u); h = lerp(.8, 1, u);
+    if (t > T1.wind + .3 && t < T1.smear) { c[0] += (hash(Math.floor(t * 12)) - .5) * 4; rot += (hash(Math.floor(t * 12) + 5) - .5) * 1.2; }
+  }
+  if (t >= T1.smear) {   // the one in-between drawing
+    const u = clamp((t - T1.smear) / (T1.slap - T1.smear), 0, 1);
+    c = [lerp(c[0], PATCH_C[0], u), lerp(c[1], PATCH_C[1], u)]; rot = lerp(rot, 0, u); h = lerp(h, 0, u);
+  }
+  const G1 = [P(103.15, 4.55)[0] - PATCH_C[0], P(103.15, 4.55)[1] - PATCH_C[1]], G2 = [P(103.55, 3.2)[0] - PATCH_C[0], P(103.55, 3.2)[1] - PATCH_C[1]];
+  const r = rot * D2R, at = q => [c[0] + q[0] * Math.cos(r) - q[1] * Math.sin(r), c[1] + q[0] * Math.sin(r) + q[1] * Math.cos(r)];
+  return { c, rot, h, br: [bx, by], g1: at(G1), g2: at(G2), smear: t >= T1.smear && t < T1.slap };
+}
+function curl46(t) { return t < T1.curl ? 0 : t < T1.curl + .45 ? 96 * EASE.back((t - T1.curl) / .45) : 96 + 22 * Math.sin(2 * Math.PI * 1.25 * (twos(t) - T1.curl - .45)); }
+function br46(t, pp) {
+  const [x, y] = pp.br;
+  let rot = 0, head = 'n', headRot = 0, legL = 98, legR = 76;
+  if (t < T1.hop[3]) { const u = ((t - (T1.hop[0] - .5)) % .5) / .5; rot = 7 * Math.sin(Math.PI * u); legL = lerp(98, 120, Math.sin(Math.PI * u)); legR = lerp(76, 96, Math.sin(Math.PI * u)); headRot = -4 * Math.sin(2 * Math.PI * u); }
+  else rot = K(t, [[T1.hop[3], 0], [T1.wind + .3, 8, 'o'], [T1.smear, 8], [T1.slap, -12, 'lin'], [T1.slap + .5, -10, 'back']]) + wob(t, T1.slap, 4, 4, 8);
+  if (t >= T1.slap + .5) rot = -10 + 1.5 * Math.sin(2 * Math.PI * .5 * t);
+  if (t >= T1.wind && t < T1.slap) head = 'strain';
+  if (t >= T1.curl) head = t < T1.curl + 1.0 ? 'wow' : 'strain';
+  const pop = 1 + wob(t, T1.wind, .07, 3, 10) + wob(t, T1.slap, .08, 3, 10) + wob(t, T1.curl, .1, 3, 9);
+  let hL, hR, bL = 1, bR = 1;
+  if (t < T1.slap) { hL = pp.g1; hR = pp.g2; bL = 1; bR = -1; }
+  else { const press = P(103.15, 4.55); hL = t > T1.curl + 1.0 ? [press[0] + (hash(Math.floor(t * 12) + 3) - .5) * 6, press[1]] : press; hR = [x + 95, y + 175]; bL = 1; bR = -1; }
+  return { at: [x, y], rot, head, headRot, pop, hat: [0, 0, 0], leg: { L: legL, R: legR }, hand: { L: hL, R: hR }, bend: { L: bL, R: bR } };
+}
+function my46(t) {
+  const x = 250, y = 1150 + 3 * Math.sin(2 * Math.PI * .6 * t);
+  const stomp = t >= T1.nounion - .1 && t < T1.nounion + .35;
+  const head = t < T1.slap + .12 ? 'n' : t < T1.curl + .3 ? 'grit' : 'smug';
+  const pop = 1 + wob(t, T1.slap + .12, .1, 3, 9) + wob(t, T1.nounion, .08, 3, 10) + wob(t, T1.curl + .3, .08, 3, 10);
+  const rot = wob(t, T1.slap, -5, 4, 7) + (stomp ? K(t, [[T1.nounion - .1, 0], [T1.nounion + .05, 4, 'o'], [T1.nounion + .35, 0]]) : 0) + (t >= T1.curl + .3 ? 3 : 0);
+  const legR = stomp ? K(t, [[T1.nounion - .1, 80], [T1.nounion + .05, 40, 'o'], [T1.nounion + .2, 80, 'i']]) : 80;
+  const hatDy = K(t, [[T1.slap, 0], [T1.slap + .15, -60, 'o'], [T1.slap + .32, 0, 'i']]) + wob(t, T1.slap + .32, -5, 6, 10);
+  // arms crossed: each hand tucked under the other elbow
+  return { at: [x, y], rot, head, headRot: t >= T1.curl + .3 ? 8 : 0, pop, hat: [0, hatDy, K(t, [[T1.slap, 0], [T1.slap + .15, -14, 'o'], [T1.slap + .32, 0, 'i']])],
+    leg: { L: 100, R: legR }, hand: { L: [x + 52, y + 118], R: [x - 52, y + 108] }, bend: { L: -1, R: 1 }, behind: { L: true } };
+}
+function cam46(t) {
+  const z = K(t, [[0, 1.0], [T1.wind, 1.04], [T1.slap, 1.04], [T1.slap + 1.0, 1.0], [T1.curl, 1.0], [T1.curl + .6, 1.04]]);
+  const f = K(t, [[0, [540, 960]], [T1.curl, [540, 960]], [T1.curl + .6, [580, 1060]]]);
+  const a = shake(t, T1.slap, 22), b = shake(t, T1.nounion + .05, 6, 14, 12);
+  return { z, f, sx: a[0] + b[0], sy: a[1] + b[1], sr: a[2] + b[2] };
+}
+function puff(g, x, y, k) {
+  if (k <= 0.001) return;
+  g.save(); g.translate(x, y); g.scale(k, k);
+  const b = new Path2D(); [[-18, 4, 16], [0, -8, 20], [20, 2, 15], [4, 10, 15]].forEach(([cx, cy, r]) => { b.moveTo(cx + r, cy); b.arc(cx, cy, r, 0, Math.PI * 2); });
+  g.shadowColor = 'rgba(30,20,10,.35)'; g.shadowBlur = 6; g.shadowOffsetX = 3; g.shadowOffsetY = 5;
+  g.fillStyle = '#FBF6EA'; g.fill(b); g.restore();
+}
+function scene46(g, t) {
+  const tq = twos(t), cam = cam46(t);
+  applyCam(g, cam);
+  g.drawImage(MAP, 0, 0, W, H);
+  if (tq >= T1.slap) { if (tq >= T1.curl) drawFolded(g, curl46(tq), { z: cam.z }); else drawPatch(g, PATCH, { z: cam.z }); }
+  const mp = my46(tq), me = drawLayer(g, cam, q => drawPuppet(q, 'my', mp));
+  const pp = patch46(tq);
+  if (tq >= T1.hop[0] - .5 && tq < T1.slap) { drawPatch(g, PATCH, { c: pp.c, rot: pp.rot, h: pp.h, z: cam.z }); if (pp.smear) smearLines(g, [PATCH_C[0] + 40, PATCH_C[1] - 120], 0.3); }
+  if (tq >= T1.hop[0] - .5) drawLayer(g, cam, q => drawPuppet(q, 'br', br46(tq, pp)));
+  ticks(g, t, T1.slap, PATCH_C, 1.6); flecks(g, tq, T1.slap, PATCH_C, [C.paper, C.brPatch, C.my], 20, 1.3);
+  T1.puff.forEach((t0, i) => { const u = tq - t0; if (u < 0) return; const k = u < .17 ? EASE.el(u / .17) : Math.max(0, 1 - (u - .6) / .25); puff(g, me.hatAt[0] + (i ? 70 : -60) + 12 * u, me.hatAt[1] - 40 - 30 * u, k * 1.2); });
+  bubble(g, 'nounion', 'NO UNION!', 330, 560, [me.mouth[0] + 10, me.mouth[1] - 120], popIn(tq, T1.nounion, .2));
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  yearTag(g, t, 0.2, 44, 44, '1946', 'The Malayan Union', 'y46');
+  vignette(g);
+}
+
+// ================================================================ PANEL 2 · 1956, London (a short panel: the agreement on a desk)
+const P2W = 1080, P2H = 900;
+const S56 = 0.42, K56 = S56 / 0.6, MEET = [560, 272];   // the London puppets stand smaller, behind the agreement
+function pump56(t) { return t >= T2.shake + .3 ? 12 * Math.sin(2 * Math.PI * 2 * (twos(t) - T2.shake - .3)) * Math.exp(-(t - T2.shake - .3) * .8) : 0; }
+function br56(t) {
+  const x = 365, y = 250, shk = t >= T2.shake;
+  const head = t < T2.stamp ? 'n' : t < T2.stamp + .6 ? 'wow' : 'n';
+  const hip = [x + 95 * K56, y + 175 * K56];
+  const hR = !shk ? hip : t < T2.shake + .3 ? K(t, [[T2.shake, hip], [T2.shake + .3, MEET, 'back']]) : [MEET[0], MEET[1] + pump56(t)];
+  return { s: S56, at: [x, y], rot: wob(t, T2.stamp, 4, 4, 8) + (shk ? 4 : 0), head, headRot: shk ? 5 : 0, pop: 1 + wob(t, T2.stamp, .1, 3, 9), hat: [0, K(t, [[T2.stamp, 0], [T2.stamp + .12, -30, 'o'], [T2.stamp + .3, 0, 'i']]), 0],
+    leg: { L: 98, R: 80 }, hand: { L: [x - 95 * K56, y + 175 * K56], R: hR }, bend: { L: 1, R: shk ? 1 : -1 } };
+}
+function my56(t) {
+  const x = 755, y = 250, shk = t >= T2.shake;
+  const head = t < T2.stamp ? 'n' : 'smug';
+  const cross = [x + 52 * K56, y + 118 * K56];
+  const hL = !shk ? cross : t < T2.shake + .3 ? K(t, [[T2.shake, cross], [T2.shake + .3, MEET, 'back']]) : [MEET[0], MEET[1] + pump56(t)];
+  const hR = !shk ? [x - 52 * K56, y + 108 * K56] : [x + 100 * K56, y + 165 * K56];
+  return { s: S56, at: [x, y], rot: wob(t, T2.stamp, -4, 4, 8) + (shk ? -4 : 0), head, headRot: shk ? -5 : 0, pop: 1 + wob(t, T2.stamp + .1, .08, 3, 9) + wob(t, T2.shake, .06, 3, 9), hat: [0, 0, 0],
+    leg: { L: 100, R: 78 }, hand: { L: hL, R: hR }, bend: { L: -1, R: shk ? -1 : 1 }, behind: { L: !shk } };
+}
+function scene56(g, t) {
+  const tq = twos(t), a = shake(t, T2.stamp, 12, 14, 11);
+  g.setTransform(1, 0, 0, 1, a[0], a[1]);
+  g.fillStyle = deskPat; g.fillRect(-40, -40, P2W + 80, P2H + 80);
+  // the agreement: a sheet of paper on the desk
+  g.save(); g.translate(545, 705); g.rotate(-1.5 * D2R);
+  g.shadowColor = 'rgba(30,20,10,.4)'; g.shadowBlur = 10; g.shadowOffsetX = 6; g.shadowOffsetY = 9;
+  g.fillStyle = '#F6EEDB'; g.fillRect(-300, -170, 600, 340); g.shadowColor = 'transparent';
+  g.strokeStyle = C.ink; g.lineWidth = 2; g.strokeRect(-286, -156, 572, 312);
+  g.fillStyle = C.ink; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.font = '46px FellSC'; spaced(g, 'independence', 0, -98, 6); noteText(g, 'doc-t', 'independence', -200, -134, 200, -90);
+  g.font = 'italic 34px FellIt'; g.fillText('for the Federation of Malaya', 0, -46); noteText(g, 'doc-1', 'for the Federation of Malaya', -210, -74, 210, -38);
+  fillMixed(g, 'by August 1957', 0, 0, 'italic 34px FellIt', 'center'); noteText(g, 'doc-2', 'by August 1957', -110, -28, 110, 8);
+  g.strokeStyle = 'rgba(43,34,25,.6)'; g.lineWidth = 1.5;
+  [[-250, -40], [40, 250]].forEach(([x0, x1]) => { g.beginPath(); g.moveTo(x0, 96); g.lineTo(x1, 96); g.stroke(); });
+  g.restore();
+  // the stamp: drops from above with a big shadow, lands in red across the signature lines
+  if (tq >= T2.stamp - .3) {
+    const u = EASE.i(clamp((tq - (T2.stamp - .3)) / .3, 0, 1)), k = lerp(1.6, 1, u);
+    g.save(); g.translate(640, lerp(380, 790, u)); g.rotate(-9 * D2R); g.scale(k, k);
+    if (u < 1) { g.shadowColor = 'rgba(30,20,10,.35)'; g.shadowBlur = 20; g.shadowOffsetX = 30 * (1 - u); g.shadowOffsetY = 40 * (1 - u); g.fillStyle = 'rgba(0,0,0,0)'; }
+    g.globalAlpha = u < 1 ? 1 : 0.92;
+    g.strokeStyle = C.red; g.lineWidth = 6; g.strokeRect(-132, -46, 264, 92); g.lineWidth = 2; g.strokeRect(-122, -36, 244, 72);
+    g.fillStyle = C.red; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '62px Lilita'; g.fillText('AGREED', 0, 4);
+    if (u >= 1) noteText(g, 'agreed', 'AGREED', -120, -34, 120, 34);
+    g.restore();
+    ticks(g, t, T2.stamp, [640, 790], .55);
+  }
+  const cam = { z: 1, f: [540, 960], sx: a[0], sy: a[1], sr: 0 };
+  drawLayer(g, cam, q => drawPuppet(q, 'br', br56(tq)));
+  drawLayer(g, cam, q => drawPuppet(q, 'my', my56(tq)));
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  yearTag(g, t, 11.1, 30, 30, '1956', 'London', 'y56');
+  vignette(g, .2, P2W, P2H);
+}
+
+// ================================================================ PANEL 4 · the title card
+const P4W = 1080, P4H = 760;
+function sceneTitle(g, t) {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.fillStyle = '#E8DEC6'; g.fillRect(0, 0, P4W, P4H);
+  g.save(); g.globalCompositeOperation = 'multiply'; g.globalAlpha = .35; g.drawImage(paperTex, -200, -300); g.restore();
+  const u = clamp((t - TT.title) / 0.16, 0, 1); if (u <= 0) return;
+  const s1 = shake(t, TT.title + 0.16, 8, 14, 12);
+  g.save(); g.translate(540 + s1[0], 380 + s1[1] + lerp(-700, 0, EASE.i(u))); g.rotate(lerp(-10, -1.5, u) * D2R);
+  g.shadowColor = 'rgba(30,20,10,.4)'; g.shadowBlur = 16; g.shadowOffsetX = 8; g.shadowOffsetY = 12;
+  g.fillStyle = '#F6EEDB'; g.fillRect(-420, -280, 840, 560); g.shadowColor = 'transparent';
+  g.strokeStyle = C.ink; g.lineWidth = 3; g.strokeRect(-402, -262, 804, 524); g.lineWidth = 1.2; g.strokeRect(-394, -254, 788, 508);
+  g.fillStyle = C.ink; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.font = '128px FellSC'; spaced(g, 'merdeka', 0, -60, 10); noteText(g, 'title', 'merdeka', -330, -160, 330, -50);
+  // the film's icon: a teal peninsula of paper with a pink patch peeling off its corner
+  g.save(); g.translate(0, 40);
+  g.fillStyle = C.paper; g.fillRect(-150, -22, 300, 44); g.fillStyle = C.my; g.fillRect(-142, -16, 284, 32);
+  g.save(); g.translate(60, -16); g.rotate(-24 * D2R); g.fillStyle = C.paper; g.fillRect(-4, -36, 120, 40); g.fillStyle = C.brPatch; g.fillRect(0, -32, 112, 32); g.restore();
+  g.restore();
+  g.fillStyle = '#5A4A3A'; fillMixed(g, 'Malaya, 1946–1957', 0, 170, 'italic 50px FellIt', 'center'); noteText(g, 'title-s', 'Malaya, 1946–1957', -210, 130, 210, 180);
+  g.restore();
+  flecks(g, t, TT.title + 0.16, [540, 380], [C.paper, C.brPatch, C.my], 10, 1.2);
+}
+
+// ================================================================ THE PAGE: four panels down one sheet, and the page camera
+const PANELS = [
+  { id: 'p1', x: 0, y: 0, w: W, h: H, scene: scene46, tc: t => Math.min(t, 11.5) },
+  { id: 'p2', x: 0, y: 1980, w: P2W, h: P2H, scene: scene56, tc: t => clamp(t, 10.8, 17.4) },
+  { id: 'p3', x: 0, y: 2940, w: W, h: H, scene: scene57, tc: t => clamp(t, 16.8, DUR) },
+  { id: 'p4', x: 0, y: 4920, w: P4W, h: P4H, scene: sceneTitle, tc: t => t },
+];
+const PAGE = { x: -60, y: -60, w: W + 120, h: 4920 + P4H + 120 };
+// page camera keys: [t, cx, cy, zoom, ease]; zoom interpolates in log space
+const PCAM = [
+  [0, 540, 960, 1], [10.8, 540, 960, 1],
+  [11.15, 540, 1700, .62, 'io'], [11.55, 540, 2300, 1, 'io'],          // pull out, then down into the London panel (parked high, the 1946 panel above it)
+  [16.8, 540, 2300, 1], [17.1, 540, 3050, .66, 'i'], [17.4, 540, 3900, 1, 'o'],   // a drop down the page into 1957
+  [26.4, 540, 3900, 1], [27.3, 540, 4513, .6, 'io'], [DUR, 540, 4520, .595, 'lin'],   // pull back: the whole lower page, the title card lands
+];
+function pageCam(t) {
+  let i = 1; while (i < PCAM.length - 1 && t > PCAM[i][0]) i++;
+  const a = PCAM[i - 1], b = PCAM[i], u = EASE[b[4] || 'io'](clamp((t - a[0]) / Math.max(b[0] - a[0], 1e-6), 0, 1));
+  return { cx: lerp(a[1], b[1], u), cy: lerp(a[2], b[2], u), z: Math.exp(lerp(Math.log(a[3]), Math.log(b[3]), u)), moving: a[2] !== b[2] ? Math.sin(Math.PI * u) : 0 };
+}
+function renderFilm(t) {
+  TXT = [];
+  const pc = pageCam(t), g = MAIN;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.shadowColor = 'transparent';
+  const view = { y0: pc.cy - 960 / pc.z, y1: pc.cy + 960 / pc.z };
+  const full = PANELS.find(p => pc.z === 1 && p.h === H && Math.abs(pc.cy - (p.y + 960)) < .01);
+  const toS = (x, y) => [(x - pc.cx) * pc.z + 540, (y - pc.cy) * pc.z + 960];
+  const out = [];
+  if (!full) {
+    g.fillStyle = tablePat; g.fillRect(0, 0, W, H);
+    g.save(); g.translate(540, 960); g.scale(pc.z, pc.z); g.translate(-pc.cx, -pc.cy);
+    g.shadowColor = 'rgba(20,12,4,.5)'; g.shadowBlur = 40 * pc.z; g.shadowOffsetX = 18 * pc.z; g.shadowOffsetY = 26 * pc.z;
+    g.fillStyle = pagePat; g.fillRect(PAGE.x, PAGE.y, PAGE.w, PAGE.h); g.restore();
+  }
+  for (const p of PANELS) {
+    if (full && p !== full) continue;
+    if (p.y + p.h < view.y0 || p.y > view.y1) continue;
+    const sg = p.cv.getContext('2d');
+    sg.setTransform(1, 0, 0, 1, 0, 0); sg.clearRect(0, 0, p.w, p.h); sg.shadowColor = 'transparent';
+    const before = TXT.length; p.scene(sg, p.tc(t));
+    for (let i = before; i < TXT.length; i++) {
+      const e = TXT[i];
+      if (e.x1 < 0 || e.x0 > p.w || e.y1 < 0 || e.y0 > p.h) continue;
+      const [a0, b0] = toS(p.x + e.x0, p.y + e.y0), [a1, b1] = toS(p.x + e.x1, p.y + e.y1);
+      out.push({ id: `${p.id}:${e.id}`, text: e.text, x0: a0, y0: b0, x1: a1, y1: b1 });
+    }
+    TXT.length = before;
+    if (full) { g.drawImage(p.cv, 0, 0); continue; }
+    g.save(); g.translate(540, 960); g.scale(pc.z, pc.z); g.translate(-pc.cx, -pc.cy);
+    g.shadowColor = 'rgba(30,18,6,.35)'; g.shadowBlur = 10 * pc.z; g.shadowOffsetX = 5 * pc.z; g.shadowOffsetY = 7 * pc.z;
+    g.fillStyle = C.ink; g.fillRect(p.x - 6, p.y - 6, p.w + 12, p.h + 12); g.shadowColor = 'transparent';
+    g.drawImage(p.cv, p.x, p.y);
+    g.restore();
+  }
+  // comic speed lines while the camera drops down the page
+  if (pc.moving > 0.3 && t > 16.8 && t < 17.4) {
+    const r = rng(Math.floor(t * 24));
+    g.save(); g.strokeStyle = 'rgba(43,34,25,.5)'; g.lineCap = 'round';
+    for (let i = 0; i < 22; i++) { const x = r() * W, y = r() * H, l = 200 + r() * 400; g.lineWidth = 2 + r() * 4; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y + l); g.stroke(); }
+    g.restore();
+  }
+  caption(t);
+  TXT = out;
+}
+// narration captions: a comic caption box at the bottom centre (English only, the film's language)
+function caption(t) {
+  const i = SUBS.findIndex(([a, b]) => t >= a && t < b); if (i < 0) return;
+  const [a, b, lines] = SUBS[i], g = MAIN, font = 'italic 44px FellIt';
+  const u = EASE.o(clamp((t - a) / 0.14, 0, 1)), v = clamp((b - t) / 0.1, 0, 1);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+  const w = Math.max(...lines.map(l => measureMixed(g, l, font))) + 70, lh = 56, h = 44 + lh * lines.length, x = 540 - w / 2, y = 1856 - h + (1 - u) * 18 + (1 - v) * 10;
+  g.globalAlpha = Math.min(u, v);
+  g.shadowColor = 'rgba(30,20,10,.35)'; g.shadowBlur = 10; g.shadowOffsetX = 4; g.shadowOffsetY = 6;
+  g.fillStyle = C.caption; g.fillRect(x, y, w, h); g.shadowColor = 'transparent';
+  g.strokeStyle = C.ink; g.lineWidth = 3; g.strokeRect(x + 1.5, y + 1.5, w - 3, h - 3);
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.fillStyle = C.ink;
+  lines.forEach((l, j) => fillMixed(g, l, 540, y + 22 + lh * (j + 1) - 12, font, 'center'));
+  g.restore();
+}
+window.TEXTS = t => { renderFilm(t + FROM); return TXT.filter(x => x.x1 > 0 && x.x0 < W && x.y1 > 0 && x.y0 < H).map(({ id, text, x0, y0, x1, y1 }) => ({ id, text, x0, y0, x1, y1 })); };
+
+// ---------------------------------------------------------------- sound events (exported by core/render/events.mjs)
+function buildEvents() {
+  const ev = [], E = (t, type, o = {}) => ev.push({ t: +t.toFixed(3), type, pan: 0, ...o });
+  // 1946
+  E(0.2, 'tag', { pan: -.7 });
+  T1.hop.forEach((t, i) => E(t, 'hop', { i, pan: .9 - .15 * i }));
+  E(0.5, 'fly', { d: .5, pan: .7 }); E(T1.wind, 'windup', { d: .4, pan: .4 }); E(T1.smear, 'swish', { d: .2, pan: .2 });
+  E(T1.slap, 'slap'); E(T1.slap, 'hathop', { pan: -.6 }); E(T1.slap + .32, 'hatland', { pan: -.6 }); E(T1.slap + .3, 'rub', { d: .6, pan: .3 });
+  E(T1.nounion, 'stomp', { pan: -.6 }); T1.puff.forEach(t => E(t, 'puff', { pan: -.6 }));
+  E(T1.curl, 'curl', { d: .5, pan: .4 }); E(T1.curl + .45, 'flap', { d: 1.4, pan: .4 });
+  // page moves
+  E(10.8, 'pageout', { d: .75 }); E(16.8, 'drop', { d: .6 }); E(26.4, 'pageout', { d: 1.0 });
+  // 1956
+  E(11.1, 'tag', { pan: -.7 }); E(T2.stamp - .3, 'fall', { d: .3, pan: .2 }); E(T2.stamp, 'stamp', { pan: .2 }); E(T2.shake, 'reach', { pan: 0 }); E(T2.shake + .3, 'shake', { d: 1.0, pan: 0 });
+  // 1957
+  E(17.45, 'tag', { pan: -.7 }); E(17.4, 'flap', { d: T.grip - 17.4, pan: .3 });
+  T.hop.forEach((t, i) => E(t, 'hop', { i, pan: -.8 + .25 * i }));
+  E(T.hop[2] + .5, 'land', { pan: -.5 }); E(T.grip, 'grab', { pan: -.3 });
+  T.tug.forEach((t, i) => { E(t, 'tug', { i, pan: -.2 }); E(t + .05, 'strain', { d: .45, pan: .5 }); });
+  E(T.tug[2] + .3, 'hold', { d: T.letgo - T.tug[2] - .3, pan: 0 });
+  E(T.sigh, 'puff', { pan: .55 }); E(T.letgo, 'release', { pan: .5 });
+  E(T.peel, 'peel', { d: .45, pan: -.2 }); E(T.peel, 'hatoff', { pan: .55 }); E(T.peel + .55, 'hatland', { pan: .55 });
+  E(T.peel + .1, 'fly', { d: .5, pan: -.7 });
+  E(T.strip, 'strip', { pan: -.75 }); E(T.merdeka, 'shout', { pan: -.4 }); E(T.pin - .3, 'fall', { d: .3, pan: -.1 }); E(T.pin, 'pin', { pan: -.1 });
+  // title
+  E(TT.title + .16, 'titleslap', { pan: 0 });
+  VO.forEach(([id, t]) => E(t, 'vo', { id }));
+  return ev.sort((a, b) => a.t - b.t);
+}
+window.EV = buildEvents().filter(e => e.t >= FROM && e.t < TO).map(e => ({ ...e, t: +(e.t - FROM).toFixed(4) }));
+
+async function boot() {
+  const [map, index] = await Promise.all([fetch('malaya.json').then(r => r.json()), fetch('parts/index.json').then(r => r.json())]);
+  geo = map; idx = index;
+  const names = [];
+  for (const sh of ['br', 'my']) idx[sh].parts.forEach(p => names.push(`${sh}_${p.id}`));
+  await Promise.all(names.map(n => new Promise((ok, no) => { const i = new Image(); i.onload = () => { img[n] = i; ok(); }; i.onerror = no; i.src = `parts/${n}.png`; })));
+  await Promise.all([document.fonts.load('52px FellSC', 'malaya'), document.fonts.load('64px Fell', 'km'), document.fonts.load('24px FellIt', 'Strait'),
+    document.fonts.load('84px Lilita', 'MERDEKA! NO UNION AGREED'), document.fonts.load('68px OldStdB', '0123456789'), document.fonts.load('30px OldStd', '0123456789'), document.fonts.load('italic 28px OldStdIt', '0123456789')]);
+  paperTex = makePaper(W * MS, H * MS, 7);
+  { const tp = canvas(1024, 1024), tg = tp.getContext('2d'); tg.fillStyle = '#ECE2CA'; tg.fillRect(0, 0, 1024, 1024); tg.globalCompositeOperation = 'overlay'; tg.globalAlpha = .6; tg.drawImage(makePaper(1024, 1024, 21), 0, 0);
+    pagePat = MAIN.createPattern(tp, 'repeat');
+    const tb = canvas(1024, 1024), bg = tb.getContext('2d'); bg.fillStyle = C.table; bg.fillRect(0, 0, 1024, 1024); bg.globalCompositeOperation = 'overlay'; bg.globalAlpha = .7; bg.drawImage(makePaper(1024, 1024, 33), 0, 0);
+    tablePat = MAIN.createPattern(tb, 'repeat'); }
+  MAP = bakeMap();
+  // the patch bake window (Malaya's extent) and the patch centre
+  { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const poly of geo['Malaya']) for (const [lo, la] of poly[0]) { const [x, y] = P(lo, la); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    PB = { x0: x0 - 24, y0: y0 - 24, x1: x1 + 24, y1: y1 + 24 }; PATCH_C = [(x0 + x1) / 2, (y0 + y1) / 2]; }
+  PATCH = bakePatch(C.brPatch, 11);
+  // the corner that won't lie flat: southern Johor, beyond a line A→B across the state; it peels back north-west
+  { const A = P(103.75, 2.85), B = P(102.3, 1.85), tip = P(103.55, 1.5);
+    FOLD = { A: [A[0] - PATCH_C[0], A[1] - PATCH_C[1]], B: [B[0] - PATCH_C[0], B[1] - PATCH_C[1]], tip: [tip[0] - PATCH_C[0], tip[1] - PATCH_C[1]] }; }
+  FOLDP = foldPieces(PATCH);
+  LAYER = canvas(W, H); PANELS.forEach(p => { p.cv = canvas(p.w, p.h); });
+  { const dk = canvas(1024, 1024), dg = dk.getContext('2d'); dg.fillStyle = '#8C6B4F'; dg.fillRect(0, 0, 1024, 1024); dg.globalCompositeOperation = 'overlay'; dg.globalAlpha = .8; dg.drawImage(makePaper(1024, 1024, 45), 0, 0); deskPat = MAIN.createPattern(dk, 'repeat'); }
+  window.render = t => renderFilm(t + FROM);
+  window.READY = true;
+}
+boot();
+</script></body></html>
