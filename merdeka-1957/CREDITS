@@ -1,0 +1,36 @@
+Merdeka, 1957 — Comic History Cartoon, 1080x1920, 10 s
+
+Third-party material in the film, with source and licence:
+
+Puppet part sheets
+- src/sheet-britain.png and src/sheet-malaya.png: images made by the film's author with ChatGPT image generation
+  (OpenAI), from the prompts in SHEETS.md, under OpenAI's terms. Keyed and cut into parts/ by tools/extract.py.
+  The two puppets personify Britain and Malaya; they are not portraits of real people.
+
+Map
+- Natural Earth 1:50m admin-0 countries (public domain), via world-atlas 2.0.2 (ISC), clipped to 95–108°E, 3°S–12°N
+  by tools/malaya_map.py into malaya.json. Default (not China-view) data: China is not in or near the frame.
+- Malaya = the modern Peninsular Malaysia polygons, standing in for the Federation of Malaya's 1957 extent; the
+  Malaya–Thailand line is the modern border (unchanged since the 1909 Anglo-Siamese Treaty). Error margin: the
+  coastlines at 1:50m, a few kilometres.
+
+Fonts (SIL Open Font License 1.1; licence texts in fonts/)
+- IM FELL English and IM FELL English SC (Igino Marini) · Lilita One (Juan Montoreano) · Old Standard TT (Alexey Kryukov)
+
+Voice
+- Kokoro-82M (Apache-2.0) via kokoro-onnx, voice bm_george; every line checked with faster-whisper (base.en).
+  Script: vo/lines.json.
+
+Music and foley
+- Samples (CC0): FreePats project (freepats.zenvoid.org), VS Chamber Orchestra: Community Edition (Versilian Studios),
+  Versilian Community Sample Library (Versilian Studios). Score written in mix.py; paper foley synthesised in mix.py.
+
+Code
+- index.html, mix.py and tools/extract.py adapt the Comic History Cartoon demo code of the Lemo-Opuscar library
+  (github.com/lemomo-ai/lemo-opuscar), MIT License, Copyright (c) 2026 SecondFirst Pty Ltd. Rendering, voice, speech
+  check, sampler and mastering tools from the same library (MIT).
+
+History
+- The Federation of Malaya became independent from Britain on 31 August 1957, after negotiations (the London
+  conference of January–February 1956), not a war of independence. Singapore remained a British colony in 1957.
+  Kuala Lumpur was the capital.

@@ -1,6 +1,8 @@
 # Merdeka, 1957: treatment
 
-Style: Comic History Cartoon · 1080×1920 (9:16) · 24 fps · 10 s · English narrator, burned-in captions.
+Style: Comic History Cartoon · 1080×1920 (9:16) · 24 fps · 10 s · English narrator (Kokoro bm_george), burned-in captions (`subtitles_en.srt`).
+
+> Final timings are in §11, "As built". Where they differ from §4–§8 (written before production), §11 wins.
 
 ## Brief
 - Topic: the Federation of Malaya's independence from Britain, 31 August 1957.
@@ -76,3 +78,13 @@ VO: dry, slightly amused; about 10 dB over the music, ducking as in STYLE.md §7
 - Region: about 94°E–106°E, 0°–8°N (the peninsula, Singapore, Sumatra's east coast). Natural Earth 1:10m coastlines and admin-0; China is not in frame.
 - Borders drawn: only the Malaya–Thailand line (the film is about Malaya's extent). Singapore is printed separately: it stayed a British colony in 1957 and keeps a small British patch. That is correct, and the narration doesn't claim otherwise.
 - Malaya's 1957 extent = the modern Peninsular Malaysia shape.
+
+## 11. As built (final)
+- **Images:** the user made the sheets; the two ChatGPT sheets were used (matching style, every part separate, brass pins at the joints).
+- **Narration:** v1 at 0.10 s: "Nineteen fifty-seven. Britain's patch on Malaya won't lie flat any more." (4.43 s). v2 at 5.15 s: "No war. Just talks. And Britain lets go." (2.95 s).
+- **Peel geometry:** the corner that won't lie flat is southern Johor, beyond a line across the state, and it peels back to the north-west. From 0 to 3.3 s it flaps on its own, showing its cream back. Malaya grips it at 3.3 s and walks it back with three tugs (3.8 / 4.8 / 5.8 s), each yank springing back a little.
+- **Beats:** hops 1.8 / 2.3 / 2.8 s · grip 3.3 · Britain strains from 3.8 · sighs 6.3 ("just talks") · lifts his hand 7.05 ("lets go") · peel 7.3: the whole patch comes up and is flung out of frame, top left (one in-between frame with ink arcs), and the helmet jumps · date slip "31 August 1957" 7.45 · MERDEKA! 7.55 · pin on Kuala Lumpur 7.75 · pull back to the comic page 8.9–9.9 (the panel on the page, the next row of panels empty below it).
+- **Ending:** changed from the narrow date panel to the date slip under the year tag, plus a single pull back to the page. At 9:16 and 10 s there was no room for a second panel's reading time.
+- **Score:** 120 bpm on a grid from 0.3 s. Britain's tuba and trombone oom-pah thins under the tugs. Hand drums (darbuka doom/tak, standing in for gendang and rebana) answer each tug. A thin violin tremolo plays from 6.3 s. The peel brings a big gong, bass drum and a marimba/glockenspiel run. At the pin the music stops dead with only a small gong ringing, then a soft Bb major chord plays under the pull back.
+- **Checks:** speech check 2/2 OK; readcheck OK (tightest: "kuala lumpur" 2.48 s against 2.23 s); −14.0 LUFS; no black frames.
+- **Not the demo again:** this film differs from the demo in its structure (one tall panel, one action, against six panels and four changes of hand), its opening (the corner already curling, Britain already pressing, against a puppet hopping in with a patch), its signature move (a peel walked back by tugs, against a cut and a tear), its camera path (one panel with small pushes, against page moves between panels) and its score shape (Britain's brass giving way to Malay hand drums and gong). It shares the pin ending and the pull back to the page (2 of 6).
