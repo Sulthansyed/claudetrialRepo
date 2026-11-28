@@ -1,10 +1,11 @@
-fit: tempo 1.000x (speech untouched), pauses shortened to sentence 0.5s / comma 0.3s, lead 0.27s, breath 0.37s, VO-free ending 1.50s
+source: scratch TTS
+fit: tempo 1.000x (speech untouched), pauses shortened to sentence 0.5s / comma 0.3s, lead 0.26s, breath 0.35s, VO-free ending 1.80s
  # scene                 start            end  VO raw  VO fit    gap
- 1 hook            0f  0.000s   111f  3.700s   3.054s  3.054s  0.65s
- 2 curiosity     111f  3.700s   241f  8.033s   3.766s  3.650s  0.68s
- 3 programme-1   241f  8.033s   355f 11.833s   3.322s  3.162s  0.64s
- 4 programme-2   355f 11.833s   517f 17.233s   5.096s  4.753s  0.65s
- 5 structure     517f 17.233s   647f 21.567s   3.888s  3.662s  0.67s
- 6 climax        647f 21.567s   759f 25.300s   3.074s  3.074s  0.66s
- 7 payoff        759f 25.300s   900f 30.000s   3.431s  2.916s  1.78s
+ 1 hook            0f  0.000s   110f  3.667s   3.054s  3.054s  0.61s
+ 2 curiosity     110f  3.667s   238f  7.933s   3.766s  3.648s  0.62s
+ 3 programme-1   238f  7.933s   351f 11.700s   3.322s  3.162s  0.60s
+ 4 programme-2   351f 11.700s   511f 17.033s   5.096s  4.757s  0.58s
+ 5 structure     511f 17.033s   639f 21.300s   3.888s  3.662s  0.60s
+ 6 climax        639f 21.300s   750f 25.000s   3.074s  3.074s  0.63s
+ 7 payoff        750f 25.000s   900f 30.000s   3.431s  2.916s  2.08s
 total frames: 900 = 30.000 s

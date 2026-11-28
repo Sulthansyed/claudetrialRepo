@@ -70,3 +70,33 @@ def add(buf, x, at, gain=1.0):
     s = int(round(at * SR))
     if s >= len(buf): return
     e = min(len(buf), s + len(x)); buf[s:e] += x[:e - s] * gain
+
+
+def click(v=1.0):
+    """Klik's cursor click / a laptop latch: a tiny, dry two-part tick."""
+    d = 0.07; tt = t_(d)
+    a = hp(noise(d), 3000) * np.exp(-tt / 0.003)
+    b = np.zeros_like(a); s = int(0.022 * SR); b[s:] = hp(noise(d), 2500)[:len(b) - s] * np.exp(-tt[:len(b) - s] / 0.004) * 0.6
+    body = np.sin(2 * np.pi * 900 * tt) * np.exp(-tt / 0.01) * 0.25
+    return norm(a + b + body) * v
+
+
+def flip(v=1.0):
+    """A calendar page flipping over: a quick swish ending in a soft flap."""
+    d = 0.22; tt = t_(d)
+    sw = bp(noise(d), 1500, 7000) * np.sin(np.pi * np.clip(tt / 0.16, 0, 1)) ** 2
+    flap = np.zeros_like(tt); s = int(0.15 * SR)
+    flap[s:] = bp(noise(d), 300, 2500)[:len(tt) - s] * np.exp(-tt[:len(tt) - s] / 0.015)
+    return norm(sw * 0.7 + flap) * v
+
+
+def snap(v=1.0):
+    """Card folding / a card snapping into place."""
+    d = 0.09; tt = t_(d)
+    return norm(bp(noise(d), 1200, 5000) * np.exp(-tt / 0.008) + np.sin(2 * np.pi * 260 * tt) * np.exp(-tt / 0.02) * 0.5) * v
+
+
+def tick(v=1.0):
+    """A soft pencil tick on paper."""
+    d = 0.05; tt = t_(d)
+    return norm(bp(noise(d), 2000, 6000) * np.exp(-tt / 0.006)) * v

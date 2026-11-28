@@ -1,0 +1,424 @@
+[
+ {
+  "text": "ANAK BAKAL",
+  "visible": 109,
+  "first": 6,
+  "last": 114,
+  "settled": 19,
+  "outsideMotion": 3,
+  "seconds": 3.63,
+  "scene": "hook"
+ },
+ {
+  "text": "MENDUDUKI",
+  "visible": 109,
+  "first": 6,
+  "last": 114,
+  "settled": 109.7,
+  "outsideMotion": 0,
+  "seconds": 3.63,
+  "scene": "hook"
+ },
+ {
+  "text": "UPKK 2027?",
+  "visible": 62,
+  "first": 52,
+  "last": 113,
+  "settled": 16.2,
+  "outsideMotion": 7,
+  "seconds": 2.07,
+  "scene": "hook"
+ },
+ {
+  "text": "PROGRAM CUTI",
+  "visible": 127,
+  "first": 116,
+  "last": 242,
+  "settled": 101.1,
+  "outsideMotion": 2,
+  "seconds": 4.23,
+  "scene": "curiosity"
+ },
+ {
+  "text": "SEKOLAH",
+  "visible": 127,
+  "first": 116,
+  "last": 242,
+  "settled": 230.6,
+  "outsideMotion": 0,
+  "seconds": 4.23,
+  "scene": "curiosity"
+ },
+ {
+  "text": "PERSEDIAAN UPKK 2027",
+  "visible": 101,
+  "first": 142,
+  "last": 242,
+  "settled": 83.4,
+  "outsideMotion": 1,
+  "seconds": 3.37,
+  "scene": "curiosity"
+ },
+ {
+  "text": "LOGO (curiosity)",
+  "visible": 81,
+  "first": 162,
+  "last": 242,
+  "settled": 14,
+  "outsideMotion": 0,
+  "seconds": 2.7,
+  "scene": "curiosity",
+  "logoMaxSkewPx": 0
+ },
+ {
+  "text": "2 PILIHAN",
+  "visible": 43,
+  "first": 200,
+  "last": 242,
+  "settled": 286.1,
+  "outsideMotion": 0,
+  "seconds": 1.43,
+  "scene": "curiosity"
+ },
+ {
+  "text": "PROGRAM 1",
+  "visible": 114,
+  "first": 242,
+  "last": 355,
+  "settled": 41.3,
+  "outsideMotion": 2,
+  "seconds": 3.8,
+  "scene": "programme-1"
+ },
+ {
+  "text": "KELAS JAWI INTENSIF",
+  "visible": 110,
+  "first": 245,
+  "last": 354,
+  "settled": 23.1,
+  "outsideMotion": 3,
+  "seconds": 3.67,
+  "scene": "programme-1"
+ },
+ {
+  "text": "ممباچ",
+  "visible": 96,
+  "first": 259,
+  "last": 354,
+  "settled": 132,
+  "outsideMotion": 2,
+  "seconds": 3.2,
+  "scene": "programme-1"
+ },
+ {
+  "text": "Membaca • Mengeja • Menulis",
+  "visible": 98,
+  "first": 257,
+  "last": 354,
+  "settled": 27.9,
+  "outsideMotion": 2,
+  "seconds": 3.27,
+  "scene": "programme-1"
+ },
+ {
+  "text": "مڠيجا",
+  "visible": 66,
+  "first": 289,
+  "last": 354,
+  "settled": 128.3,
+  "outsideMotion": 2,
+  "seconds": 2.2,
+  "scene": "programme-1"
+ },
+ {
+  "text": "منوليس",
+  "visible": 43,
+  "first": 312,
+  "last": 354,
+  "settled": 101.5,
+  "outsideMotion": 1,
+  "seconds": 1.43,
+  "scene": "programme-1"
+ },
+ {
+  "text": "PROGRAM 2",
+  "visible": 161,
+  "first": 355,
+  "last": 515,
+  "settled": 41.3,
+  "outsideMotion": 2,
+  "seconds": 5.37,
+  "scene": "programme-2"
+ },
+ {
+  "text": "KELAS ULANG KAJI",
+  "visible": 148,
+  "first": 367,
+  "last": 514,
+  "settled": 14.3,
+  "outsideMotion": 3,
+  "seconds": 4.93,
+  "scene": "programme-2"
+ },
+ {
+  "text": "UPKK",
+  "visible": 149,
+  "first": 367,
+  "last": 515,
+  "settled": 219.6,
+  "outsideMotion": 0,
+  "seconds": 4.97,
+  "scene": "programme-2"
+ },
+ {
+  "text": "Akidah",
+  "visible": 135,
+  "first": 381,
+  "last": 515,
+  "settled": 53.9,
+  "outsideMotion": 0,
+  "seconds": 4.5,
+  "scene": "programme-2"
+ },
+ {
+  "text": "Ibadah",
+  "visible": 111,
+  "first": 405,
+  "last": 515,
+  "settled": 161.9,
+  "outsideMotion": 0,
+  "seconds": 3.7,
+  "scene": "programme-2"
+ },
+ {
+  "text": "Adab",
+  "visible": 80,
+  "first": 432,
+  "last": 511,
+  "settled": 247.4,
+  "outsideMotion": 0,
+  "seconds": 2.67,
+  "scene": "programme-2"
+ },
+ {
+  "text": "Sirah",
+  "visible": 58,
+  "first": 454,
+  "last": 511,
+  "settled": 264.9,
+  "outsideMotion": 0,
+  "seconds": 1.93,
+  "scene": "programme-2"
+ },
+ {
+  "text": "Bahasa Arab",
+  "visible": 41,
+  "first": 471,
+  "last": 511,
+  "settled": 144,
+  "outsideMotion": 0,
+  "seconds": 1.37,
+  "scene": "programme-2"
+ },
+ {
+  "text": "4",
+  "visible": 129,
+  "first": 517,
+  "last": 645,
+  "settled": 38,
+  "outsideMotion": 1,
+  "seconds": 4.3,
+  "scene": "structure"
+ },
+ {
+  "text": "MINGGU",
+  "visible": 128,
+  "first": 517,
+  "last": 644,
+  "settled": 103.8,
+  "outsideMotion": 2,
+  "seconds": 4.27,
+  "scene": "structure"
+ },
+ {
+  "text": "3",
+  "visible": 93,
+  "first": 550,
+  "last": 642,
+  "settled": 20,
+  "outsideMotion": 0,
+  "seconds": 3.1,
+  "scene": "structure"
+ },
+ {
+  "text": "KELAS",
+  "visible": 93,
+  "first": 550,
+  "last": 642,
+  "settled": 126.6,
+  "outsideMotion": 0,
+  "seconds": 3.1,
+  "scene": "structure"
+ },
+ {
+  "text": "SEMINGGU",
+  "visible": 93,
+  "first": 550,
+  "last": 642,
+  "settled": 72.1,
+  "outsideMotion": 0,
+  "seconds": 3.1,
+  "scene": "structure"
+ },
+ {
+  "text": "12",
+  "visible": 65,
+  "first": 581,
+  "last": 645,
+  "settled": 153.8,
+  "outsideMotion": 2,
+  "seconds": 2.17,
+  "scene": "structure"
+ },
+ {
+  "text": "SESI",
+  "visible": 65,
+  "first": 581,
+  "last": 645,
+  "settled": 154.7,
+  "outsideMotion": 2,
+  "seconds": 2.17,
+  "scene": "structure"
+ },
+ {
+  "text": "6–8",
+  "visible": 50,
+  "first": 593,
+  "last": 642,
+  "settled": 107.9,
+  "outsideMotion": 0,
+  "seconds": 1.67,
+  "scene": "structure"
+ },
+ {
+  "text": "MURID",
+  "visible": 50,
+  "first": 593,
+  "last": 642,
+  "settled": 122.5,
+  "outsideMotion": 0,
+  "seconds": 1.67,
+  "scene": "structure"
+ },
+ {
+  "text": "SEKELAS",
+  "visible": 50,
+  "first": 593,
+  "last": 642,
+  "settled": 95,
+  "outsideMotion": 0,
+  "seconds": 1.67,
+  "scene": "structure"
+ },
+ {
+  "text": "جاوي",
+  "visible": 98,
+  "first": 657,
+  "last": 754,
+  "settled": 287.2,
+  "outsideMotion": 0,
+  "seconds": 3.27,
+  "scene": "climax"
+ },
+ {
+  "text": "Modul Latihan Digital",
+  "visible": 84,
+  "first": 671,
+  "last": 754,
+  "settled": 67,
+  "outsideMotion": 1,
+  "seconds": 2.8,
+  "scene": "climax"
+ },
+ {
+  "text": "Ujian Diagnostik & Penilaian",
+  "visible": 55,
+  "first": 700,
+  "last": 754,
+  "settled": 43.8,
+  "outsideMotion": 2,
+  "seconds": 1.83,
+  "scene": "climax"
+ },
+ {
+  "text": "Akhir",
+  "visible": 60,
+  "first": 697,
+  "last": 756,
+  "settled": 169,
+  "outsideMotion": 2,
+  "seconds": 2,
+  "scene": "climax"
+ },
+ {
+  "text": "Laporan Kemajuan",
+  "visible": 50,
+  "first": 705,
+  "last": 754,
+  "settled": 170,
+  "outsideMotion": 1,
+  "seconds": 1.67,
+  "scene": "climax"
+ },
+ {
+  "text": "LOGO (payoff)",
+  "visible": 145,
+  "first": 755,
+  "last": 899,
+  "settled": 16,
+  "outsideMotion": 2,
+  "seconds": 4.83,
+  "scene": "payoff",
+  "logoMaxSkewPx": 0
+ },
+ {
+  "text": "PENDAFTARAN DIBUKA!",
+  "visible": 144,
+  "first": 756,
+  "last": 899,
+  "settled": 18.4,
+  "outsideMotion": 4,
+  "seconds": 4.8,
+  "scene": "payoff"
+ },
+ {
+  "text": "Persediaan UPKK 2027",
+  "visible": 129,
+  "first": 771,
+  "last": 899,
+  "settled": 101,
+  "outsideMotion": 0,
+  "seconds": 4.3,
+  "scene": "payoff"
+ },
+ {
+  "text": "WhatsApp 019-823 0383",
+  "visible": 101,
+  "first": 799,
+  "last": 899,
+  "settled": 49.9,
+  "outsideMotion": 3,
+  "seconds": 3.37,
+  "scene": "payoff"
+ },
+ {
+  "text": "oneclicklearningcentre.com",
+  "visible": 101,
+  "first": 799,
+  "last": 899,
+  "settled": 38,
+  "outsideMotion": 5,
+  "seconds": 3.37,
+  "scene": "payoff"
+ }
+]

@@ -1,0 +1,41 @@
+OCLC UPKK 2027: QC report
+============================================================
+file      out/oclc-upkk-2027.mp4  (16.3 MB)
+video     h264 1080x1920 yuv420p 30/1 fps, range=tv matrix=bt709 primaries=bt709 trc=bt709
+audio     aac 48000 Hz, 2 ch, 30.000 s
+PASS  frame count 900 (need 900)
+PASS  duration 30.000 s (need 30.000 s)
+PASS  H.264 1080x1920 yuv420p 30 fps
+PASS  bt709 limited range, tagged
+PASS  AAC 48 kHz stereo
+PASS  loudness -14.1 LUFS integrated (target -14)
+PASS  true peak -1.4 dBTP (limit -1.0)
+          loudness range 2.3 LU
+PASS  colour: cream background matches the PNG within ±3 (worst 2)
+          f0: png (249, 246, 238) mp4 (249, 245, 237), frame mean |diff| 1.06
+          f450: png (249, 246, 238) mp4 (249, 245, 237), frame mean |diff| 1.00
+          f899: png (249, 246, 238) mp4 (249, 245, 237), frame mean |diff| 0.84
+PASS  VO-free ending 1.80 s (need >= 1.8 s)
+PASS  voice at 1.0x (shortened: sentence 0.5s, comma 0.3s)
+          scene        frames      start     end
+          hook           0-110   0.000s  3.667s
+          curiosity    110-238   3.667s  7.933s
+          programme-1  238-351   7.933s 11.700s
+          programme-2  351-511  11.700s 17.033s
+          structure    511-639  17.033s 21.300s
+          climax       639-750  21.300s 25.000s
+          payoff       750-900  25.000s 30.000s
+PASS  every text readable >= 1.2 s (shortest: Bahasa Arab 1.37 s)
+PASS  no text touches the safe-zone edge in its settled position
+          text touching the safe-zone edge (settled margin < 4 px): none
+          closest settled margins: LOGO (curiosity) 14px, KELAS ULANG KAJI 14.3px, LOGO (payoff) 16px, UPKK 2027? 16.2px, PENDAFTARAN DIBUKA! 18.4px
+          24 items pass outside the zone only while sliding/popping in or out (entrance overshoot, transitions)
+PASS  logo square (undistorted) in every scene: LOGO (curiosity) skew 0px, LOGO (payoff) skew 0px
+PASS  characters/ and config/brand.json identical to the approved commit 8322a10
+PASS  scene order, on-screen text, VO lines and scene Jawi identical to the approved commit
+PASS  Jawi words identical to the signed sheet: Jawi U+062C U+0627 U+0648 U+064A; membaca U+0645 U+0645 U+0628 U+0627 U+0686; mengeja U+0645 U+06A0 U+064A U+062C U+0627; menulis U+0645 U+0646 U+0648 U+0644 U+064A U+0633
+PASS  only signed Jawi words appear in the film (4 distinct)
+PASS  only the brand WhatsApp number appears
+          all numbers on screen: 019-823 0383 1 12 2 2027 3 4 6–8 (UPKK 2027, programme numbers, 4/3/12/6–8, the brand WhatsApp)
+============================================================
+ALL CHECKS PASS

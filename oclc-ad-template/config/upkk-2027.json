@@ -28,20 +28,21 @@
     "scratch_dir": "out/vo-scratch",
     "scratch_voice": "ms-MY-YasminNeural",
     "scratch_rate": "+0%",
-    "max_speedup": 1.0,
+    "max_speedup": 1.05,
     "lead_in_s": 0.3,
     "breath_s": 0.4,
     "min_last_scene_s": 4.0,
     "tighten_pauses": "auto",
-    "end_hold_s": 1.5,
-    "_note": "scratch lines play at 1.0x, untouched; the last scene ends with end_hold_s of no voice for the music to resolve",
+    "end_hold_s": 1.8,
+    "_note": "lines play at 1.0x as recorded; if needed, pauses are shortened, then padding (to 85%), then the ending (1.8 -> 1.5 s); a speed-up up to max_speedup is the last resort and is printed as a warning; past it the build stops and names the long lines",
     "fit": {
       "tempo": 1.0,
-      "lead_s": 0.27,
-      "breath_s": 0.37,
+      "lead_s": 0.261,
+      "breath_s": 0.348,
       "pauses": "shortened: sentence 0.5s, comma 0.3s",
-      "end_hold_s": 1.5
-    }
+      "end_hold_s": 1.8
+    },
+    "end_hold_min_s": 1.5
   },
   "jawi_words": [
     {
@@ -111,10 +112,10 @@
       ],
       "timing": {
         "start_frame": 0,
-        "end_frame": 111,
-        "frames": 111,
+        "end_frame": 110,
+        "frames": 110,
         "start_s": 0.0,
-        "end_s": 3.7
+        "end_s": 3.667
       },
       "vo": {
         "file": "out/vo-scratch/fit/01.wav",
@@ -124,6 +125,13 @@
         "tempo": 1.0,
         "start_frame": 8,
         "end_frame": 100
+      },
+      "cues": {
+        "headline_1": "anak",
+        "headline_2": "u",
+        "underline": "tahun",
+        "qmark_1": "menduduki",
+        "qmark_3": "depan"
       }
     },
     {
@@ -178,20 +186,28 @@
         "pop as badge lands"
       ],
       "timing": {
-        "start_frame": 111,
-        "end_frame": 241,
-        "frames": 130,
-        "start_s": 3.7,
-        "end_s": 8.033
+        "start_frame": 110,
+        "end_frame": 238,
+        "frames": 128,
+        "start_s": 3.667,
+        "end_s": 7.933
       },
       "vo": {
         "file": "out/vo-scratch/fit/02.wav",
         "raw_file": "out/vo-scratch/02.wav",
         "raw_s": 3.766,
-        "fitted_s": 3.65,
+        "fitted_s": 3.648,
         "tempo": 1.0,
-        "start_frame": 119,
-        "end_frame": 229
+        "start_frame": 118,
+        "end_frame": 228
+      },
+      "cues": {
+        "headline_flip_1": "cuti",
+        "flip_2": "sekolah",
+        "subhead_flip_3": "ini",
+        "klik_click_logo": "o",
+        "fold_books_badge": "dua",
+        "boy_excited": "pilihan"
       }
     },
     {
@@ -240,11 +256,11 @@
         "pencil scratch"
       ],
       "timing": {
-        "start_frame": 241,
-        "end_frame": 355,
-        "frames": 114,
-        "start_s": 8.033,
-        "end_s": 11.833
+        "start_frame": 238,
+        "end_frame": 351,
+        "frames": 113,
+        "start_s": 7.933,
+        "end_s": 11.7
       },
       "vo": {
         "file": "out/vo-scratch/fit/03.wav",
@@ -252,8 +268,14 @@
         "raw_s": 3.322,
         "fitted_s": 3.162,
         "tempo": 1.0,
-        "start_frame": 249,
-        "end_frame": 344
+        "start_frame": 246,
+        "end_frame": 341
+      },
+      "cues": {
+        "headline": "kuasai",
+        "card_1": "membaca",
+        "card_2": "mengeja",
+        "card_3": "menulis"
       }
     },
     {
@@ -310,20 +332,29 @@
         "paper settle"
       ],
       "timing": {
-        "start_frame": 355,
-        "end_frame": 517,
-        "frames": 162,
-        "start_s": 11.833,
-        "end_s": 17.233
+        "start_frame": 351,
+        "end_frame": 511,
+        "frames": 160,
+        "start_s": 11.7,
+        "end_s": 17.033
       },
       "vo": {
         "file": "out/vo-scratch/fit/04.wav",
         "raw_file": "out/vo-scratch/04.wav",
         "raw_s": 5.096,
-        "fitted_s": 4.753,
+        "fitted_s": 4.757,
         "tempo": 1.0,
-        "start_frame": 363,
-        "end_frame": 506
+        "start_frame": 359,
+        "end_frame": 502
+      },
+      "cues": {
+        "headline": "ulang",
+        "book_1": "akidah",
+        "book_2": "ibadah",
+        "book_3": "adab",
+        "book_4": "sirah",
+        "book_5": "bahasa",
+        "girl_smiles": "arab"
       }
     },
     {
@@ -369,11 +400,11 @@
         "tick marks"
       ],
       "timing": {
-        "start_frame": 517,
-        "end_frame": 647,
-        "frames": 130,
-        "start_s": 17.233,
-        "end_s": 21.567
+        "start_frame": 511,
+        "end_frame": 639,
+        "frames": 128,
+        "start_s": 17.033,
+        "end_s": 21.3
       },
       "vo": {
         "file": "out/vo-scratch/fit/05.wav",
@@ -381,8 +412,15 @@
         "raw_s": 3.888,
         "fitted_s": 3.662,
         "tempo": 1.0,
-        "start_frame": 525,
-        "end_frame": 635
+        "start_frame": 519,
+        "end_frame": 629
+      },
+      "cues": {
+        "card_1": "empat",
+        "ticks_start": "minggu",
+        "card_2": "tiga",
+        "card_3_ticks_end": "seminggu",
+        "card_4_laptop": "secara"
       }
     },
     {
@@ -435,11 +473,11 @@
         "bright ding on the gold tick"
       ],
       "timing": {
-        "start_frame": 647,
-        "end_frame": 759,
-        "frames": 112,
-        "start_s": 21.567,
-        "end_s": 25.3
+        "start_frame": 639,
+        "end_frame": 750,
+        "frames": 111,
+        "start_s": 21.3,
+        "end_s": 25.0
       },
       "vo": {
         "file": "out/vo-scratch/fit/06.wav",
@@ -447,8 +485,14 @@
         "raw_s": 3.074,
         "fitted_s": 3.074,
         "tempo": 1.0,
-        "start_frame": 655,
-        "end_frame": 748
+        "start_frame": 647,
+        "end_frame": 740
+      },
+      "cues": {
+        "card_1": "modul",
+        "card_2": "dan",
+        "card_3": "laporan",
+        "gold_tick": "kemajuan"
       }
     },
     {
@@ -506,10 +550,10 @@
         "soft chime on the logo"
       ],
       "timing": {
-        "start_frame": 759,
+        "start_frame": 750,
         "end_frame": 900,
-        "frames": 141,
-        "start_s": 25.3,
+        "frames": 150,
+        "start_s": 25.0,
         "end_s": 30.0
       },
       "vo": {
@@ -518,9 +562,15 @@
         "raw_s": 3.431,
         "fitted_s": 2.916,
         "tempo": 1.0,
-        "start_frame": 767,
-        "end_frame": 855
+        "start_frame": 758,
+        "end_frame": 846
+      },
+      "cues": {
+        "headline": "tempat",
+        "subhead": "terhad",
+        "contact": "daftar"
       }
     }
-  ]
+  ],
+  "cues_note": "scenes[].cues: which spoken word (vo_tts_text spelling, lower case) each on-screen beat waits for. Change these when you change a VO line."
 }

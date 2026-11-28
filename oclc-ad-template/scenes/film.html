@@ -29,7 +29,8 @@ const ctx = document.createElement('canvas').getContext('2d');
 const cache = new Map();
 const measure = (s, font) => { const k = font + '|' + s; if (!cache.has(k)) { ctx.font = font; cache.set(k, ctx.measureText(s).width); } return cache.get(k); };
 const rigs = { boy: boy(C), girl: girl(C), klik: klik(C), poses };
-const film = createFilm({ brand, cfg, C, rigs, measure });
+const words = await fetch('../out/vo-words.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+const film = createFilm({ brand, cfg, C, rigs, measure, words });
 const safe = new URLSearchParams(location.search).has('safe');
 const root = document.getElementById('root');
 
@@ -37,6 +38,9 @@ window.DUR = film.DUR;
 window.EV = film.events;
 window.SCENES = film.scenes.map((s) => ({ id: s.id, t0: s.t0, t1: s.t1 }));
 window.render = (t, opts = {}) => { root.innerHTML = film.frame(t, { safe: opts.safe ?? safe }); };
+window.renderThumbnail = (spec) => { root.innerHTML = film.thumbnail(spec); };
+window.TR = film.TR;
+window.CUE_MISSING = film.missingCues;
 window.checkSafe = () => {
   const z = cfg.safe_zone, bad = [];
   for (const el of root.querySelectorAll('[data-essential]')) {

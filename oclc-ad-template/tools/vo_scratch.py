@@ -40,7 +40,14 @@ async def tts(text, path):
 scenes = cfg["scenes"]
 own = [ROOT / f"assets/vo/{i + 1:02d}.wav" for i in range(len(scenes))]
 use_own = all(p.exists() for p in own)
+# scratch lines are only re-synthesised when their text or the voice changed (so a render works offline)
+stamp = out / "lines.json"
+want = {"voice": VOICE, "rate": RATE, "lines": [sc["vo_tts_text"] for sc in scenes]}
+cached = (not use_own and stamp.exists() and json.loads(stamp.read_text()) == want
+          and all((out / f"{i + 1:02d}.wav").exists() for i in range(len(scenes))))
 for i, sc in enumerate(scenes):
+    if cached:
+        continue
     dst = out / f"{i + 1:02d}.wav"
     if use_own:
         to_wav(own[i], dst)
@@ -51,6 +58,8 @@ for i, sc in enumerate(scenes):
         except Exception as e:  # no network: stop, never fake durations
             sys.exit(f"TTS failed for line {i + 1}: {e}")
         to_wav(mp3, dst)
-print(f"source: {'assets/vo (recorded)' if use_own else 'edge-tts ' + VOICE + ' rate ' + RATE}")
+if not use_own:
+    stamp.write_text(json.dumps(want, ensure_ascii=False, indent=1))
+print(f"source: {'assets/vo (recorded)' if use_own else 'edge-tts ' + VOICE + ' rate ' + RATE + (' (cached)' if cached else '')}")
 for i, sc in enumerate(scenes):
     print(f"{i + 1:02d}.wav  {dur(out / f'{i + 1:02d}.wav'):6.3f} s  {sc['vo_text']}")
