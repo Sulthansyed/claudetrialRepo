@@ -1,16 +1,16 @@
 # Facts — RM2,000 or RM0? (SSPN)
 
 Every claim the film makes, where it appears, and its source. The sources are the ones set in the brief; the film adds no claim beyond them.
-Stage A note: the source pages were not re-opened for this commit; the wording below is the brief's summary of each source. I'll quote each page's own wording here in Stage B before the final render.
+**Verification status:** in Stage B I tried to open all four source pages to quote their wording here, but this build machine's network does not reach hasil.gov.my, ringgitplus.com, techarp.com or pwc.com (DNS lookups refused). The wording below is the brief's summary of each source, not a quote. Please spot-check the four URLs before publishing, especially that the PwC table is the YA 2026 one.
 
 | # | Claim in the film | Where it appears | Source |
 |---|---|---|---|
-| 1 | SSPN relief is up to RM8,000, on **net** deposits (deposits minus withdrawals in the same year) | beat 1 ("Same RM8,000"), beat 3 (what-if: 8,000 − 3,000 → relief 5,000), the IF formula's `MIN(Deposited-Withdrawn,8000)`, beat 5 ("RM8,000 of relief") | LHDN tax reliefs page: https://www.hasil.gov.my/en/individu/pelepasan-cukai/ · RinggitPlus: https://ringgitplus.com/en/blog/tax/how-much-tax-you-save-with-sspn-and-prs.html |
+| 1 | SSPN relief is up to RM8,000, on **net** deposits (deposits minus withdrawals in the same year) | beat 1 ("Same eight thousand ringgit"), beat 3 (what-if: 8,000 − 3,000 → relief 5,000), the IF formula's `MIN(Deposited-Withdrawn,8000)`, the band-table title "Pelepasan RM8,000 × kadar cukai" | LHDN tax reliefs page: https://www.hasil.gov.my/en/individu/pelepasan-cukai/ · RinggitPlus: https://ringgitplus.com/en/blog/tax/how-much-tax-you-save-with-sspn-and-prs.html |
 | 2 | Withdrawing dividends also counts as a withdrawal | beat 3 VO and subtitle ("even your dividends" / "termasuk dividen") | TechARP: https://www.techarp.com/money/sspn-withdrawal-trap-wipes-out-tax-relief/ |
 | 3 | An SSPN with yourself as the beneficiary gets no relief | beat 4 (Beneficiary = "Self" → Relief 0; the IF formula's `IF(Beneficiary="Self",0,…)`) | RinggitPlus (above), citing PTPTN |
 | 4 | The deposit must reach PTPTN by 31 December; if not paying at a counter, pay by 25 December | beat 6 (31 DIS; "Bukan di kaunter? Bayar sebelum 25 Dis") | RinggitPlus (above) |
 | 5 | YA 2026 tax bands: RM50,001–70,000 at 11 %, RM70,001–100,000 at 19 %, RM100,001–400,000 at 25 % | beat 5 band table (11 %, 19 %, 25 %); the 25 % Band cells on both rows | PwC Malaysian Tax Booklet 2026/2027: https://www.pwc.com/my/en/publications/mtb/personal-income-tax.html |
-| 6 | RM8,000 × 11 % / 19 % / 25 % = RM880 / RM1,520 / RM2,000 | hook (RM2,000), beat 5 (880 / 1,520 / 2,000) | Arithmetic |
+| 6 | RM8,000 × 11 % / 19 % / 25 % = RM880 / RM1,520 / RM2,000 | hook (RM2,000), beat 5: on screen 880 / 1,520 / 2,000; spoken "you save up to two thousand ringgit, depending on your tax band" | Arithmetic |
 
 ## Arithmetic and staging that are not claims
 

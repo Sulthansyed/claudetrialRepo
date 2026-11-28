@@ -1,5 +1,5 @@
 # storyboard sheet: one panel per beat, rendered with the real drawing code (stills/t_<t>.jpg), captioned
-# make the stills first: node core/render/still.mjs <this folder> 0.5 7.6 12.8 17.9 27.0 31.8 38.6 --size 1080x1920 --out <this folder>/stills
+# make the stills first: node core/render/still.mjs <this folder> 0.5 7.6 12.8 17.9 23.9 31.6 38.0 --size 1080x1920 --out <this folder>/stills
 import os
 from PIL import Image, ImageDraw, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -8,15 +8,15 @@ SH = [
   ('0.5', '1 · HOOK · 0–6.2 s', 'Locked wide on the two rows. RM2,000', 'lime vs RM0 red from frame 0.'),
   ('7.6', '2 · CURIOSITY · 6.2–9.0 s', 'Whip to the headers: A C E… skip;', 'red double lines mark the folds.'),
   ('12.8', '3 · TRAP 1 · 9.0–14.8 s', 'Unhide Withdrawn. What-if 3,000 (red):', 'Relief 5,000, Saved RM1,250. Then ctrl-Z.'),
-  ('17.9', '4 · TRAP 2 · 14.8–18.9 s', 'Unhide Beneficiary: Ali = Self. IF', 'formula typed; Relief 0, Saved RM0.'),
-  ('27.0', '5 · CLIMAX · 18.9–29.2 s', '=8000*C44 filled right: 880 / 1,520 /', '2,000, counted as cells (1 sel = RM80).'),
-  ('31.8', '6 · PAYOFF · 29.2–36.1 s', 'Merged cell as stage: 31 DIS, then', '"Bukan di kaunter? … 25 Dis".'),
-  ('38.6', '7 · END · 36.1–41.0 s', 'Back up to the two rows, all columns', 'open; end card + footnote.'),
+  ('17.9', '4 · TRAP 2 · 14.8–18.4 s', 'Unhide Beneficiary: Ali = Self. IF', 'formula typed; Relief 0, Saved RM0.'),
+  ('23.9', '5 · CLIMAX · 18.4–25.8 s', '=8000*C44 filled right: 880 / 1,520 /', '2,000 lands on "two thousand ringgit".'),
+  ('31.6', '6 · PAYOFF · 25.8–34.3 s', 'Merged cell as stage: 31 DIS, then', '"Bukan di kaunter? … 25 Dis", held.'),
+  ('38.0', '7 · END · 34.3–39.8 s', 'Back up to the two rows; end card +', 'footnote (31 px, held 4 s).'),
 ]
 w, cols, gap = 330, 4, 18; h = w * 1920 // 1080; cap = 96
 rows = (len(SH) + cols - 1) // cols
 S = Image.new('RGB', (cols * w + (cols + 1) * gap, rows * (h + cap + gap) + 80), (241, 240, 235)); d = ImageDraw.Draw(S)
-d.text((gap, 22), 'RM2,000 or RM0? (SSPN)  ·  storyboard  ·  Spreadsheet Film  ·  1080×1920  ·  41.0 s', fill=(23, 18, 10), font=F('Bold', 28))
+d.text((gap, 22), 'RM2,000 or RM0? (SSPN)  ·  storyboard  ·  Spreadsheet Film  ·  1080×1920  ·  39.8 s', fill=(23, 18, 10), font=F('Bold', 28))
 for k, (t, h1, l1, l2) in enumerate(SH):
     im = Image.open(os.path.join(HERE, 'stills', f't_{t}.jpg')).convert('RGB').resize((w, h), Image.LANCZOS)
     x = gap + (k % cols) * (w + gap); y = 80 + (k // cols) * (h + cap + gap)

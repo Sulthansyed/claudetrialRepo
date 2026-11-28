@@ -4,6 +4,6 @@ const words = await (await fetch('voices/words.json')).json(), durs = await (awa
 const film = await import('./film.js');
 film.init(words, durs);
 const Q = new URLSearchParams(location.search);
-window.DUR = film.DUR; window.EV = film.EV; window.TEXTS = film.texts;
+window.FILM = film; window.DUR = film.DUR; window.EV = film.EV; window.TEXTS = film.texts;
 window.render = t => { g.setTransform(1, 0, 0, 1, 0, 0); Q.has('thumb') ? film.thumb(g) : film.render(g, t, { nosub: Q.has('nosub') }); };
 window.READY = true;

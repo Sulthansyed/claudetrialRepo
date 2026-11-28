@@ -1,4 +1,4 @@
-RM2,000 or RM0? (SSPN) — third-party material in this film (Stage A: picture + scratch voice; music and foley come in Stage B)
+RM2,000 or RM0? (SSPN) — third-party material in this film
 
 PICTURE
 - Everything on screen is drawn in code (film.js); no images, footage or generated pictures. The spreadsheet shell is
@@ -13,6 +13,15 @@ VOICE
 - Narration: Kokoro-82M text-to-speech, voice "am_onyx", speed 0.92 (hexgrad, https://huggingface.co/hexgrad/Kokoro-82M)
   Apache License 2.0; ONNX export by thewh1teagle/kokoro-onnx (runtime MIT).
 - Speech check: faster-whisper "base.en" (Systran) · MIT.
+
+MUSIC AND SOUND
+- Original score written in mix.py and played with the Lemo-Opuscar sampler (core/audio/sampler.py, MIT):
+  drum kit, hi-hat, electric bass, piano, marimba, xylophone, glockenspiel.
+  Drums: "MuldjordKit" by Lars Muldjord (drumgizmo.org), FreePats version · CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+  Piano: "Salamander Grand Piano V3" by Alexander Holm · CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/)
+  Hi-hat, electric bass, marimba, xylophone, glockenspiel: FreePats project (freepats.zenvoid.org) and
+  Versilian Community Sample Library (Versilian Studios) · CC0
+- All foley (keys, clicks, Enter, blips, whooshes, ding) synthesised with core/audio/sfx.py (MIT). No recordings.
 
 CONTENT
 - Aisyah and Ali are fictional. No bank, PTPTN, LHDN or spreadsheet-software logo or colour appears.

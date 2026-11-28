@@ -1,11 +1,13 @@
 # RM2,000 or RM0? (SSPN) — treatment
 
 **Style:** Spreadsheet Film (`styles/spreadsheet`) · **Channel:** Ringgit, Explained (TikTok / Reels)
-**Format:** 1080 × 1920, 30 fps, H.264 + AAC, −14 LUFS, true peak ≤ −1 dBTP · **Length:** 41.0 s (voice-led; speech 35.8 s)
+**Format:** 1080 × 1920, 30 fps, H.264 + AAC, −14 LUFS, true peak ≤ −1 dBTP · **Length:** 39.8 s (voice-led; speech 29.6 s)
 **Voice:** Kokoro `am_onyx`, speed 0.92, English · **Subtitles:** the style's cell-comment note, BM line large on top, English small under it, one line each, never wrapped
 **File in the shell:** `SSPN_2026.xlsx` · generic, hand-drawn shell; no bank, PTPTN, LHDN or spreadsheet-software marks or colours
 
-> Stage A (this commit): treatment, `storyboard.jpg`, scratch VO + timing table (§6), three preview frames (`preview_beat1_0.5s.png`, `preview_beat3_12.8s.png`, `preview_beat5_27.0s.png`), `FACTS.md`. The picture code (`film.js`) already renders the whole 41 s timeline; sound is not built yet. Stage B (full render, mix, SRT, thumbnail, caption, QC) waits for approval.
+> **Stage B revision (approved changes):** (1) beat 5 voice is now "Do it right, and you save up to two thousand ringgit, depending on your tax band.", the band table animation is kept and its numbers stay on screen; (2) every spoken amount says "ringgit" (on-screen text keeps "RM"); (3) the end-card footnote is 31 px on screen and held 4.2 s. Timings below are the re-timed ones.
+>
+> Stage A: treatment, `storyboard.jpg`, scratch VO + timing table (§6), three preview frames (`preview_beat1_0.5s.png`, `preview_beat3_12.8s.png`, `preview_beat5_27.0s.png`), `FACTS.md`. The picture code (`film.js`) already renders the whole 41 s timeline; sound is not built yet. Stage B (full render, mix, SRT, thumbnail, caption, QC) waits for approval.
 
 ---
 
@@ -77,32 +79,29 @@ Safe areas: key numbers sit above the subtitle note (note top at y ≈ 1270), ne
 | 2 | 6.2–9.0 | close on the header row under the column letters | **whip to the headers** (fast push 183 % → 305 %, 0.45 s) | letters read A C E F G; double fold lines at A|C and C|E pulse; status bar "2 lajur tersembunyi · 2 hidden columns" | look at the structure, not the data |
 | 3 | 9.0–14.8 | medium on rows 3–5, A..G | eases out as D opens (rides the reflow) | right-click → Unhide; D opens showing `#`, `##`, `0`. D5 selected, `3000` typed, Enter: D5 red, then E5 8,000 → 5,000, G5 → RM1,250 (amber). Status "Undo"; ctrl-Z: back to 0 / 8,000 / RM2,000 | a what-if is a spreadsheet's native move; ctrl-Z says "this isn't Aisyah's real problem" |
 | 4 | 14.8–18.4 | medium, whole table, 7 columns | rides the reflow again (153 % → 130 %) | B opens: Child / **Self** (red). Select E6, the IF formula types out over two lines in the expanded formula bar, reference boxes amber / sky / indigo on B, C, D. Enter: E6 0 and G6 RM0 flash red | the clue is a structural fact (who the account is for) |
-| 5 | 18.4–29.0 | full on the band table, rows 16–45 | **track down the sheet** (0.9 s), then slow push while counting, then a pull-out for the sweep | `11% 19% 25%` pasted; `=8000*C44` → 880; fill handle drags to D, E → 1,520, 2,000; each bar counts up as cells (status "Count: 11 / 19 / 25"); colour scale sweeps from the 2,000 cell | signature shot: a count drawn as cells. The tallest bar is literally the 25 % band |
-| 6 | 29.0–36.0 | full on the merged stage, rows 48–55 | scroll down + **push into the merged cell** (78 % → 130 %) | A48:G53 merges and expands; `31 DIS` typed huge; under it `Bukan di kaunter? Bayar sebelum 25 Dis` typed smaller, "25 Dis" amber | a deadline is a verdict: one merged cell, nothing else |
-| 7 | 36.0–41.0 | wide, rows 1–13, all 7 columns | **fast scroll back up** (pull out + up, 0.8 s) then locked | back on the two rows, now with Child/Self and 0/0 open. A8:G11 merges: `Nak versi BM penuh? Komen di bawah.`; A12:G13 footnote | bookend: the same comparison as frame one, now explained |
+| 5 | 18.4–25.8 | full on the band table, rows 16–45 | **track down the sheet** (0.9 s), then slow push while counting, then a pull-out for the sweep | `11% 19% 25%` pasted; `=8000*C44` → 880; fill handle drags to D, E → 1,520, 2,000; each bar counts up as cells (status "Count: 11 / 19 / 25"); colour scale sweeps from the 2,000 cell | signature shot: a count drawn as cells. The tallest bar is literally the 25 % band |
+| 6 | 25.8–34.3 | full on the merged stage, rows 48–55 | scroll down + **push into the merged cell** (78 % → 130 %) | A48:G53 merges and expands; `31 DIS` typed huge; under it `Bukan di kaunter? Bayar sebelum 25 Dis` typed smaller, "25 Dis" amber | a deadline is a verdict: one merged cell, nothing else |
+| 7 | 34.3–39.8 | wide, rows 1–14, all 7 columns | **fast scroll back up** (pull out + up, 0.8 s) then locked | back on the two rows, now with Child/Self and 0/0 open. A8:G11 merges: `Nak versi BM penuh? Komen di bawah.`; A12:G14 footnote (3 lines, 31 px) | bookend: the same comparison as frame one, now explained |
 
 Camera moves: locked, whip-push, reflow ride, push, track down, pull-out, scroll back (7). Signature shot: #5.
 
-## 6. Timing table (scratch VO, measured)
+## 6. Timing table (final VO, measured)
 
-Kokoro `am_onyx`, speed 0.92, unchanged. Every line passes the speech-to-text check (`asr_check.py`, 0 mismatches). Files: `tts/lines.json` (spoken text), `voices/v01–v07.wav`, `voices/dur.json` (lengths), `voices/words.json` (Whisper word timings). Gaps between lines ≥ 0.33 s; beat 3 gets an extra 1.3 s after its line so the what-if and ctrl-Z read.
+Kokoro `am_onyx`, speed 0.92, unchanged. Every line passes the speech-to-text check (`asr_check.py`, 0 mismatches). Files: `tts/lines.json` (spoken text), `voices/v01–v07.wav`, `voices/dur.json` (lengths), `voices/words.json` (Whisper word timings). Gaps between lines ≥ 0.33 s; beat 3 gets an extra 1.3 s after its line so the what-if and ctrl-Z read; beat 5 opens with 3 s of music while the first two bars count, so "two thousand" lands on the 2,000 cell; beat 6 ends on a 2.4 s music-only hold on the deadline so the counter line is readable.
 
 | # | Beat | VO id | Starts | Speech | Ends | Beat window | Spoken text (TTS spelling) |
 |---|---|---|---|---|---|---|---|
-| 1 | Hook | v01 | 0.15 | 5.85 s | 6.00 | 0.0–6.2 | Two parents. Same RM eight thousand saved. One saves up to RM two thousand in tax. |
+| 1 | Hook | v01 | 0.15 | 5.58 s | 5.73 | 0.0–6.2 | Two parents. Same eight thousand ringgit saved. One saves up to two thousand ringgit in tax. |
 | 2 | Curiosity | v02 | 6.35 | 2.43 s | 8.78 | 6.2–9.0 | The difference is hiding in two columns. |
 | 3 | Trap 1 | v03 | 9.05 | 4.46 s | 13.51 | 9.0–14.8 | Trap one: withdraw in the same year, even your dividends, and your relief shrinks. |
-| 4 | Trap 2 | v04 | 14.85 | 3.52 s | 18.37 | 14.8–18.9 | Trap two: an S S P N in your own name gets zero relief. |
-| 5 | Climax | v05 | 19.00 | 9.87 s | 28.87 | 18.9–29.2 | Do it right, and RM eight thousand of relief saves RM eight hundred and eighty, RM one thousand five hundred and twenty, or RM two thousand, depending on your tax band. |
-| 6 | Payoff | v06 | 29.30 | 6.62 s | 35.92 | 29.2–36.1 | The money must reach P T P T N by thirty-first December. Not paying at a counter? Pay by the twenty-fifth. |
-| 7 | End | v07 | 36.30 | 2.73 s | 39.03 | 36.1–41.0 | Want a full B M version? Comment below. |
+| 4 | Trap 2 | v04 | 14.85 | 3.52 s | 18.37 | 14.8–18.4 | Trap two: an S S P N in your own name gets zero relief. |
+| 5 | Climax | v05 | 21.40 | 4.27 s | 25.67 | 18.4–25.8 | Do it right, and you save up to two thousand ringgit, depending on your tax band. |
+| 6 | Payoff | v06 | 26.00 | 6.62 s | 32.62 | 25.8–34.3 | The money must reach P T P T N by thirty-first December. Not paying at a counter? Pay by the twenty-fifth. |
+| 7 | End | v07 | 35.20 | 2.73 s | 37.93 | 34.3–39.8 | Want a full B M version? Comment below. |
 
-Total: **41.0 s** (target 36–42 s). The end card holds 2.0 s after the last word.
+Total: **39.8 s** (target 36–42 s). The end card holds 1.9 s after the last word and 3.5 s after it is typed; the footnote is on screen from 35.55 s (4.2 s).
 
-**Lines that run long at 0.92:**
-- **v05 (9.87 s)** is the longest line, a quarter of the film. It fits because beat 5 carries the most action (three values and three bars), but if you want a tighter climax the cheapest cut is "of relief" → "Do it right, and RM8,000 saves RM880, RM1,520 or RM2,000, depending on your tax band." (≈ −0.6 s).
-- **v06 (6.62 s)** is fine for its beat but has two sentences, so it needs four subtitle cards.
-- Nothing else is tight. The BM subtitles are long, though: at a phone-readable size, five of the seven BM lines do not fit on one line, so each line is split into 2–3 cards at phrase breaks (BM over its matching English phrase), timed from Whisper's word timestamps. The BM wording is the brief's, unchanged; only the break points are mine (section 9).
+**Lines that run long at 0.92:** none now. The new v05 (4.27 s) is the shortest climax line; v06 (6.62 s) has two sentences, so it gets four subtitle cards. The BM subtitles are split into 1–4 single-line cards per line at phrase breaks (BM over its matching English phrase), timed from Whisper's word timestamps; the BM wording is the brief's (beat 5: the approved new line), only the break points are mine (section 9).
 
 ## 7. Beat sheet (second by second)
 
@@ -111,7 +110,7 @@ Total: **41.0 s** (target 36–42 s). The end card holds 2.0 s after the last wo
 | 0.00 | hook frame; G5 RM2,000 lime, G6 RM0 red already drawn; selection on C5 |
 | 0.25 | soft Enter clack; the two Saved cells flash white once (0.12 s) |
 | 1.10 | selection hops C5 → C6 ("same RM8,000") |
-| 3.25 | selection hops to G5 ("one saves up to RM2,000"); G5 pops 30 %; formula bar `=Relief*Band` |
+| 3.00 | selection hops to G5 ("one saves up to two thousand ringgit"); G5 pops 30 %; formula bar `=Relief*Band` |
 | 6.10 | music cut (silence 0.25 s) |
 | 6.35 | whip push to the header row; whoosh; letters A C E F G; fold lines pulse at 6.9 and 7.4 (two ticks) |
 | 7.9 | status bar: "2 lajur tersembunyi · 2 hidden columns" |
@@ -120,26 +119,27 @@ Total: **41.0 s** (target 36–42 s). The end card holds 2.0 s after the last wo
 | 10.5 | select D5 (tick) |
 | 11.15–11.45 | type `3000` (key clicks) |
 | 12.30 | Enter: D5 = 3,000, red fill flash; 12.42 E5 → 5,000 (flash); 12.55 G5 → RM1,250 amber (flash) |
-| 13.90 | ctrl-Z (status "Buat asal · Undo"): D5 0, E5 8,000, G5 RM2,000 lime |
+| 14.55 | ctrl-Z (status "Buat asal · Undo"): D5 0, E5 8,000, G5 RM2,000 lime |
 | 14.95 | right-click at the A|C fold → Unhide at 15.2; 15.2–15.75 B opens; B6 "Self" red flash at 15.6 |
 | 15.72 | select E6; 15.78–17.38 the IF formula types (≈ 34 cps); reference boxes appear as each name completes |
 | 16.95 | music cut (silence 0.5 s) |
 | 17.45 | Enter: E6 0 red flash, 17.58 G6 RM0 red flash (thump) |
-| 18.50–19.40 | track down to the band table |
-| 19.45 | band title merges; 19.6–19.9 `11%  19%  25%` pasted into C44:E44 |
-| 20.30–20.75 | `=8000*C44` typed into C45; reference box on C44 |
-| 21.30 | Enter: 880; bar C counts 11 cells (21.4–21.9), status "Count: 11" |
-| 22.10 | label `1 sel = RM80` merges |
-| 23.00–23.35 | fill handle drag to D45: 1,520; bar D counts 19 cells (23.45–24.3) |
-| 25.55–25.90 | fill handle drag to E45: 2,000; bar E counts 25 cells (26.0–27.0), ding on the last |
-| 27.10–28.70 | colour-scale sweep from E45 (blip per ring), camera pulls out to 78 % |
-| 29.20–29.90 | scroll down to rows 48–55; A48:G53 selected, merges at 29.95 |
-| 30.55–30.85 | type `31 DIS`; Enter 31.0 ("thirty-first December" at 31.2) |
-| 33.40–34.75 | type `Bukan di kaunter? Bayar sebelum 25 Dis` into A54:G55; Enter 34.85 ("25 Dis" turns amber) |
-| 35.95–36.75 | scroll back up to rows 1–12 (whoosh) |
-| 36.85–37.90 | A8:G11 merges, `Nak versi BM penuh? Komen di bawah.` typed; Enter 38.0 |
-| 38.20 | footnote fills A12:G13 |
-| 38.60 | glockenspiel ding; hold to 41.0 |
+| 18.50–19.30 | track down to the band table (whoosh); four-on-the-floor starts |
+| 19.35 | band title merges; 19.5–19.8 `11%  19%  25%` pasted into C44:E44 |
+| 19.85–20.30 | `=8000*C44` typed into C45; reference box on C44 |
+| 20.55 | Enter: 880; bar C counts 11 cells (20.65–21.05), status "Count: 11" |
+| 21.00 | label `1 sel = RM80` merges |
+| 21.25–21.55 | fill handle drag to D45: 1,520; bar D counts 19 cells (21.65–22.3) |
+| 21.40 | v05 starts: "Do it right, and you save up to…" |
+| 22.45–22.80 | fill handle drag to E45: 2,000 lands with "two thousand ringgit"; bar E counts 25 cells (22.9–23.76), ding on the last |
+| 23.95–25.50 | colour-scale sweep from E45 under "depending on your tax band" (blip + xylophone per ring), camera pulls out to 78 % |
+| 25.90–26.60 | scroll down to rows 48–55; A48:G53 selected, merges at 26.65 |
+| 27.25–27.55 | type `31 DIS`; Enter 27.7 ("thirty-first December" at 28.3) |
+| 29.55–30.85 | type `Bukan di kaunter? Bayar sebelum 25 Dis` into A54:G55 (with "Not paying at a counter?"); Enter 30.95 ("25 Dis" turns amber); held to 34.3 |
+| 34.30–35.10 | scroll back up to rows 1–14 (whoosh) |
+| 35.20 | A8:G11 merges; 35.4–36.25 `Nak versi BM penuh? Komen di bawah.` typed; Enter 36.35 |
+| 35.55 | footnote fills A12:G14 (3 lines, 31 px), held to the end |
+| 36.95 | glockenspiel ding; hold to 39.8 |
 
 ## 8. Cue map and sound
 
@@ -147,15 +147,15 @@ Total: **41.0 s** (target 36–42 s). The end card holds 2.0 s after the last wo
 
 | Section | Time | Bars | Music state | Lands on the grid |
 |---|---|---|---|---|
-| Hook | 0–6.1 | 1–3 | half-time kit (kick on 1, rim on 3), electric bass roots, marimba stabs | the Saved flash at 0.25, the G5 hop at 3.25 |
+| Hook | 0–6.1 | 1–3 | half-time kit (kick on 1, rim on 3), electric bass roots, marimba stabs | the Saved flash at 0.25, the G5 hop at 3.0 |
 | — cut 1 — | 6.1–6.35 | | silence (foley only) | first sound after: the whip whoosh |
 | Curiosity | 6.35–9.0 | 4 | bass + closed hats only, a question figure on marimba | fold ticks on beats |
-| Trap 1 | 9.0–14.8 | 5–7 | half-time groove back, piano stab on the red Enter (12.3), reversed piano on ctrl-Z | Enter 12.3, ctrl-Z 13.9 |
+| Trap 1 | 9.0–14.8 | 5–7 | half-time groove back, sour piano stab on the red Enter (12.3), falling glockenspiel on ctrl-Z | Enter 12.3, ctrl-Z 14.55 |
 | Trap 2 | 14.8–16.95 | 8 | thinner (bass + rim), key clicks carry the rhythm | |
 | — cut 2 — | 16.95–17.45 | | silence while the last characters type | first sound after: the IF Enter thump |
-| Climax | 17.45–29.0 | 9–14 | four-on-the-floor, sixteenth marimba + xylophone; the counting blips rise in pitch with each cell | Enter 21.3, drags 23.0 / 25.55, sweep 27.1 |
-| Payoff (breath) | 29.0–36.0 | 15–17 | half-time again, glockenspiel on 31 DIS, bass pedal | 31 DIS Enter 31.0 |
-| End | 36.0–41.0 | 18–19 | kit drops out, piano chord + glockenspiel ding at 38.6, tail to silence | end-card Enter 38.0 |
+| Climax | 17.45–25.8 | 9–12 | low chord on the IF Enter; 18.5–23.95 four-on-the-floor, sixteenth marimba, the counting blips rise in pitch with each cell; then half-time under the sweep (keeps "tax band" clear) with a xylophone arpeggio per colour-scale ring | Enter 20.55, drags 21.25 / 22.45, 2,000 at 22.8, sweep 23.95 |
+| Payoff (breath) | 25.8–34.3 | 13–16 | half-time again, glockenspiel on 31 DIS and on the counter line | 31 DIS Enter 27.7, counter line 30.95 |
+| End | 34.3–39.8 | 17–18 | kit drops out, home chord on the merge, mallets on Enter, glockenspiel ding at 36.95, tail to silence | end-card Enter 36.35 |
 
 **Sound design table**
 
@@ -169,12 +169,12 @@ Total: **41.0 s** (target 36–42 s). The end card holds 2.0 s after the last wo
 | Payoff | room tone | merge pop, key clicks, big Enter | half-time breath |
 | End | room tone | whoosh, merge pop, key clicks, Enter, final ding | resolves to silence |
 
-Mix: voice compressed and ~10 dB over the music by RMS, music carved 300 Hz–4 kHz under speech, mixed for phone speakers (low end high-passed at 90 Hz, bass with 2nd/3rd harmonics), −14 LUFS, true peak ≤ −1 dBTP. Two real silences (6.1, 16.95), two sound transitions (the whoosh at 6.35 J-cuts the header shot; the ding at 27.0 rings over the sweep).
+Mix: voice compressed and ~10 dB over the music by RMS, music carved 300 Hz–4 kHz under speech, mixed for phone speakers (low end high-passed at 90 Hz, bass with 2nd/3rd harmonics), −14 LUFS, true peak ≤ −1 dBTP. Two real silences (6.1, 16.95), two sound transitions (the whoosh at 6.35 J-cuts the header shot; the ding at 23.76 rings over the sweep). Instruments are sampled (see CREDITS).
 
 ## 9. Subtitle and title design
 
-- **Cell comment note**: pale yellow note (`#fff8c4`), 2 px ink border, red corner triangle, docked lower left at x 40, top y ≈ 1270, width ≤ 900 (so the note ends before the right 140 px) and bottom above y 1536. Inter Bold 37 px BM line on top, Inter Medium 25 px English line under it (37 px is the largest size at which the longest card, 1a at 787 px, fits the note); one line each, never wrapped. The camera frames the subject above it.
-- **Cards** (BM text from the brief, split at phrase breaks; timed from Whisper word starts; each card ≥ 1.2 s, each full line ≥ max(1.8 s, speech + 0.6 s)):
+- **Cell comment note**: pale yellow note (`#fff8c4`), 2 px ink border, red corner triangle, docked lower left at x 80, top y 1290, width ≤ 860 (so the note ends before the right 140 px) and bottom above y 1536. Inter Bold 37 px BM line on top, Inter Medium 25 px English line under it (37 px is the largest size at which the longest card, 1a at 787 px, fits the note); one line each, never wrapped. The camera frames the subject above it.
+- **Cards** (BM text from the brief, split at phrase breaks; timed from Whisper word starts; each full line ≥ max(1.8 s, speech + 0.6 s); the shortest card is 3a, "Perangkap pertama: keluarkan wang", at 1.0 s):
 
 | Line | Card | BM (top) | English (under) |
 |---|---|---|---|
@@ -186,9 +186,8 @@ Mix: voice compressed and ~10 dB over the music by RMS, music carved 300 Hz–4 
 | | c | pelepasan anda berkurang. | and your relief shrinks. |
 | 4 | a | Perangkap kedua: SSPN atas nama sendiri, | Trap two: an SSPN in your own name |
 | | b | pelepasan sifar. | gets zero relief. |
-| 5 | a | Buat dengan betul: pelepasan RM8,000 | Do it right, and RM8,000 of relief |
-| | b | jimat RM880, RM1,520 atau RM2,000, | saves RM880, RM1,520 or RM2,000, |
-| | c | ikut kadar cukai anda. | depending on your tax band. |
+| 5 | a | Buat dengan betul, jimat sehingga | Do it right, and you save up to |
+| | b | RM2,000, ikut kadar cukai anda. | RM2,000, depending on your tax band. |
 | 6 | a | Wang mesti sampai ke PTPTN | The money must reach PTPTN |
 | | b | sebelum 31 Disember. | by 31 December. |
 | | c | Bukan di kaunter? | Not paying at a counter? |
@@ -197,13 +196,13 @@ Mix: voice compressed and ~10 dB over the music by RMS, music carved 300 Hz–4 
 
 - **Formula bar**: Inter SemiBold 33 px fixed (the film's line), referenced names coloured to match their reference boxes; it expands to two lines for the IF formula (a line break after `0,`), as a real expanded formula bar does.
 - **Sheet type**: cell values 11 × zoom (not drawn below 6.5 px), merged labels 14–26 × zoom, results 26–32 × zoom and popping 30 % on Enter. Every number the voice uses is ≥ 26 px on screen when it is spoken (smallest: the 0s in the 130 % shots, 26 px).
-- **Thumbnail (Stage B):** the two Saved cells huge, RM2,000 lime vs RM0 red, a merged cell `SSPN · sebelum 31 Dis`, all text inside the centre 1080 × 1440.
+- **Footnote:** 3 lines, Inter SemiBold 31 px at the end zoom, in A12:G14, from 35.55 s to the end (4.2 s).
+- **Thumbnail:** the two Saved cells huge, RM2,000 lime vs RM0 red, a merged cell `SSPN · sebelum 31 Dis`, all text inside the centre 1080 × 1440.
 
-## 10. What I'm least sure about
+## 10. Open points
 
-1. **Subtitle splits.** "Never wrapped" with the brief's long BM lines means 2–3 cards per line. If you'd rather keep one card per line, the BM text has to shrink to ~28 px (no longer "large") or be shortened.
-2. **v05 length** (9.9 s): see section 6 for a −0.6 s trim if wanted.
-3. **"1 sel = RM80"** makes the bar heights equal the band percentages (11, 19, 25 cells). It's arithmetic (8,000 × 1 % = 80), not a claim, but say if you'd rather show bars without a unit.
+1. **Sources not re-read.** The source sites could not be reached from the build machine (see FACTS.md); the film states only the brief's claims.
+2. **"1 sel = RM80"** makes the bar heights equal the band percentages (11, 19, 25 cells). It's arithmetic, not a claim.
 
 ## 11. Not the demo again (checked after reading the style's DEMO.md)
 

@@ -1,9 +1,49 @@
 [
- {"id": "v01", "text": "Two parents. Same RM eight thousand saved. One saves up to RM two thousand in tax.", "asr": "Two parents. Same RM8000 saved. One saves up to RM2000 in tax.", "voice": "am_onyx", "speed": 0.92},
- {"id": "v02", "text": "The difference is hiding in two columns.", "voice": "am_onyx", "speed": 0.92},
- {"id": "v03", "text": "Trap one: withdraw in the same year, even your dividends, and your relief shrinks.", "voice": "am_onyx", "speed": 0.92},
- {"id": "v04", "text": "Trap two: an S S P N in your own name gets zero relief.", "asr": "Trap two: an SSPN in your own name gets zero relief.", "voice": "am_onyx", "speed": 0.92},
- {"id": "v05", "text": "Do it right, and RM eight thousand of relief saves RM eight hundred and eighty, RM one thousand five hundred and twenty, or RM two thousand, depending on your tax band.", "asr": "Do it right, and RM8000 of relief saves RM880, RM1520, or RM2000, depending on your tax band.", "voice": "am_onyx", "speed": 0.92},
- {"id": "v06", "text": "The money must reach P T P T N by thirty-first December. Not paying at a counter? Pay by the twenty-fifth.", "asr": "The money must reach PTPTN by 31st December. Not paying at a counter? Pay by the 25th.", "voice": "am_onyx", "speed": 0.92},
- {"id": "v07", "text": "Want a full B M version? Comment below.", "asr": "Want a full BM version? Comment below.", "voice": "am_onyx", "speed": 0.92}
+ {
+  "id": "v01",
+  "text": "Two parents. Same eight thousand ringgit saved. One saves up to two thousand ringgit in tax.",
+  "asr": "Two parents. Same 8000 ringgit saved. One saves up to 2000 ringgit in tax.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v02",
+  "text": "The difference is hiding in two columns.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v03",
+  "text": "Trap one: withdraw in the same year, even your dividends, and your relief shrinks.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v04",
+  "text": "Trap two: an S S P N in your own name gets zero relief.",
+  "asr": "Trap two: an SSPN in your own name gets zero relief.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v05",
+  "text": "Do it right, and you save up to two thousand ringgit, depending on your tax band.",
+  "asr": "Do it right, and you save up to 2000 ringgit, depending on your tax band.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v06",
+  "text": "The money must reach P T P T N by thirty-first December. Not paying at a counter? Pay by the twenty-fifth.",
+  "asr": "The money must reach PTPTN by 31st December. Not paying at a counter? Pay by the 25th.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ },
+ {
+  "id": "v07",
+  "text": "Want a full B M version? Comment below.",
+  "asr": "Want a full BM version? Comment below.",
+  "voice": "am_onyx",
+  "speed": 0.92
+ }
 ]

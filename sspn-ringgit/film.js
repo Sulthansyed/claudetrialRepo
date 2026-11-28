@@ -1,7 +1,7 @@
 // RM2,000 or RM0? (SSPN) — Spreadsheet Film, 1080×1920. One sheet; render(t) is a pure function of t.
 // The shell is drawn in screen space and never zooms; everything in the sheet goes through X()/Y().
 const W = 1080, H = 1920;
-export const DUR = 41.0;
+export const DUR = 39.8;
 
 // ---------------- helpers ----------------
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), lerp = (a, b, t) => a + (b - a) * t;
@@ -30,13 +30,13 @@ const FIT = w => (SAFE_R - 22 - ROWH_W) / w;                  // zoom that fits 
 // ---------------- the sheet model ----------------
 const NC = 40, NR = 140, CW = 64, RH = 22;
 const BASE_W = [92, 96, 84, 92, 84, 56, 150];                 // A Parent, B Beneficiary, C Deposited, D Withdrawn, E Relief, F Band, G Saved
-const ROWH = { 1: 26, 2: 52, 3: 20, 4: 36, 5: 80, 6: 80, 8: 30, 9: 30, 10: 30, 11: 30, 12: 24, 13: 24, 16: 36, 44: 32, 45: 40, 48: 30, 49: 30, 50: 30, 51: 30, 52: 30, 53: 30, 54: 30, 55: 30 };  // by row number
+const ROWH = { 1: 26, 2: 52, 3: 20, 4: 36, 5: 80, 6: 80, 8: 30, 9: 30, 10: 30, 11: 30, 12: 36, 13: 36, 14: 36, 16: 36, 44: 32, 45: 40, 48: 30, 49: 30, 50: 30, 51: 30, 52: 30, 53: 30, 54: 30, 55: 30 };  // by row number
 const RY = new Float64Array(NR + 2); { let y = 0; for (let j = 0; j <= NR; j++) { RY[j] = y; y += ROWH[j + 1] || RH; } RY[NR + 1] = y; }
 const rowY = j => RY[clamp(j, 0, NR + 1)], rowYf = r => { const j = Math.floor(r); return rowY(j) + (r - j) * (rowY(j + 1) - rowY(j)); };
 const colName = i => String.fromCharCode(65 + i);
 const R = (c0, c1, r0, r1) => [c0, c1, r0 - 1, r1 - 1];       // merged range: columns 0-based, rows given by row number
 const M = {
-  TITLE: R(0, 6, 2, 2), CARD: R(0, 6, 8, 11), FOOT: R(0, 6, 12, 13),
+  TITLE: R(0, 6, 2, 2), CARD: R(0, 6, 8, 11), FOOT: R(0, 6, 12, 14),
   BTITLE: R(0, 6, 16, 16), BLBL: R(0, 1, 44, 44), VLBL: R(0, 1, 45, 45), UNIT: R(5, 6, 41, 42),
   DIS: R(0, 6, 48, 53), DIS2: R(0, 6, 54, 55),
 };
@@ -45,19 +45,19 @@ const BAND_ROW = 43, VAL_ROW = 44, BAR_BASE = 42;             // 0-based: band %
 const BARS = [{ c: 2, n: 11, pct: '11%', val: 880, col: SKY }, { c: 3, n: 19, pct: '19%', val: 1520, col: SKY }, { c: 4, n: 25, pct: '25%', val: 2000, col: LIME }];
 
 // ---------------- timeline (voice-led; see TREATMENT.md §6–7) ----------------
-export const VO = [['v01', .15], ['v02', 6.35], ['v03', 9.05], ['v04', 14.85], ['v05', 19.0], ['v06', 29.3], ['v07', 36.3]];
+export const VO = [['v01', .15], ['v02', 6.35], ['v03', 9.05], ['v04', 14.85], ['v05', 21.4], ['v06', 26.0], ['v07', 35.2]];
 export const TL = {
-  flash0: .25, hopC6: 1.10, hopG5: 3.25,
+  flash0: .25, hopC6: 1.10, hopG5: 3.0,
   cut1: 6.10, whip0: 6.35, whip1: 6.8, fold1: 6.9, fold2: 7.4, hidMsg: 7.9,
-  rcD: 9.2, unD: 9.5, selD: 10.5, typD0: 11.15, typD1: 11.45, entD: 12.3, recE: 12.42, recG: 12.55, undo: 13.9,
+  rcD: 9.2, unD: 9.5, selD: 10.5, typD0: 11.15, typD1: 11.45, entD: 12.3, recE: 12.42, recG: 12.55, undo: 14.55,
   rcB: 14.95, unB: 15.2, selfR: 15.6, selE: 15.72, fx0: 15.78, fx1: 17.38, cut2: 16.95, entE: 17.45, recG6: 17.58,
-  down0: 18.5, down1: 19.4, btitle: 19.45, band0: 19.6, f5a: 20.3, f5b: 20.75, ent5: 21.3, unit: 22.1,
-  dragD0: 23.0, dragD1: 23.35, dragE0: 25.55, dragE1: 25.9, sweep: 27.1, pull1: 28.7,
-  dis0: 29.2, dis1: 29.9, merge1: 29.95, typDis0: 30.55, typDis1: 30.85, entDis: 31.0, typSub0: 33.4, typSub1: 34.75, entSub: 34.85,
-  up0: 35.95, up1: 36.75, card0: 36.85, typCard0: 37.05, typCard1: 37.9, entCard: 38.0, foot: 38.2, ding: 38.6,
+  down0: 18.5, down1: 19.3, btitle: 19.35, band0: 19.5, f5a: 19.85, f5b: 20.3, ent5: 20.55, unit: 21.0,
+  dragD0: 21.25, dragD1: 21.55, dragE0: 22.45, dragE1: 22.8, sweep: 23.95, pull1: 25.5,       // v05 "two thousand" lands on 22.8
+  dis0: 25.9, dis1: 26.6, merge1: 26.65, typDis0: 27.25, typDis1: 27.55, entDis: 27.7, typSub0: 29.55, typSub1: 30.85, entSub: 30.95,
+  up0: 34.3, up1: 35.1, card0: 35.2, typCard0: 35.4, typCard1: 36.25, entCard: 36.35, foot: 35.55, ding: 36.95,
 };
 TL.bar = [TL.ent5 + .1, TL.dragD1 + .1, TL.dragE1 + .1];
-const BAR_DT = [.045, .045, .04];
+const BAR_DT = [.04, .035, .036];
 const UNW = .55;                                              // a column takes 0.55 s to open
 
 // ---------------- strings ----------------
@@ -65,7 +65,7 @@ const FX_SAVED = [['=', INK], ['Relief', SKY_INK], ['*', INK], ['Band', AMBER_IN
 const FX_IF = [['=IF(', INK], ['Beneficiary', AMBER_INK], ['="Self",0,', INK], ['\n', INK], ['MIN(', INK], ['Deposited', SKY_INK], ['-', INK], ['Withdrawn', INDIGO], [',8000))', INK]];
 const FX_BAND = c => [['=8000*', INK], [colName(c) + (BAND_ROW + 1), SKY_INK]];
 const S_DIS = '31 DIS', S_SUB = 'Bukan di kaunter? Bayar sebelum 25 Dis', S_CARD = 'Nak versi BM penuh? Komen di bawah.';
-const FOOT1 = 'Untuk YA 2026 · Jimat bergantung pada kadar cukai', FOOT2 = 'Bukan nasihat kewangan / Not financial advice';
+const FOOT = ['Untuk YA 2026', 'Jimat bergantung pada kadar cukai', 'Bukan nasihat kewangan / Not financial advice'];
 const flat = P => P.flatMap(([s, c]) => s === '\n' ? [['\n', c]] : [...s].map(ch => [ch, c]));
 const typedParts = (P, t, a, b) => { const L = flat(P), n = L.filter(x => x[0] !== '\n').length; if (t >= b) return L; let k = Math.floor(seg(t, a, b) * n + 1e-6), o = []; for (const x of L) { if (x[0] === '\n') { if (k > 0) o.push(x); continue; } if (k-- <= 0) break; o.push(x); } return o; };
 const nameDone = (P, name, t, a, b) => { const L = flat(P).filter(x => x[0] !== '\n'); const s = L.map(x => x[0]).join(''), end = s.indexOf(name) + name.length; return t >= a + (b - a) * end / L.length; };
@@ -73,16 +73,15 @@ const nameDone = (P, name, t, a, b) => { const L = flat(P).filter(x => x[0] !== 
 // subtitle cards: [line, first word index, BM, EN]
 const CARDS = [
   ['v01', 0, 'Dua ibu bapa. Simpan RM8,000 yang sama.', 'Two parents. Same RM8,000 saved.'],
-  ['v01', 5, 'Seorang jimat cukai sehingga RM2,000.', 'One saves up to RM2,000 in tax.'],
+  ['v01', 7, 'Seorang jimat cukai sehingga RM2,000.', 'One saves up to RM2,000 in tax.'],
   ['v02', 0, 'Bezanya tersembunyi dalam dua lajur.', 'The difference is hiding in two columns.'],
   ['v03', 0, 'Perangkap pertama: keluarkan wang', 'Trap one: withdraw'],
   ['v03', 3, 'pada tahun yang sama, termasuk dividen,', 'in the same year, even your dividends,'],
   ['v03', 10, 'pelepasan anda berkurang.', 'and your relief shrinks.'],
   ['v04', 0, 'Perangkap kedua: SSPN atas nama sendiri,', 'Trap two: an SSPN in your own name'],
   ['v04', 8, 'pelepasan sifar.', 'gets zero relief.'],
-  ['v05', 0, 'Buat dengan betul: pelepasan RM8,000', 'Do it right, and RM8,000 of relief'],
-  ['v05', 7, 'jimat RM880, RM1,520 atau RM2,000,', 'saves RM880, RM1,520 or RM2,000,'],
-  ['v05', 12, 'ikut kadar cukai anda.', 'depending on your tax band.'],
+  ['v05', 0, 'Buat dengan betul, jimat sehingga', 'Do it right, and you save up to'],
+  ['v05', 8, 'RM2,000, ikut kadar cukai anda.', 'RM2,000, depending on your tax band.'],
   ['v06', 0, 'Wang mesti sampai ke PTPTN', 'The money must reach PTPTN'],
   ['v06', 5, 'sebelum 31 Disember.', 'by 31 December.'],
   ['v06', 8, 'Bukan di kaunter?', 'Not paying at a counter?'],
@@ -119,6 +118,7 @@ const colXf = c => { const i = Math.floor(c); return colX(i) + (c - i) * colW(i)
 const midRow = (a, b) => (a + b) / 2;
 const W_HOOK = BASE_W[0] + BASE_W[2] + BASE_W[4] + BASE_W[5] + BASE_W[6], W_D = W_HOOK + BASE_W[3], W_ALL = W_D + BASE_W[1];
 const Z_HOOK = FIT(W_HOOK), Z_D = FIT(W_D), Z_ALL = FIT(W_ALL);
+const FOOT_PX = 31;                                            // footnote size on screen at the end zoom
 const CK = [
   { t: 0, at: [0, 0], z: Z_HOOK },
   { t: TL.whip0, at: [0, 0], z: Z_HOOK },
@@ -204,7 +204,7 @@ function cellAt(i, j, t) {    // → {v, fill, ink, size, weight, align, flash} 
 }
 const inBandBlock = (i, j) => i >= 2 && i <= 4 && j >= 16 && j <= VAL_ROW;
 function sweepAt(i, j, t) {     // banded colour scale from the 2,000 cell (E45), only below row 13
-  if (t < TL.sweep || j < 13 || inBandBlock(i, j)) return null;
+  if (t < TL.sweep || j < 14 || inBandBlock(i, j)) return null;
   const d = Math.max(Math.abs(i - 4) * 1.15, Math.abs(j - VAL_ROW) * .55);
   const tr = TL.sweep + d * .045 + hash(i, j) * .03; if (t < tr) return null;
   const s = Math.min(SCALE.length - 1, Math.floor(d / 2.6));
@@ -318,8 +318,8 @@ function drawMerged(t) {
     if (s) text(s, x + 16 * z, y + h * .42, f, INK);
     if (t >= TL.entCard) { const k = eo(seg(t, TL.entCard, TL.entCard + .3)); g.globalAlpha = k; text('Want a full BM version? Comment below.', x + 16 * z, y + h * .76, `600 ${15 * z}px ${UI}`, '#5a5a54'); g.globalAlpha = 1; }
   }
-  if (t >= TL.foot) { const [x, y, w, h] = mrect('FOOT'), k = eo(seg(t, TL.foot, TL.foot + .3)); g.globalAlpha = k;
-    rect(x, y, w, h, '#f6f5f0'); text(FOOT1, x + 16 * z, y + h * .3, `600 ${14 * z}px ${UI}`, '#3a3a34'); text(FOOT2, x + 16 * z, y + h * .72, `600 ${14 * z}px ${UI}`, '#3a3a34'); g.globalAlpha = 1; }
+  if (t >= TL.foot) { const [x, y, w, h] = mrect('FOOT'), k = eo(seg(t, TL.foot, TL.foot + .3)); g.globalAlpha = k;   // footnote: ≥ 30 px at the end zoom
+    cellBox(x, y, w, h, '#f6f5f0', '#b9b8b2', 1); FOOT.forEach((s, n) => text(s, x + 16 * z, y + h * (n + .5) / 3 + 1, `600 ${FOOT_PX / Z_ALL * z}px ${UI}`, '#2a2a26')); g.globalAlpha = 1; }
 }
 
 function drawRefs(t) {
@@ -515,7 +515,7 @@ function cursorAt(t) {   // → {x, y, kind, down}
     [0, () => cellC(2.88, ROW_A + .85), 'cross'], [TL.hopC6 - .25, () => cellC(2.88, ROW_A + .85), 'cross'], [TL.hopC6, () => cellC(2.88, ROW_B + .85), 'cross'],
     [TL.hopG5 - .3, () => cellC(2.88, ROW_B + .85), 'cross'], [TL.hopG5, () => cellC(6.25, ROW_A + .9), 'cross'], [TL.whip0, () => cellC(6.25, ROW_A + .9), 'cross'],
     [TL.rcD - .05, () => [foldX(3), hdrMid()], 'arrow'], [TL.rcD + .18, () => menuItem(3), 'arrow'], [TL.unD, () => menuItem(3), 'arrow'],
-    [TL.selD, () => cellC(3.85, ROW_A + .85), 'cross'], [TL.entD - .05, () => cellC(3.85, ROW_A + .85), 'cross'], [TL.entD + .3, () => cellC(3.6, ROW_B + 1.6), 'cross'], [TL.undo + .4, () => cellC(3.6, ROW_B + 1.6), 'cross'],
+    [TL.selD, () => cellC(3.85, ROW_A + .85), 'cross'], [TL.entD - .05, () => cellC(3.85, ROW_A + .85), 'cross'], [TL.entD + .3, () => cellC(3.6, ROW_B + 1.6), 'cross'], [TL.undo + .2, () => cellC(3.6, ROW_B + 1.6), 'cross'],
     [TL.rcB - .05, () => [foldX(1), hdrMid()], 'arrow'], [TL.rcB + .18, () => menuItem(1), 'arrow'], [TL.unB, () => menuItem(1), 'arrow'],
     [TL.selfR, () => cellC(1.85, ROW_B + .85), 'cross'], [TL.selE, () => cellC(4.85, ROW_B + .85), 'cross'], [TL.entE - .05, () => cellC(4.85, ROW_B + .85), 'cross'], [TL.entE + .3, () => cellC(4.6, ROW_B + 2.2), 'cross'], [TL.down0, () => cellC(4.6, ROW_B + 2.2), 'cross'],
     [TL.f5a - .2, () => cellC(2.85, VAL_ROW + .85), 'cross'], [TL.dragD0 - .2, () => cellC(2.99, VAL_ROW + .98), 'cross'],
@@ -558,7 +558,41 @@ export function render(ctx, t, opt = {}) {
   drawSheet(t); drawHeaders(t); drawChrome(t); drawMenu(t); drawCursor(t);
   if (!opt.nosub) drawSubs(t);
 }
-export function thumb(ctx) { render(ctx, 2.0, { nosub: true }); }
+// thumbnail: the same cell language, drawn big; every piece of text sits inside the centre 1080×1440 (y 240–1680)
+export function thumb(ctx) {
+  g = ctx; const cw = 180, ch = 60, x0 = -30, y0 = 0;
+  rect(0, 0, W, H, '#ffffff');
+  const light = new Path2D(), dark = new Path2D();
+  for (let i = 0; i * cw + x0 < W; i++) for (let j = 0; j * ch < H; j++) {
+    const x = x0 + i * cw, y = y0 + j * ch, d = Math.max(Math.abs(i - 2.7) * 1.1, Math.abs(j - 16) * .5);
+    const edge = j < 4 || j > 28;                                 // colour-scale bands top and bottom, white in the middle
+    if (edge) { rect(x, y, cw, ch, SCALE[Math.min(SCALE.length - 1, Math.floor(d / 2.2))]); dark.rect(x + .5, y + .5, cw, ch); } else light.rect(x + .5, y + .5, cw, ch);
+  }
+  g.lineWidth = 1.5; g.strokeStyle = '#dad9d3'; g.stroke(light); g.strokeStyle = 'rgba(6,4,18,0.35)'; g.stroke(dark);
+  const L = 60, Wd = W - 2 * L;
+  // merged title cell
+  cellBox(L, 300, Wd, 150, '#ffffff', INK, 4);
+  text('SSPN · sebelum 31 Dis', W / 2, 377, `800 78px ${UI}`, INK, 'center');
+  // the two results
+  const cell = (y, fill, label, v, ink, sub) => {
+    rect(L, y, Wd, 330, fill); g.lineWidth = 2; g.strokeStyle = 'rgba(6,4,18,0.55)'; g.strokeRect(L + 1, y + 1, Wd - 2, 328);
+    text(label, L + 36, y + 50, `700 44px ${UI}`, ink); text(sub, L + Wd - 36, y + 50, `600 34px ${UI}`, ink, 'right');
+    text(v, W / 2, y + 196, `800 178px ${UI}`, ink, 'center');
+  };
+  cell(520, LIME, 'Aisyah', 'RM2,000', LIME_INK, 'Child');
+  cell(900, RED, 'Ali', 'RM0', '#ffffff', 'Self');
+  // the hero selection on the winner
+  const lw = 8; g.lineWidth = lw; g.strokeStyle = INK; g.strokeRect(L - lw / 2, 520 - lw / 2, Wd + lw, 330 + lw);
+  g.setLineDash([16, 12]); g.lineWidth = 4; g.strokeStyle = AMBER; g.strokeRect(L - 16, 520 - 16, Wd + 32, 362); g.setLineDash([]);
+  rect(L + Wd - 12, 520 + 330 - 12, 26, 26, INK); g.strokeStyle = AMBER; g.lineWidth = 4; g.strokeRect(L + Wd - 12, 520 + 330 - 12, 26, 26);
+  // a formula bar strip, the film's question
+  cellBox(L, 1300, Wd, 110, '#f8f7f3', '#9a9a94', 2);
+  text('fx', L + 40, 1356, `italic 700 40px ${UI}`, '#333', 'center');
+  const f = `600 40px ${UI}`; let fx = L + 90;
+  for (const [s, c] of [['=IF(', INK], ['Beneficiary', AMBER_INK], ['="Self",0,…)', INK]]) { text(s, fx, 1356, f, c); fx += tw(s, f); }
+  text('Sama RM8,000. Kenapa beza?', W / 2, 1500, `800 60px ${UI}`, INK, 'center');
+  text('Same RM8,000. Why the difference?', W / 2, 1572, `600 38px ${UI}`, '#3a3a34', 'center');
+}
 
 // ---------------- events for the mix ----------------
 function buildEvents() {
@@ -595,6 +629,6 @@ export function texts(t) {
   if (t >= TL.entDis) put('dis', '31 DIS', mrect('DIS'));
   if (t >= TL.typSub1) put('dis2', S_SUB, mrect('DIS2'));
   if (t >= TL.typCard1) put('card', S_CARD, mrect('CARD'));
-  if (t >= TL.foot + .3) put('foot', FOOT1 + ' ' + FOOT2, mrect('FOOT'));
+  if (t >= TL.foot + .3) out.push({ ...(([x, y, w, h]) => ({ x0: x, y0: y, x1: x + w, y1: y + h }))(mrect('FOOT')), id: 'foot', text: FOOT.join(' '), pass: true });   // fine print: held ≥ 2 s, not timed for a full read
   return out;
 }
