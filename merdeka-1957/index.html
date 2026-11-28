@@ -179,7 +179,7 @@ function drawMap(g) {
   { const km = KS / 111.2, x0 = 700, y0 = 1580, L100 = 100 * km; g.save(); g.fillStyle = C.ink; g.strokeStyle = C.ink; g.lineWidth = 1.2;
     for (let i = 0; i < 4; i++) { const xa = x0 + i * L100 / 2; i % 2 ? g.strokeRect(xa, y0, L100 / 2, 7) : g.fillRect(xa, y0, L100 / 2, 7); }
     g.font = '17px OldStd'; g.textAlign = 'center'; g.textBaseline = 'bottom';
-    [0, 100, 200].forEach((k, i) => g.fillText(String(k), x0 + i * L100, y0 - 5)); g.font = '18px Fell'; g.textAlign = 'left'; g.fillText('km', x0 + 2 * L100 + 12, y0 - 5); g.restore(); }
+    [0, 100, 200].forEach((k, i) => g.fillText(String(k), x0 + i * L100, y0 - 5)); g.font = '18px Fell'; g.textAlign = 'left'; g.fillText('km', x0 + 2 * L100 + 26, y0 - 5); g.restore(); }
 }
 function bakeMap() {
   const c = canvas(W * MS, H * MS), g = c.getContext('2d');
